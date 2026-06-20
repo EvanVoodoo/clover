@@ -1,2 +1,2 @@
-# clover
-2D renderer made using DirectX11
+# Clover
+2D renderer made using DirectX11.
