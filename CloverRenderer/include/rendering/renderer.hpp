@@ -2,7 +2,7 @@
 
 // Based on the tutorial from http://www.rastertek.com/dx11tut03.html
 
-#include "rendering/render_d3d11.hpp"
+#include "rendering/render_d3d11.hpp"	
 
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;

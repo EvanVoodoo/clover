@@ -4,6 +4,7 @@ using namespace clvr;
 
 Window::Window() : m_hwnd(nullptr), m_hInstance(nullptr), m_width(0), m_height(0)
 {
+	m_input = nullptr;
 }
 
 Window::Window(const Window&)
@@ -14,11 +15,13 @@ Window::~Window()
 {
 }
 
-bool Window::Initialize(HINSTANCE hInstance, int nCmdShow, int width, int height)
+bool Window::Initialize(HINSTANCE hInstance, int nCmdShow, int width, int height, Input* input)
 {
 	m_hInstance = hInstance;
 	m_width = width;
 	m_height = height;
+
+	m_input = input;
 
 	// Register window class
 	WNDCLASSEXW wcex = {};
@@ -77,6 +80,13 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 	switch (message)
 	{
+	case WM_KEYDOWN:
+		window->m_input->KeyDown(static_cast<unsigned int>(wParam));
+		return 0;
+
+	case WM_KEYUP:
+		window->m_input->KeyUp(static_cast<unsigned int>(wParam));
+		return 0;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;

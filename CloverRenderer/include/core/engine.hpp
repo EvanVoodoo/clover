@@ -1,10 +1,11 @@
 #pragma once
 
 #include "core/window.hpp"
+#include "core/input.hpp"
 #include "rendering/renderer.hpp"
 
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
+const int SCREEN_WIDTH = 1600;
+const int SCREEN_HEIGHT = 900;
 
 namespace clvr
 {
@@ -22,7 +23,7 @@ namespace clvr
 	private:
 		bool Frame(float dt);
 
-		//InputClass* m_Input;
+		Input* m_input;
 		Window* m_window;
 		Renderer* m_renderer;
 	};

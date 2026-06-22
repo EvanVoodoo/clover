@@ -1,6 +1,7 @@
 #pragma once
 
 #include <windows.h>
+#include "input.hpp"
 
 namespace clvr
 {
@@ -11,7 +12,7 @@ namespace clvr
 		Window(const Window&);
 		~Window();
 
-		bool Initialize(HINSTANCE hInstance, int nCmdShow, int width, int height);
+		bool Initialize(HINSTANCE hInstance, int nCmdShow, int width, int height, Input* input);
 		void Shutdown();
 
 		HWND GetHWND() const;
@@ -20,6 +21,8 @@ namespace clvr
 
 	private:
 		static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+
+		Input* m_input;
 
 		HWND m_hwnd;
 		HINSTANCE m_hInstance;
