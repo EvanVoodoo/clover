@@ -69,3 +69,4 @@ Testing/
 .cache/
 /CloverRenderer/.vs
 /CloverRenderer/Clover/x64
+/CloverRenderer/.idea

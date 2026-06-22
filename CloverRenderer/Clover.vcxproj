@@ -101,7 +101,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -125,6 +125,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -135,12 +136,20 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\core\engine.hpp" />
     <ClInclude Include="include\Clover.h" />
+    <ClInclude Include="include\core\window.hpp" />
     <ClInclude Include="include\framework.h" />
+    <ClInclude Include="include\rendering\renderer.hpp" />
+    <ClInclude Include="include\rendering\render_d3d11.hpp" />
     <ClInclude Include="include\resource.h" />
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\core\engine.cpp" />
+    <ClCompile Include="source\core\window.cpp" />
+    <ClCompile Include="source\rendering\renderer.cpp" />
+    <ClCompile Include="source\rendering\render_d3d11.cpp" />
     <ClCompile Include="source\Clover.cpp" />
   </ItemGroup>
   <ItemGroup>
