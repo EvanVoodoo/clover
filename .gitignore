@@ -67,3 +67,5 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+/CloverRenderer/.vs
+/CloverRenderer/Clover/x64
