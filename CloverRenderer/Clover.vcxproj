@@ -136,6 +136,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Downloads\stb_rect_pack.h" />
     <ClInclude Include="include\core\engine.hpp" />
     <ClInclude Include="include\Clover.h" />
     <ClInclude Include="include\core\input.hpp" />
@@ -146,10 +147,13 @@
     <ClInclude Include="include\rendering\render_d3d11.hpp" />
     <ClInclude Include="include\rendering\shader.hpp" />
     <ClInclude Include="include\rendering\sprite_batcher.hpp" />
+    <ClInclude Include="include\rendering\stb_rect_pack.h" />
+    <ClInclude Include="include\rendering\texture_atlas.hpp" />
     <ClInclude Include="include\resource.h" />
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\rendering\texture_atlas.cpp" />
     <ClCompile Include="source\core\engine.cpp" />
     <ClCompile Include="source\core\input.cpp" />
     <ClCompile Include="source\core\window.cpp" />
@@ -167,7 +171,17 @@
     <Image Include="Clover.ico" />
     <Image Include="small.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\directxtex_desktop_win10.2026.5.8.1\build\native\directxtex_desktop_win10.targets" Condition="Exists('packages\directxtex_desktop_win10.2026.5.8.1\build\native\directxtex_desktop_win10.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\directxtex_desktop_win10.2026.5.8.1\build\native\directxtex_desktop_win10.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtex_desktop_win10.2026.5.8.1\build\native\directxtex_desktop_win10.targets'))" />
+  </Target>
 </Project>

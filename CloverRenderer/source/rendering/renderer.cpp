@@ -64,36 +64,62 @@ void Renderer::DrawSprite(const Sprite& sprite) { m_DX2D->DrawSprite(sprite); }
 
 bool Renderer::Render(float dt)
 {
-	// Clear the buffers to begin the scene.
-	m_DX2D->BeginScene(0.1f, 0.1f, 0.1f, 1.0f);
+    static std::mt19937 rng(std::random_device{}());
+    static std::uniform_real_distribution<float> xPosDist(-800.0f, 800.0f);
+    static std::uniform_real_distribution<float> yPosDist(-400.0f, 400.0f);
+    static std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
+    static std::uniform_real_distribution<float> sizeDist(100.0f, 400.0f);
 
-	// Submit sprites here
-	{
-		Sprite sprite;
-		sprite.position = XMFLOAT2(0.0f, 0.0f);
-		sprite.size = XMFLOAT2(200.0f, 200.0f);
-		sprite.color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-		m_DX2D->DrawSprite(sprite);
-	}
+    static const wchar_t* textures[] = {
+    L"assets/textures/shrew1.jpg",
+    L"assets/textures/shrew2.jpg",
+    L"assets/textures/hamper.jpeg"
+    };
 
-	{
-		Sprite sprite;
-		sprite.position = XMFLOAT2(250.0f, 0.0f);
-		sprite.size = XMFLOAT2(200.0f, 200.0f);
-		sprite.color = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
-		m_DX2D->DrawSprite(sprite);
-	}
+    static std::uniform_int_distribution<int> texDist(0, (int)(std::size(textures)) - 1);
 
-	{
-		Sprite sprite;
-		sprite.position = XMFLOAT2(-100.0f, 0.0f);
-		sprite.size = XMFLOAT2(200.0f, 200.0f);
-		sprite.color = XMFLOAT4(0.0f, 1.0f, 1.0f, 0.1f);
-		m_DX2D->DrawSprite(sprite);
-	}
+    static Sprite randomSprites[10];
+    static float elapsed = 0.0f;
+    static bool initialized = false;
 
-	// Present the rendered scene to the screen.
-	m_DX2D->EndScene();
+    if (!initialized)
+    {
+        for (auto& sprite : randomSprites)
+        {
+            sprite.position = XMFLOAT2(xPosDist(rng), yPosDist(rng));
+            float size = sizeDist(rng);
+            sprite.size = XMFLOAT2(size, size);
+            sprite.color = XMFLOAT4(colorDist(rng), colorDist(rng), colorDist(rng), 1.0f);
+            sprite.uvRect = m_DX2D->GetAtlasRegion(textures[texDist(rng)]).uvRect;
+        }
+        initialized = true;
+    }
 
-	return true;
+    elapsed += dt;
+    if (elapsed >= 1.f)
+    {
+        for (auto& sprite : randomSprites)
+        {
+            sprite.position = XMFLOAT2(xPosDist(rng), yPosDist(rng));
+            sprite.color = XMFLOAT4(colorDist(rng), colorDist(rng), colorDist(rng), 1.0f);
+        }
+        elapsed = 0.0f;
+    }
+
+    m_DX2D->BeginScene(0.1f, 0.1f, 0.1f, 1.0f);
+
+    // Center sprite
+    Sprite center;
+    center.position = XMFLOAT2(0.0f, 0.0f);
+    center.size = XMFLOAT2(600.0f, 600.0f);
+    center.color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    center.uvRect = m_DX2D->GetAtlasRegion(L"assets/textures/shrew1.jpg").uvRect;
+    m_DX2D->DrawSprite(center);
+
+    for (const auto& sprite : randomSprites)
+        m_DX2D->DrawSprite(sprite);
+
+    m_DX2D->EndScene();
+
+    return true;
 }

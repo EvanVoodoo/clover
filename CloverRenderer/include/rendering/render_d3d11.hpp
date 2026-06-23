@@ -10,6 +10,7 @@
 #include <directxmath.h>
 #include "shader.hpp"
 #include "sprite_batcher.hpp"
+#include "texture_atlas.hpp"
 
 using namespace DirectX;
 
@@ -23,12 +24,14 @@ namespace clvr
 		~DirectX2D();
 
 		bool Initialize(int, int, bool, HWND, bool, float, float);
-		bool InitializeBuffers();
 		void Shutdown();
 
 		void BeginScene(float, float, float, float);
 		void EndScene();
 		void DrawSprite(const Sprite& sprite);
+
+		ID3D11ShaderResourceView* LoadTexture(const wchar_t* filename);
+		AtlasRegion GetAtlasRegion(const wchar_t* filename) { return m_textureAtlas->GetRegion(filename); }
 
 		ID3D11Device* GetDevice();
 		ID3D11DeviceContext* GetDeviceContext();
@@ -62,8 +65,9 @@ namespace clvr
 
 		ID3D11Buffer* m_vertexBuffer;
 		ID3D11InputLayout* m_inputLayout;
-		int m_vertexCount;
 		Shader* m_shader;
 		SpriteBatcher* m_spriteBatcher;
+		ID3D11SamplerState* m_samplerState;
+		TextureAtlas* m_textureAtlas;
 	};
 }

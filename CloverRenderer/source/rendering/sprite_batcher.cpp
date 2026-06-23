@@ -101,22 +101,37 @@ void SpriteBatcher::DrawSprite(const Sprite& sprite)
 {
 	if (m_indexCount >= MAX_INDICES)
 		return;
+
 	float halfWidth = sprite.size.x * 0.5f;
 	float halfHeight = sprite.size.y * 0.5f;
 
-	// Calculate the four corners of the sprite
+	float uvLeft = sprite.uvRect.x;
+	float uvTop = sprite.uvRect.y;
+	float uvRight = sprite.uvRect.x + sprite.uvRect.z;
+	float uvBottom = sprite.uvRect.y + sprite.uvRect.w;
+
 	XMFLOAT2 corners[4] = {
 		{ -halfWidth, -halfHeight },
-		{ halfWidth, -halfHeight },
-		{ halfWidth, halfHeight },
-		{ -halfWidth, halfHeight }
+		{  halfWidth, -halfHeight },
+		{  halfWidth,  halfHeight },
+		{ -halfWidth,  halfHeight }
 	};
+
+	XMFLOAT2 uvs[4] = {
+		{ uvLeft,  uvBottom },
+		{ uvRight, uvBottom },
+		{ uvRight, uvTop    },
+		{ uvLeft,  uvTop    }
+	};
+
 	for (int i = 0; i < 4; ++i)
 	{
 		m_vertexBufferPtr->position = XMFLOAT3(sprite.position.x + corners[i].x, sprite.position.y + corners[i].y, 0.5f);
+		m_vertexBufferPtr->uv = uvs[i];
 		m_vertexBufferPtr->color = sprite.color;
 		m_vertexBufferPtr++;
 	}
+
 	m_indexCount += 6;
 }
 

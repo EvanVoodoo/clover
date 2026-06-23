@@ -1,4 +1,5 @@
 #include "rendering/render_d3d11.hpp"
+#include <DirectXTex.h>
 
 using namespace clvr;
 
@@ -14,6 +15,8 @@ DirectX2D::DirectX2D()
 	m_rasterState = nullptr;
 	m_shader = nullptr;
 	m_spriteBatcher = nullptr;
+	m_samplerState = nullptr;
+	m_textureAtlas = nullptr;
 }
 
 DirectX2D::DirectX2D(const DirectX2D& other)
@@ -345,6 +348,19 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	m_deviceContext->OMSetBlendState(blendState, blendFactor, 0xFFFFFFFF);
 	blendState->Release();
 
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	result = m_device->CreateSamplerState(&samplerDesc, &m_samplerState);
+	if (FAILED(result))
+		return false;
+
 	// Setup the viewport for rendering.
 	m_viewport.Width = (float)screenWidth;
 	m_viewport.Height = (float)screenHeight;
@@ -362,8 +378,6 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	// Initialize the world matrix to the identity matrix.
 	m_worldMatrix = XMMatrixIdentity();
 
-	InitializeBuffers();
-
 	m_shader = new Shader();
 	result = m_shader->Initialize(m_device, hwnd);
 	if (!result)
@@ -380,31 +394,21 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 		return false;
 	}
 
-	return true;
-}
+	m_textureAtlas = new TextureAtlas();
+	if (!m_textureAtlas->Initialize(m_device, m_deviceContext, ATLAS_MAX_SIZE, ATLAS_MAX_SIZE))
+		return false;
 
-bool DirectX2D::InitializeBuffers()
-{
-	// Triangle vertices defined in pixel space with a depth of 0.5f (between the near and far planes) and a different color for each vertex.
-	Vertex vertices[] =
-	{
-		{ XMFLOAT3(0.0f,  200.0f, 0.5f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
-		{ XMFLOAT3(200.0f, -200.0f, 0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
-		{ XMFLOAT3(-200.0f, -200.0f, 0.5f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
-	};
-	m_vertexCount = 3;
+	m_textureAtlas->AddTexture(L"assets/textures/shrew1.jpg");
+	m_textureAtlas->AddTexture(L"assets/textures/shrew2.jpg");
+	m_textureAtlas->AddTexture(L"assets/textures/shrew3.jpg");
+	m_textureAtlas->AddTexture(L"assets/textures/freak.png");
+	m_textureAtlas->AddTexture(L"assets/textures/hihi.png");
+	m_textureAtlas->AddTexture(L"assets/textures/hamper.jpeg");
+	m_textureAtlas->AddTexture(L"assets/textures/ParticleSystemMenu.png");
+	m_textureAtlas->AddTexture(L"assets/textures/steve_frogs.jpg");
+	m_textureAtlas->AddTexture(L"assets/textures/time.png");
 
-	// Describe the vertex buffer
-	D3D11_BUFFER_DESC bufferDesc = {};
-	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.ByteWidth = sizeof(Vertex) * m_vertexCount;
-	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA initData = {};
-	initData.pSysMem = vertices;
-
-	HRESULT result = m_device->CreateBuffer(&bufferDesc, &initData, &m_vertexBuffer);
-	if (FAILED(result))
+	if (!m_textureAtlas->Build())
 		return false;
 
 	return true;
@@ -416,6 +420,19 @@ void DirectX2D::Shutdown()
 	if (m_swapChain)
 	{
 		m_swapChain->SetFullscreenState(false, NULL);
+	}
+
+	if (m_samplerState)
+	{
+		m_samplerState->Release();
+		m_samplerState = nullptr;
+	}
+
+	if(m_textureAtlas)
+	{
+		m_textureAtlas->Shutdown();
+		delete m_textureAtlas;
+		m_textureAtlas = nullptr;
 	}
 
 	if (m_spriteBatcher)
@@ -479,6 +496,11 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 
 	// Shader handles the rest
 	m_shader->Bind(m_deviceContext, m_worldMatrix, XMMatrixIdentity(), m_projectionMatrix);
+	
+	ID3D11ShaderResourceView* srv = m_textureAtlas->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 1, &srv);
+	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+
 	m_spriteBatcher->Begin();
 
 }
@@ -501,6 +523,21 @@ void DirectX2D::EndScene()
 }
 
 void DirectX2D::DrawSprite(const Sprite& sprite) { m_spriteBatcher->DrawSprite(sprite); }
+
+ID3D11ShaderResourceView* DirectX2D::LoadTexture(const wchar_t* filename)
+{
+	ScratchImage image;
+	HRESULT result = LoadFromWICFile(filename, WIC_FLAGS_NONE, nullptr, image);
+	if (FAILED(result))
+		return nullptr;
+
+	ID3D11ShaderResourceView* srv = nullptr;
+	result = CreateShaderResourceView(m_device, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &srv);
+	if (FAILED(result))
+		return nullptr;
+
+	return srv;
+}
 
 ID3D11Device* DirectX2D::GetDevice()
 {
