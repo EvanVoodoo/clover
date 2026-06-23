@@ -22,6 +22,7 @@ namespace clvr
 		bool Initialize(int, int, HWND);
 		void Shutdown();
 		bool Frame(float dt);
+		void DrawSprite(const Sprite& sprite);
 
 	private:
 		bool Render(float dt);

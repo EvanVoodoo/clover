@@ -60,25 +60,37 @@ bool Renderer::Frame(float dt)
 	return true;
 }
 
+void Renderer::DrawSprite(const Sprite& sprite) { m_DX2D->DrawSprite(sprite); }
+
 bool Renderer::Render(float dt)
 {
-	static std::mt19937 rng(std::random_device{}());
-	static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
-	static float r = dist(rng), g = dist(rng), b = dist(rng);
-	static float elapsed = 0.0f;
+	// Clear the buffers to begin the scene.
+	m_DX2D->BeginScene(0.1f, 0.1f, 0.1f, 1.0f);
 
-	elapsed += dt;
-	if (elapsed >= 1.0f)
+	// Submit sprites here
 	{
-		r = dist(rng);
-		g = dist(rng);
-		b = dist(rng);
-		elapsed = 0.0f;
+		Sprite sprite;
+		sprite.position = XMFLOAT2(0.0f, 0.0f);
+		sprite.size = XMFLOAT2(200.0f, 200.0f);
+		sprite.color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+		m_DX2D->DrawSprite(sprite);
 	}
 
-	// Clear the buffers to begin the scene.
-	m_DX2D->BeginScene(r, g, b, 1.0f);
+	{
+		Sprite sprite;
+		sprite.position = XMFLOAT2(250.0f, 0.0f);
+		sprite.size = XMFLOAT2(200.0f, 200.0f);
+		sprite.color = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
+		m_DX2D->DrawSprite(sprite);
+	}
 
+	{
+		Sprite sprite;
+		sprite.position = XMFLOAT2(-100.0f, 0.0f);
+		sprite.size = XMFLOAT2(200.0f, 200.0f);
+		sprite.color = XMFLOAT4(0.0f, 1.0f, 1.0f, 0.1f);
+		m_DX2D->DrawSprite(sprite);
+	}
 
 	// Present the rendered scene to the screen.
 	m_DX2D->EndScene();

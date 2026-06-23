@@ -8,11 +8,13 @@
 
 #include <d3d11.h>
 #include <directxmath.h>
+#include "shader.hpp"
+#include "sprite_batcher.hpp"
 
 using namespace DirectX;
 
-namespace clvr {
-
+namespace clvr
+{
 	class DirectX2D
 	{
 	public:
@@ -21,10 +23,12 @@ namespace clvr {
 		~DirectX2D();
 
 		bool Initialize(int, int, bool, HWND, bool, float, float);
+		bool InitializeBuffers();
 		void Shutdown();
 
 		void BeginScene(float, float, float, float);
 		void EndScene();
+		void DrawSprite(const Sprite& sprite);
 
 		ID3D11Device* GetDevice();
 		ID3D11DeviceContext* GetDeviceContext();
@@ -55,5 +59,11 @@ namespace clvr {
 		XMMATRIX m_projectionMatrix;
 		XMMATRIX m_worldMatrix;
 		D3D11_VIEWPORT m_viewport;
+
+		ID3D11Buffer* m_vertexBuffer;
+		ID3D11InputLayout* m_inputLayout;
+		int m_vertexCount;
+		Shader* m_shader;
+		SpriteBatcher* m_spriteBatcher;
 	};
 }

@@ -142,7 +142,10 @@
     <ClInclude Include="include\core\window.hpp" />
     <ClInclude Include="include\framework.h" />
     <ClInclude Include="include\rendering\renderer.hpp" />
+    <ClInclude Include="include\rendering\render_components.hpp" />
     <ClInclude Include="include\rendering\render_d3d11.hpp" />
+    <ClInclude Include="include\rendering\shader.hpp" />
+    <ClInclude Include="include\rendering\sprite_batcher.hpp" />
     <ClInclude Include="include\resource.h" />
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
@@ -151,8 +154,11 @@
     <ClCompile Include="source\core\input.cpp" />
     <ClCompile Include="source\core\window.cpp" />
     <ClCompile Include="source\rendering\renderer.cpp" />
+    <ClCompile Include="source\rendering\render_components.cpp" />
     <ClCompile Include="source\rendering\render_d3d11.cpp" />
     <ClCompile Include="source\Clover.cpp" />
+    <ClCompile Include="source\rendering\shader.cpp" />
+    <ClCompile Include="source\rendering\sprite_batcher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Clover.rc" />

@@ -12,6 +12,8 @@ DirectX2D::DirectX2D()
 	m_depthStencilState = nullptr;
 	m_depthStencilView = nullptr;*/
 	m_rasterState = nullptr;
+	m_shader = nullptr;
+	m_spriteBatcher = nullptr;
 }
 
 DirectX2D::DirectX2D(const DirectX2D& other)
@@ -324,6 +326,25 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	// Now set the rasterizer state.
 	m_deviceContext->RSSetState(m_rasterState);
 
+	D3D11_BLEND_DESC blendDesc = {};
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	ID3D11BlendState* blendState = nullptr;
+	result = m_device->CreateBlendState(&blendDesc, &blendState);
+	if (FAILED(result))
+		return false;
+
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	m_deviceContext->OMSetBlendState(blendState, blendFactor, 0xFFFFFFFF);
+	blendState->Release();
+
 	// Setup the viewport for rendering.
 	m_viewport.Width = (float)screenWidth;
 	m_viewport.Height = (float)screenHeight;
@@ -341,6 +362,51 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	// Initialize the world matrix to the identity matrix.
 	m_worldMatrix = XMMatrixIdentity();
 
+	InitializeBuffers();
+
+	m_shader = new Shader();
+	result = m_shader->Initialize(m_device, hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the shader", L"Error", MB_OK);
+		return false;
+	}
+
+	m_spriteBatcher = new SpriteBatcher();
+	result = m_spriteBatcher->Initialize(m_device, m_deviceContext);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the sprite batcher", L"Error", MB_OK);
+		return false;
+	}
+
+	return true;
+}
+
+bool DirectX2D::InitializeBuffers()
+{
+	// Triangle vertices defined in pixel space with a depth of 0.5f (between the near and far planes) and a different color for each vertex.
+	Vertex vertices[] =
+	{
+		{ XMFLOAT3(0.0f,  200.0f, 0.5f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
+		{ XMFLOAT3(200.0f, -200.0f, 0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
+		{ XMFLOAT3(-200.0f, -200.0f, 0.5f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
+	};
+	m_vertexCount = 3;
+
+	// Describe the vertex buffer
+	D3D11_BUFFER_DESC bufferDesc = {};
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.ByteWidth = sizeof(Vertex) * m_vertexCount;
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA initData = {};
+	initData.pSysMem = vertices;
+
+	HRESULT result = m_device->CreateBuffer(&bufferDesc, &initData, &m_vertexBuffer);
+	if (FAILED(result))
+		return false;
+
 	return true;
 }
 
@@ -351,26 +417,26 @@ void DirectX2D::Shutdown()
 	{
 		m_swapChain->SetFullscreenState(false, NULL);
 	}
+
+	if (m_spriteBatcher)
+	{
+		m_spriteBatcher->Shutdown();
+		delete m_spriteBatcher;
+		m_spriteBatcher = nullptr;
+	}
+
+	if (m_shader)
+	{
+		m_shader->Shutdown();
+		delete m_shader;
+		m_shader = nullptr;
+	}
+
 	if (m_rasterState)
 	{
 		m_rasterState->Release();
 		m_rasterState = nullptr;
 	}
-	/*if (m_depthStencilView)
-	{
-		m_depthStencilView->Release();
-		m_depthStencilView = nullptr;
-	}
-	if (m_depthStencilState)
-	{
-		m_depthStencilState->Release();
-		m_depthStencilState = nullptr;
-	}
-	if (m_depthStencilBuffer)
-	{
-		m_depthStencilBuffer->Release();
-		m_depthStencilBuffer = nullptr;
-	}*/
 	if (m_renderTargetView)
 	{
 		m_renderTargetView->Release();
@@ -405,11 +471,21 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 	m_deviceContext->ClearRenderTargetView(m_renderTargetView, color);
 	// Clear the depth buffer. Not needed for a 2D renderer.
 	//m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-	return;
+
+	unsigned int stride = sizeof(Vertex);
+	unsigned int offset = 0;
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// Shader handles the rest
+	m_shader->Bind(m_deviceContext, m_worldMatrix, XMMatrixIdentity(), m_projectionMatrix);
+	m_spriteBatcher->Begin();
+
 }
 
 void DirectX2D::EndScene()
 {
+	m_spriteBatcher->End();
 	// Present the back buffer to the screen since rendering is complete.
 	if (m_vsyncEnabled)
 	{
@@ -423,6 +499,8 @@ void DirectX2D::EndScene()
 	}
 	return;
 }
+
+void DirectX2D::DrawSprite(const Sprite& sprite) { m_spriteBatcher->DrawSprite(sprite); }
 
 ID3D11Device* DirectX2D::GetDevice()
 {
