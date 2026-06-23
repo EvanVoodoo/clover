@@ -34,6 +34,15 @@ bool Engine::Initialize(HINSTANCE hInstance, int nCmdShow)
     if (!m_renderer->Initialize(m_window->GetWidth(), m_window->GetHeight(), m_window->GetHWND()))
         return false;
 
+    m_renderer->LoadShader(L"default", L"assets/shaders/color.vs.hlsl", L"assets/shaders/color.ps.hlsl");
+    m_renderer->LoadShader(L"grayscale", L"assets/shaders/color.vs.hlsl", L"assets/shaders/grayscale.ps.hlsl");
+    m_renderer->LoadShader(L"inverted", L"assets/shaders/color.vs.hlsl", L"assets/shaders/inverted.ps.hlsl");
+    m_renderer->LoadShader(L"chromatic", L"assets/shaders/color.vs.hlsl", L"assets/shaders/chromatic.ps.hlsl");
+    m_renderer->LoadShader(L"wacky", L"assets/shaders/color.vs.hlsl", L"assets/shaders/wacky.ps.hlsl");
+    
+    m_renderer->LoadShader(L"passthrough", L"assets/shaders/post.vs.hlsl", L"assets/shaders/post.ps.hlsl");
+    m_renderer->SetPostProcessShader(L"passthrough");
+
     return true;
 }
 
@@ -100,12 +109,27 @@ bool Engine::Frame(float dt)
 {
     bool result;
 
-
     // Check if the user pressed escape and wants to exit the application.
     if (m_input->IsKeyDown(VK_ESCAPE))
     {
         return false;
     }
+
+    if (m_input->IsKeyDown('1'))
+        m_renderer->SetActiveShader(L"default");
+    else if (m_input->IsKeyDown('2'))
+        m_renderer->SetActiveShader(L"grayscale");
+    else if (m_input->IsKeyDown('3'))
+        m_renderer->SetActiveShader(L"inverted");
+    else if (m_input->IsKeyDown('4'))
+        m_renderer->SetActiveShader(L"chromatic");
+	else if (m_input->IsKeyDown('5'))
+		m_renderer->SetActiveShader(L"wacky");
+
+	if (m_input->IsKeyDown('R'))
+	{
+		m_renderer->ReloadShaders();
+	}
 
     result = m_renderer->Frame(dt);
     if (!result)

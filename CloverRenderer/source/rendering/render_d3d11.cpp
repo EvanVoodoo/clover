@@ -13,10 +13,13 @@ DirectX2D::DirectX2D()
 	m_depthStencilState = nullptr;
 	m_depthStencilView = nullptr;*/
 	m_rasterState = nullptr;
-	m_shader = nullptr;
+	m_shaderManager = nullptr;
 	m_spriteBatcher = nullptr;
 	m_samplerState = nullptr;
 	m_textureAtlas = nullptr;
+	m_framebuffer = nullptr;
+	m_fullscreenQuadIB = nullptr;
+	m_fullscreenQuadVB = nullptr;
 }
 
 DirectX2D::DirectX2D(const DirectX2D& other)
@@ -225,84 +228,6 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	backBufferPtr->Release();
 	backBufferPtr = nullptr;
 
-	// don't need a depth buffer for a 2d renderer
-	{
-	/*
-		// Initialize the description of the depth buffer.
-		ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
-
-		// Set up the description of the depth buffer.
-		depthBufferDesc.Width = screenWidth;
-		depthBufferDesc.Height = screenHeight;
-		depthBufferDesc.MipLevels = 1;
-		depthBufferDesc.ArraySize = 1;
-		depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthBufferDesc.SampleDesc.Count = 1;
-		depthBufferDesc.SampleDesc.Quality = 0;
-		depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		depthBufferDesc.CPUAccessFlags = 0;
-		depthBufferDesc.MiscFlags = 0;
-
-		// Create the texture for the depth buffer using the filled out description.
-		result = m_device->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilBuffer);
-		if (FAILED(result))
-		{
-			return false;
-		}
-
-		// Initialize the description of the stencil state.
-		ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
-
-		// Set up the description of the stencil state.
-		depthStencilDesc.DepthEnable = true;
-		depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-
-		depthStencilDesc.StencilEnable = true;
-		depthStencilDesc.StencilReadMask = 0xFF;
-		depthStencilDesc.StencilWriteMask = 0xFF;
-
-		// Stencil operations if pixel is front-facing.
-		depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-		depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		// Stencil operations if pixel is back-facing.
-		depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-		depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		// Create the depth stencil state.
-		result = m_device->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
-		if (FAILED(result))
-		{
-			return false;
-		}
-
-		// Set the depth stencil state.
-		m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
-
-		// Initialize the depth stencil view.
-		ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
-
-		// Set up the depth stencil view description.
-		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-		depthStencilViewDesc.Texture2D.MipSlice = 0;
-
-		// Create the depth stencil view.
-		result = m_device->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
-		if(FAILED(result))
-		{
-			return false;
-		}
-
-	*/
-	}
-
 	// Bind the render target view and depth stencil buffer to the output render pipeline.
 	// nullptr means we don't have a depth stencil buffer, which is the case for a 2D renderer
 	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, nullptr);
@@ -350,9 +275,9 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
@@ -377,14 +302,24 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 
 	// Initialize the world matrix to the identity matrix.
 	m_worldMatrix = XMMatrixIdentity();
-
-	m_shader = new Shader();
-	result = m_shader->Initialize(m_device, hwnd);
+	m_shaderManager = new ShaderManager();
+	result = m_shaderManager->Initialize(m_device, hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the shader", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the shader manager", L"Error", MB_OK);
 		return false;
 	}
+
+	m_framebuffer = new Framebuffer();
+	result = m_framebuffer->Initialize(m_device, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the framebuffer", L"Error", MB_OK);
+		return false;
+	}
+
+	InitializeFullscreenQuad();
+
 
 	m_spriteBatcher = new SpriteBatcher();
 	result = m_spriteBatcher->Initialize(m_device, m_deviceContext);
@@ -414,6 +349,43 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	return true;
 }
 
+bool DirectX2D::InitializeFullscreenQuad()
+{
+	Vertex vertices[] =
+	{
+		{ XMFLOAT3(-1.0f,  1.0f, 0.5f), XMFLOAT2(0.0f, 0.0f), XMFLOAT4(1,1,1,1) },
+		{ XMFLOAT3(1.0f,  1.0f, 0.5f), XMFLOAT2(1.0f, 0.0f), XMFLOAT4(1,1,1,1) },
+		{ XMFLOAT3(1.0f, -1.0f, 0.5f), XMFLOAT2(1.0f, 1.0f), XMFLOAT4(1,1,1,1) },
+		{ XMFLOAT3(-1.0f, -1.0f, 0.5f), XMFLOAT2(0.0f, 1.0f), XMFLOAT4(1,1,1,1) },
+	};
+
+	unsigned int indices[] = { 0, 1, 2, 2, 3, 0 };
+
+	D3D11_BUFFER_DESC vbDesc = {};
+	vbDesc.Usage = D3D11_USAGE_DEFAULT;
+	vbDesc.ByteWidth = sizeof(Vertex) * 4;
+	vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA vbData = {};
+	vbData.pSysMem = vertices;
+
+	HRESULT result = m_device->CreateBuffer(&vbDesc, &vbData, &m_fullscreenQuadVB);
+	if (FAILED(result)) return false;
+
+	D3D11_BUFFER_DESC ibDesc = {};
+	ibDesc.Usage = D3D11_USAGE_DEFAULT;
+	ibDesc.ByteWidth = sizeof(unsigned int) * 6;
+	ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA ibData = {};
+	ibData.pSysMem = indices;
+
+	result = m_device->CreateBuffer(&ibDesc, &ibData, &m_fullscreenQuadIB);
+	if (FAILED(result)) return false;
+
+	return true;
+}
+
 void DirectX2D::Shutdown()
 {
 	// Before shutting down set to windowed mode or when you release the swap chain it will throw an exception.
@@ -428,7 +400,7 @@ void DirectX2D::Shutdown()
 		m_samplerState = nullptr;
 	}
 
-	if(m_textureAtlas)
+	if (m_textureAtlas)
 	{
 		m_textureAtlas->Shutdown();
 		delete m_textureAtlas;
@@ -442,11 +414,21 @@ void DirectX2D::Shutdown()
 		m_spriteBatcher = nullptr;
 	}
 
-	if (m_shader)
+	if (m_fullscreenQuadVB) { m_fullscreenQuadVB->Release(); m_fullscreenQuadVB = nullptr; }
+	if (m_fullscreenQuadIB) { m_fullscreenQuadIB->Release(); m_fullscreenQuadIB = nullptr; }
+
+	if (m_framebuffer)
 	{
-		m_shader->Shutdown();
-		delete m_shader;
-		m_shader = nullptr;
+		m_framebuffer->Shutdown();
+		delete m_framebuffer;
+		m_framebuffer = nullptr;
+	}
+
+	if (m_shaderManager)
+	{
+		m_shaderManager->Shutdown();
+		delete m_shaderManager;
+		m_shaderManager = nullptr;
 	}
 
 	if (m_rasterState)
@@ -484,19 +466,13 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 	color[1] = green;
 	color[2] = blue;
 	color[3] = alpha;
-	// Clear the back buffer.
-	m_deviceContext->ClearRenderTargetView(m_renderTargetView, color);
-	// Clear the depth buffer. Not needed for a 2D renderer.
-	//m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	unsigned int stride = sizeof(Vertex);
-	unsigned int offset = 0;
-	m_deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
-	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_framebuffer->Bind(m_deviceContext);
+	m_deviceContext->ClearRenderTargetView(m_framebuffer->GetRTV(), color);
 
 	// Shader handles the rest
-	m_shader->Bind(m_deviceContext, m_worldMatrix, XMMatrixIdentity(), m_projectionMatrix);
-	
+	m_shaderManager->GetActiveShader()->Bind(m_deviceContext, m_worldMatrix, XMMatrixIdentity(), m_projectionMatrix);
+
 	ID3D11ShaderResourceView* srv = m_textureAtlas->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
 	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
@@ -508,6 +484,23 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 void DirectX2D::EndScene()
 {
 	m_spriteBatcher->End();
+
+	SetBackBufferRenderTarget();
+
+	ID3D11ShaderResourceView* srv = m_framebuffer->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 1, &srv);
+	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+
+	m_shaderManager->GetPostProcessShader()->Bind(m_deviceContext, XMMatrixIdentity(), XMMatrixIdentity(), XMMatrixIdentity());
+
+	// Draw fullscreen quad
+	unsigned int stride = sizeof(Vertex);
+	unsigned int offset = 0;
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
+	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_deviceContext->DrawIndexed(6, 0, 0);
+
 	// Present the back buffer to the screen since rendering is complete.
 	if (m_vsyncEnabled)
 	{

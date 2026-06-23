@@ -78,6 +78,8 @@ bool Renderer::Render(float dt)
 
     static std::uniform_int_distribution<int> texDist(0, (int)(std::size(textures)) - 1);
 
+    static std::uniform_int_distribution<unsigned int> layerDist(0, 5);
+    
     static Sprite randomSprites[10];
     static float elapsed = 0.0f;
     static bool initialized = false;
@@ -91,6 +93,7 @@ bool Renderer::Render(float dt)
             sprite.size = XMFLOAT2(size, size);
             sprite.color = XMFLOAT4(colorDist(rng), colorDist(rng), colorDist(rng), 1.0f);
             sprite.uvRect = m_DX2D->GetAtlasRegion(textures[texDist(rng)]).uvRect;
+            sprite.layer = layerDist(rng);
         }
         initialized = true;
     }
@@ -114,10 +117,18 @@ bool Renderer::Render(float dt)
     center.size = XMFLOAT2(600.0f, 600.0f);
     center.color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     center.uvRect = m_DX2D->GetAtlasRegion(L"assets/textures/shrew1.jpg").uvRect;
-    m_DX2D->DrawSprite(center);
+	center.layer = 0; // Ensure it's at the back
 
-    for (const auto& sprite : randomSprites)
-        m_DX2D->DrawSprite(sprite);
+	std::vector<Sprite> spritesToDraw = { center };
+	spritesToDraw.insert(spritesToDraw.end(), std::begin(randomSprites), std::end(randomSprites));
+
+	// sort sprites by layer before drawing
+	std::stable_sort(spritesToDraw.begin(), spritesToDraw.end(), [](const Sprite& a, const Sprite& b) {
+		return a.layer < b.layer;
+		});
+
+    for (const auto& sprite : spritesToDraw)
+        DrawSprite(sprite);
 
     m_DX2D->EndScene();
 

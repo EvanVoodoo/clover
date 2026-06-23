@@ -14,8 +14,7 @@ namespace clvr
 		XMFLOAT4 uvRect; // x, y = top-left in UV space; z, w = width, height in UV space
 		XMFLOAT2 pivot;
 		float rotation;
-		unsigned int layer;
-		int textureID = -1;
+		unsigned int layer = 0;
 	};
 
 	struct Vertex

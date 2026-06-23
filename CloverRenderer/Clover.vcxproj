@@ -142,10 +142,12 @@
     <ClInclude Include="include\core\input.hpp" />
     <ClInclude Include="include\core\window.hpp" />
     <ClInclude Include="include\framework.h" />
+    <ClInclude Include="include\rendering\framebuffer.hpp" />
     <ClInclude Include="include\rendering\renderer.hpp" />
     <ClInclude Include="include\rendering\render_components.hpp" />
     <ClInclude Include="include\rendering\render_d3d11.hpp" />
     <ClInclude Include="include\rendering\shader.hpp" />
+    <ClInclude Include="include\rendering\shader_manager.hpp" />
     <ClInclude Include="include\rendering\sprite_batcher.hpp" />
     <ClInclude Include="include\rendering\stb_rect_pack.h" />
     <ClInclude Include="include\rendering\texture_atlas.hpp" />
@@ -153,6 +155,8 @@
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\rendering\framebuffer.cpp" />
+    <ClCompile Include="source\rendering\shader_manager.cpp" />
     <ClCompile Include="source\rendering\texture_atlas.cpp" />
     <ClCompile Include="source\core\engine.cpp" />
     <ClCompile Include="source\core\input.cpp" />

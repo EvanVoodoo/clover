@@ -8,9 +8,11 @@
 
 #include <d3d11.h>
 #include <directxmath.h>
-#include "shader.hpp"
+#include "shader_manager.hpp"
 #include "sprite_batcher.hpp"
 #include "texture_atlas.hpp"
+#include "shader_manager.hpp"
+#include "framebuffer.hpp"
 
 using namespace DirectX;
 
@@ -24,11 +26,21 @@ namespace clvr
 		~DirectX2D();
 
 		bool Initialize(int, int, bool, HWND, bool, float, float);
+		bool InitializeFullscreenQuad();
 		void Shutdown();
 
 		void BeginScene(float, float, float, float);
 		void EndScene();
 		void DrawSprite(const Sprite& sprite);
+		void SetActiveShader(const std::wstring& name) { m_shaderManager->SetActiveShader(name); }
+		void SetPostProcessShader(const std::wstring& name) { m_shaderManager->SetPostProcessShader(name); }
+
+		bool LoadShader(const std::wstring& name, const wchar_t* vsFilename, const wchar_t* psFilename)
+		{
+			return m_shaderManager->LoadShader(name, vsFilename, psFilename);
+		}
+
+		bool ReloadShaders() { return m_shaderManager->ReloadAll(); }
 
 		ID3D11ShaderResourceView* LoadTexture(const wchar_t* filename);
 		AtlasRegion GetAtlasRegion(const wchar_t* filename) { return m_textureAtlas->GetRegion(filename); }
@@ -52,20 +64,18 @@ namespace clvr
 		ID3D11Device* m_device;
 		ID3D11DeviceContext* m_deviceContext;
 		ID3D11RenderTargetView* m_renderTargetView;
+		
+		Framebuffer* m_framebuffer;
 
-		/* Not needed for a 2D renderer
-		ID3D11Texture2D* m_depthStencilBuffer;
-		ID3D11DepthStencilState* m_depthStencilState;
-		ID3D11DepthStencilView* m_depthStencilView;*/
+		ID3D11Buffer* m_fullscreenQuadVB;
+		ID3D11Buffer* m_fullscreenQuadIB;
 
 		ID3D11RasterizerState* m_rasterState;
 		XMMATRIX m_projectionMatrix;
 		XMMATRIX m_worldMatrix;
 		D3D11_VIEWPORT m_viewport;
 
-		ID3D11Buffer* m_vertexBuffer;
-		ID3D11InputLayout* m_inputLayout;
-		Shader* m_shader;
+		ShaderManager* m_shaderManager;
 		SpriteBatcher* m_spriteBatcher;
 		ID3D11SamplerState* m_samplerState;
 		TextureAtlas* m_textureAtlas;
