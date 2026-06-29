@@ -33,6 +33,8 @@ namespace clvr
 		}
 
 		bool ReloadShaders() { return m_DX2D->ReloadShaders(); }
+		Camera& GetCamera() { return m_DX2D->GetCamera(); }
+
 
 	private:
 		bool Render(float dt);

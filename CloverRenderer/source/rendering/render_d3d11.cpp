@@ -297,11 +297,12 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	// Create the viewport.
 	m_deviceContext->RSSetViewports(1, &m_viewport);
 
+	m_camera = Camera();
+
 	// Create the projection matrix for 2D rendering.
-	m_projectionMatrix = XMMatrixOrthographicLH(m_viewport.Width, m_viewport.Height, screenNear, screenDepth);
+	m_camera.projectionMatrix = XMMatrixOrthographicLH(m_viewport.Width, m_viewport.Height, screenNear, screenDepth);
 
 	// Initialize the world matrix to the identity matrix.
-	m_worldMatrix = XMMatrixIdentity();
 	m_shaderManager = new ShaderManager();
 	result = m_shaderManager->Initialize(m_device, hwnd);
 	if (!result)
@@ -471,7 +472,8 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 	m_deviceContext->ClearRenderTargetView(m_framebuffer->GetRTV(), color);
 
 	// Shader handles the rest
-	m_shaderManager->GetActiveShader()->Bind(m_deviceContext, m_worldMatrix, XMMatrixIdentity(), m_projectionMatrix);
+
+	m_shaderManager->GetActiveShader()->Bind(m_deviceContext, GetWorldMatrix(), GetViewMatrix(), GetProjectionMatrix());
 
 	ID3D11ShaderResourceView* srv = m_textureAtlas->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
@@ -542,16 +544,20 @@ ID3D11DeviceContext* DirectX2D::GetDeviceContext()
 	return m_deviceContext;
 }
 
-void DirectX2D::GetProjectionMatrix(XMMATRIX& projectionMatrix)
+XMMATRIX DirectX2D::GetProjectionMatrix()
 {
-	projectionMatrix = m_projectionMatrix;
-	return;
+	return m_camera.projectionMatrix;
 }
 
-void DirectX2D::GetWorldMatrix(XMMATRIX& worldMatrix)
+XMMATRIX DirectX2D::GetWorldMatrix()
 {
-	worldMatrix = m_worldMatrix;
-	return;
+	// returns the identity matrix for 2D rendering
+	return XMMatrixIdentity();
+}
+
+XMMATRIX DirectX2D::GetViewMatrix()
+{
+	return XMMatrixInverse(nullptr, m_camera.transform.GetWorld());
 }
 
 void DirectX2D::GetVideoCardInfo(char* cardName, int& memory)

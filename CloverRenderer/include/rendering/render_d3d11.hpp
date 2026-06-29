@@ -11,7 +11,6 @@
 #include "shader_manager.hpp"
 #include "sprite_batcher.hpp"
 #include "texture_atlas.hpp"
-#include "shader_manager.hpp"
 #include "framebuffer.hpp"
 
 using namespace DirectX;
@@ -48,8 +47,10 @@ namespace clvr
 		ID3D11Device* GetDevice();
 		ID3D11DeviceContext* GetDeviceContext();
 
-		void GetProjectionMatrix(XMMATRIX&);
-		void GetWorldMatrix(XMMATRIX&);
+		XMMATRIX GetProjectionMatrix();
+		XMMATRIX GetWorldMatrix();
+		XMMATRIX GetViewMatrix();
+		Camera& GetCamera() { return m_camera; }
 
 		void GetVideoCardInfo(char*, int&);
 
@@ -71,8 +72,9 @@ namespace clvr
 		ID3D11Buffer* m_fullscreenQuadIB;
 
 		ID3D11RasterizerState* m_rasterState;
-		XMMATRIX m_projectionMatrix;
-		XMMATRIX m_worldMatrix;
+
+		// main camera for 2D rendering
+		Camera m_camera;
 		D3D11_VIEWPORT m_viewport;
 
 		ShaderManager* m_shaderManager;

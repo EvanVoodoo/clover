@@ -40,7 +40,7 @@ bool Engine::Initialize(HINSTANCE hInstance, int nCmdShow)
     m_renderer->LoadShader(L"chromatic", L"assets/shaders/color.vs.hlsl", L"assets/shaders/chromatic.ps.hlsl");
     m_renderer->LoadShader(L"wacky", L"assets/shaders/color.vs.hlsl", L"assets/shaders/wacky.ps.hlsl");
     
-    m_renderer->LoadShader(L"passthrough", L"assets/shaders/post.vs.hlsl", L"assets/shaders/post.ps.hlsl");
+    m_renderer->LoadShader(L"passthrough", L"assets/shaders/post.vs.hlsl", L"assets/shaders/crt.ps.hlsl");
     m_renderer->SetPostProcessShader(L"passthrough");
 
     return true;
@@ -130,6 +130,46 @@ bool Engine::Frame(float dt)
 	{
 		m_renderer->ReloadShaders();
 	}
+
+	// move camera with arrow keys
+	Camera& camera = m_renderer->GetCamera();
+	float cameraSpeedMult = 1.0f;
+
+	if (m_input->IsKeyDown(VK_SHIFT))
+		cameraSpeedMult = 10.0f;
+	if (m_input->IsKeyDown(VK_CONTROL))
+		cameraSpeedMult = 0.1f;
+	float cameraSpeed = camera.speed * cameraSpeedMult * dt;
+
+    if (m_input->IsKeyDown('Q'))
+        camera.transform.rotation += (cameraSpeed * 0.1f * 2 * 3.1415927f) / 180.f;
+    if (m_input->IsKeyDown('E'))
+        camera.transform.rotation -= (cameraSpeed * 0.1f * 2 * 3.1415927f) / 180.f;
+
+	// camera moves according to its rotation
+    if (m_input->IsKeyDown(VK_UP))
+	{
+		camera.transform.position.x -= sinf(camera.transform.rotation) * cameraSpeed;
+		camera.transform.position.y += cosf(camera.transform.rotation) * cameraSpeed;
+	}
+    if (m_input->IsKeyDown(VK_DOWN))
+    {
+		camera.transform.position.x += sinf(camera.transform.rotation) * cameraSpeed;
+		camera.transform.position.y -= cosf(camera.transform.rotation) * cameraSpeed;
+    }
+    if (m_input->IsKeyDown(VK_LEFT))
+    {
+		camera.transform.position.x -= cosf(camera.transform.rotation) * cameraSpeed;
+		camera.transform.position.y -= sinf(camera.transform.rotation) * cameraSpeed;
+    }
+    if (m_input->IsKeyDown(VK_RIGHT))
+    {
+        camera.transform.position.x += cosf(camera.transform.rotation) * cameraSpeed;
+        camera.transform.position.y += sinf(camera.transform.rotation) * cameraSpeed;
+    }
+
+	if (m_input->IsKeyDown('C'))
+		camera.transform = Transform();
 
     result = m_renderer->Frame(dt);
     if (!result)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <directxmath.h>
+#include <core/transform.hpp>
 
 using namespace DirectX;
 
@@ -22,5 +23,12 @@ namespace clvr
 		XMFLOAT3 position;
 		XMFLOAT2 uv;
 		XMFLOAT4 color;
+	};
+
+	struct Camera
+	{
+		Transform transform;
+		XMMATRIX projectionMatrix;
+		float speed = 500.0f; // units per second
 	};
 }
