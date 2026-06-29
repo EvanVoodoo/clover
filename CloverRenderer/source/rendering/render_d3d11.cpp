@@ -492,10 +492,13 @@ void DirectX2D::EndScene()
 {
 	m_spriteBatcher->End();
 
+	unsigned int stride = sizeof(Vertex);
+	unsigned int offset = 0;
+
 	// Unbind the framebuffer so we can render to the back buffer
 	SetBackBufferRenderTarget();
 
-	/*Framebuffer lightFramebuffer;
+	Framebuffer lightFramebuffer;
 	lightFramebuffer.Initialize(m_device, static_cast<int>(m_viewport.Width), static_cast<int>(m_viewport.Height));
 	lightFramebuffer.Bind(m_deviceContext);
 
@@ -504,11 +507,9 @@ void DirectX2D::EndScene()
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
 	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	m_deviceContext->DrawIndexed(6, 0, 0);*/
+	m_deviceContext->DrawIndexed(6, 0, 0);
 
 	// final pass: render framebuffer to back buffer with post-processing shader
-	unsigned int stride = sizeof(Vertex);
-	unsigned int offset = 0;
 
 	BufferType::MVPBufferType mvpData = { XMMatrixIdentity(), GetViewMatrix(), GetProjectionMatrix() };
 	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
