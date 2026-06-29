@@ -74,6 +74,16 @@ Shader* ShaderManager::GetActiveShader()
 	return m_activeShader;
 }
 
+Shader* ShaderManager::GetShader(const std::wstring& name)
+{
+	auto it = m_shaders.find(name);
+	if (it != m_shaders.end())
+	{
+		return it->second;
+	}
+	return nullptr;
+}
+
 bool ShaderManager::ReloadAll()
 {
 	for (auto& pair : m_shaders)

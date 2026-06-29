@@ -18,6 +18,7 @@ namespace clvr
         bool LoadShader(const std::wstring& name, const wchar_t* vsFilename, const wchar_t* psFilename);
         bool SetActiveShader(const std::wstring& name);
         Shader* GetActiveShader();
+        Shader* GetShader(const std::wstring& name);
         bool ReloadAll();
 
         void SetPostProcessShader(const std::wstring& name);

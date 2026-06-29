@@ -347,6 +347,8 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	if (!m_textureAtlas->Build())
 		return false;
 
+	m_mvpCb.Init(m_device);
+
 	return true;
 }
 
@@ -473,7 +475,10 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 
 	// Shader handles the rest
 
-	m_shaderManager->GetActiveShader()->Bind(m_deviceContext, GetWorldMatrix(), GetViewMatrix(), GetProjectionMatrix());
+	m_shaderManager->GetActiveShader()->Bind(m_deviceContext);
+	BufferType::MVPBufferType mvpData = { XMMatrixIdentity(), GetViewMatrix(), GetProjectionMatrix() };
+	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
+	m_mvpCb.BindVS(m_deviceContext, 0);
 
 	ID3D11ShaderResourceView* srv = m_textureAtlas->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
@@ -487,17 +492,34 @@ void DirectX2D::EndScene()
 {
 	m_spriteBatcher->End();
 
+	// Unbind the framebuffer so we can render to the back buffer
 	SetBackBufferRenderTarget();
 
+	/*Framebuffer lightFramebuffer;
+	lightFramebuffer.Initialize(m_device, static_cast<int>(m_viewport.Width), static_cast<int>(m_viewport.Height));
+	lightFramebuffer.Bind(m_deviceContext);
+
+	m_shaderManager->GetShader(L"light")->Bind(m_deviceContext);
+
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
+	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_deviceContext->DrawIndexed(6, 0, 0);*/
+
+	// final pass: render framebuffer to back buffer with post-processing shader
+	unsigned int stride = sizeof(Vertex);
+	unsigned int offset = 0;
+
+	BufferType::MVPBufferType mvpData = { XMMatrixIdentity(), GetViewMatrix(), GetProjectionMatrix() };
+	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
+	m_mvpCb.BindVS(m_deviceContext, 0);
 	ID3D11ShaderResourceView* srv = m_framebuffer->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
 	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
 
-	m_shaderManager->GetPostProcessShader()->Bind(m_deviceContext, XMMatrixIdentity(), XMMatrixIdentity(), XMMatrixIdentity());
+	m_shaderManager->GetPostProcessShader()->Bind(m_deviceContext);
 
 	// Draw fullscreen quad
-	unsigned int stride = sizeof(Vertex);
-	unsigned int offset = 0;
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
 	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

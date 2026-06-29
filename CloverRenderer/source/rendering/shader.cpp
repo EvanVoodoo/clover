@@ -7,7 +7,6 @@ Shader::Shader()
 	m_vertexShader = nullptr;
 	m_pixelShader = nullptr;
 	m_layout = nullptr;
-	m_matrixBuffer = nullptr;
 }
 
 Shader::Shader(const Shader& other)
@@ -33,11 +32,8 @@ void Shader::Shutdown()
 	return;
 }
 
-bool Shader::Bind(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
+bool Shader::Bind(ID3D11DeviceContext* deviceContext)
 {
-	if (!SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix))
-		return false;
-
 	deviceContext->IASetInputLayout(m_layout);
 	deviceContext->VSSetShader(m_vertexShader, nullptr, 0);
 	deviceContext->PSSetShader(m_pixelShader, nullptr, 0);
@@ -50,16 +46,14 @@ bool Shader::Reload(ID3D11Device* device, HWND hwnd)
 	ID3D11VertexShader* newVS = nullptr;
 	ID3D11PixelShader* newPS = nullptr;
 	ID3D11InputLayout* newLayout = nullptr;
-	ID3D11Buffer* newBuffer = nullptr;
 
 	// Try to compile into new resources without touching member variables
 	if (!InitializeShaderInto(device, hwnd, m_vsFilename.c_str(), m_psFilename.c_str(),
-		&newVS, &newPS, &newLayout, &newBuffer))
+		&newVS, &newPS, &newLayout))
 	{
 		if (newVS)     newVS->Release();
 		if (newPS)     newPS->Release();
 		if (newLayout) newLayout->Release();
-		if (newBuffer) newBuffer->Release();
 		return false;
 	}
 
@@ -67,12 +61,10 @@ bool Shader::Reload(ID3D11Device* device, HWND hwnd)
 	if (m_vertexShader) m_vertexShader->Release();
 	if (m_pixelShader)  m_pixelShader->Release();
 	if (m_layout)       m_layout->Release();
-	if (m_matrixBuffer) m_matrixBuffer->Release();
 
 	m_vertexShader = newVS;
 	m_pixelShader = newPS;
 	m_layout = newLayout;
-	m_matrixBuffer = newBuffer;
 
 	return true;
 }
@@ -80,11 +72,11 @@ bool Shader::Reload(ID3D11Device* device, HWND hwnd)
 bool Shader::InitializeShader(ID3D11Device* device, HWND hwnd, const wchar_t* vsFilename, const wchar_t* psFilename)
 {
 	return InitializeShaderInto(device, hwnd, vsFilename, psFilename,
-		&m_vertexShader, &m_pixelShader, &m_layout, &m_matrixBuffer);
+		&m_vertexShader, &m_pixelShader, &m_layout);
 }
 
 bool Shader::InitializeShaderInto(ID3D11Device* device, HWND hwnd, const wchar_t* vsFilename, const wchar_t* psFilename,
-	ID3D11VertexShader** outVS, ID3D11PixelShader** outPS, ID3D11InputLayout** outLayout, ID3D11Buffer** outBuffer)
+	ID3D11VertexShader** outVS, ID3D11PixelShader** outPS, ID3D11InputLayout** outLayout)
 {
 	HRESULT result;
 	ID3D10Blob* errorMessage = nullptr;
@@ -130,26 +122,11 @@ bool Shader::InitializeShaderInto(ID3D11Device* device, HWND hwnd, const wchar_t
 	pixelShaderBuffer->Release();
 	if (FAILED(result)) { (*outVS)->Release(); (*outPS)->Release(); return false; }
 
-	D3D11_BUFFER_DESC matrixBufferDesc = {};
-	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	matrixBufferDesc.ByteWidth = sizeof(MatrixBufferType);
-	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	result = device->CreateBuffer(&matrixBufferDesc, NULL, outBuffer);
-	if (FAILED(result)) { (*outVS)->Release(); (*outPS)->Release(); (*outLayout)->Release(); return false; }
-
 	return true;
 }
 
 void Shader::ShutdownShader()
 {
-	// Release the matrix constant buffer.
-	if (m_matrixBuffer)
-	{
-		m_matrixBuffer->Release();
-		m_matrixBuffer = nullptr;
-	}
 	// Release the layout.
 	if (m_layout)
 	{
@@ -187,35 +164,4 @@ void Shader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, const
 		MessageBox(hwnd, L"Error compiling shader. Check shader-error.txt for message.", shaderFilename, MB_OK);
 	else
 		OutputDebugStringW(L"Shader compile error — see shader-error.txt\n");
-}
-
-bool Shader::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
-{
-	HRESULT result;
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	MatrixBufferType* dataPtr;
-	unsigned int bufferNumber;
-	// Transpose the matrices to prepare them for the shader.
-	worldMatrix = XMMatrixTranspose(worldMatrix);
-	viewMatrix = XMMatrixTranspose(viewMatrix);
-	projectionMatrix = XMMatrixTranspose(projectionMatrix);
-	// Lock the constant buffer so it can be written to.
-	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(result))
-	{
-		return false;
-	}
-	// Get a pointer to the data in the constant buffer.
-	dataPtr = (MatrixBufferType*)mappedResource.pData;
-	// Copy the matrices into the constant buffer.
-	dataPtr->world = worldMatrix;
-	dataPtr->view = viewMatrix;
-	dataPtr->projection = projectionMatrix;
-	// Unlock the constant buffer.
-	deviceContext->Unmap(m_matrixBuffer, 0);
-	// Set the position of the constant buffer in the vertex shader.
-	bufferNumber = 0;
-	// Finally set the constant buffer in the vertex shader with the updated values.
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
-	return true;
 }

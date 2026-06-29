@@ -40,7 +40,8 @@ bool Engine::Initialize(HINSTANCE hInstance, int nCmdShow)
     m_renderer->LoadShader(L"chromatic", L"assets/shaders/color.vs.hlsl", L"assets/shaders/chromatic.ps.hlsl");
     m_renderer->LoadShader(L"wacky", L"assets/shaders/color.vs.hlsl", L"assets/shaders/wacky.ps.hlsl");
     
-    m_renderer->LoadShader(L"passthrough", L"assets/shaders/post.vs.hlsl", L"assets/shaders/crt.ps.hlsl");
+    m_renderer->LoadShader(L"light", L"assets/shaders/post.vs.hlsl", L"assets/shaders/light.ps.hlsl");
+    m_renderer->LoadShader(L"passthrough", L"assets/shaders/post.vs.hlsl", L"assets/shaders/post.ps.hlsl");
     m_renderer->SetPostProcessShader(L"passthrough");
 
     return true;

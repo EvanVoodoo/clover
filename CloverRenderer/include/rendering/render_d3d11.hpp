@@ -77,6 +77,8 @@ namespace clvr
 		Camera m_camera;
 		D3D11_VIEWPORT m_viewport;
 
+		ConstantBuffer<BufferType::MVPBufferType> m_mvpCb;
+
 		ShaderManager* m_shaderManager;
 		SpriteBatcher* m_spriteBatcher;
 		ID3D11SamplerState* m_samplerState;
