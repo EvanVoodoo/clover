@@ -18,6 +18,8 @@ DirectX2D::DirectX2D()
 	m_samplerState = nullptr;
 	m_textureAtlas = nullptr;
 	m_framebuffer = nullptr;
+	m_lightFramebuffer = nullptr;
+	m_finalFramebuffer = nullptr;
 	m_fullscreenQuadIB = nullptr;
 	m_fullscreenQuadVB = nullptr;
 }
@@ -319,6 +321,22 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 		return false;
 	}
 
+	m_lightFramebuffer = new Framebuffer();
+	result = m_lightFramebuffer->Initialize(m_device, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize light framebuffer", L"Error", MB_OK);
+		return false;
+	}
+
+	m_finalFramebuffer = new Framebuffer();
+	result = m_finalFramebuffer->Initialize(m_device, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize final framebuffer", L"Error", MB_OK);
+		return false;
+	}
+
 	InitializeFullscreenQuad();
 
 
@@ -348,6 +366,17 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 		return false;
 
 	m_mvpCb.Init(m_device);
+	
+	BufferType::LightBufferType lightData = {};
+	lightData.lights[0] = { XMFLOAT3(0.0f, 0.0f, -1.0f), 0.1f, XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f };
+	lightData.lights[1] = { XMFLOAT3(100.0f, 0.0f, 0.0f), 20000.0f, XMFLOAT3(1.0f, 0.0f, 1.0f), 1.0f };
+	/*lightData.lights[2] = { XMFLOAT3(-500.0f, 0.0f, 0.0f), 10000.0f, XMFLOAT3(1.0f, 1.0f, 1.0f), 1.0f };
+	lightData.lights[3] = { XMFLOAT3(0.0f, 700.0f, 0.0f), 5000.0f, XMFLOAT3(0.0f, 1.0f, 1.0f), 1.0f };
+	lightData.lights[4] = { XMFLOAT3(200.0f, 100.0f, 0.0f), 7000.0f, XMFLOAT3(1.0f, 0.5f, 0.0f), 1.0f };*/
+	lightData.lightCount = 2;
+
+	m_lightCb.Init(m_device);
+	m_lightCb.Update(m_deviceContext, lightData);
 
 	return true;
 }
@@ -419,6 +448,20 @@ void DirectX2D::Shutdown()
 
 	if (m_fullscreenQuadVB) { m_fullscreenQuadVB->Release(); m_fullscreenQuadVB = nullptr; }
 	if (m_fullscreenQuadIB) { m_fullscreenQuadIB->Release(); m_fullscreenQuadIB = nullptr; }
+
+	if (m_finalFramebuffer)
+	{
+		m_finalFramebuffer->Shutdown();
+		delete m_finalFramebuffer;
+		m_finalFramebuffer = nullptr;
+	}
+
+	if (m_lightFramebuffer)
+	{
+		m_lightFramebuffer->Shutdown();
+		delete m_lightFramebuffer;
+		m_lightFramebuffer = nullptr;
+	}
 
 	if (m_framebuffer)
 	{
@@ -495,14 +538,38 @@ void DirectX2D::EndScene()
 	unsigned int stride = sizeof(Vertex);
 	unsigned int offset = 0;
 
-	// Unbind the framebuffer so we can render to the back buffer
-	SetBackBufferRenderTarget();
-
-	Framebuffer lightFramebuffer;
-	lightFramebuffer.Initialize(m_device, static_cast<int>(m_viewport.Width), static_cast<int>(m_viewport.Height));
-	lightFramebuffer.Bind(m_deviceContext);
+	// Render lights to light framebuffer
 
 	m_shaderManager->GetShader(L"light")->Bind(m_deviceContext);
+
+	float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	m_lightFramebuffer->Bind(m_deviceContext);
+	m_deviceContext->ClearRenderTargetView(m_lightFramebuffer->GetRTV(), color);
+
+	m_lightCb.BindPS(m_deviceContext, 1);
+
+	BufferType::InvViewProjectionBufferType invVPData = { XMMatrixTranspose(XMMatrixInverse(nullptr, GetViewMatrix() * GetProjectionMatrix())), XMFLOAT2(m_viewport.Width, m_viewport.Height) };
+	ConstantBuffer<BufferType::InvViewProjectionBufferType> invVPCB;																  
+	invVPCB.Init(m_device);
+	invVPCB.Update(m_deviceContext, invVPData);
+	invVPCB.BindPS(m_deviceContext, 2);
+
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
+	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_deviceContext->DrawIndexed(6, 0, 0);
+
+	// Composite the light framebuffer with the main framebuffer
+
+	m_finalFramebuffer->Bind(m_deviceContext);
+	m_deviceContext->ClearRenderTargetView(m_finalFramebuffer->GetRTV(), color);
+
+	m_shaderManager->GetShader(L"composite")->Bind(m_deviceContext);
+
+	ID3D11ShaderResourceView* srvs[2] = { m_framebuffer->GetSRV(), m_lightFramebuffer->GetSRV() };
+	m_deviceContext->PSSetShaderResources(0, 1, &srvs[0]);
+	m_deviceContext->PSSetShaderResources(1, 1, &srvs[1]);
+	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
 
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
 	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
@@ -510,15 +577,14 @@ void DirectX2D::EndScene()
 	m_deviceContext->DrawIndexed(6, 0, 0);
 
 	// final pass: render framebuffer to back buffer with post-processing shader
-
-	BufferType::MVPBufferType mvpData = { XMMatrixIdentity(), GetViewMatrix(), GetProjectionMatrix() };
-	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
-	m_mvpCb.BindVS(m_deviceContext, 0);
-	ID3D11ShaderResourceView* srv = m_framebuffer->GetSRV();
-	m_deviceContext->PSSetShaderResources(0, 1, &srv);
-	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	// Unbind the framebuffer so we can render to the back buffer
+	SetBackBufferRenderTarget();
 
 	m_shaderManager->GetPostProcessShader()->Bind(m_deviceContext);
+
+	ID3D11ShaderResourceView* srv = m_finalFramebuffer->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 1, &srv);
+	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
 
 	// Draw fullscreen quad
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);

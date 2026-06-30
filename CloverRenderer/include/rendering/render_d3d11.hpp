@@ -67,6 +67,8 @@ namespace clvr
 		ID3D11RenderTargetView* m_renderTargetView;
 		
 		Framebuffer* m_framebuffer;
+		Framebuffer* m_lightFramebuffer;
+		Framebuffer* m_finalFramebuffer;
 
 		ID3D11Buffer* m_fullscreenQuadVB;
 		ID3D11Buffer* m_fullscreenQuadIB;
@@ -78,6 +80,7 @@ namespace clvr
 		D3D11_VIEWPORT m_viewport;
 
 		ConstantBuffer<BufferType::MVPBufferType> m_mvpCb;
+		ConstantBuffer<BufferType::LightBufferType> m_lightCb;
 
 		ShaderManager* m_shaderManager;
 		SpriteBatcher* m_spriteBatcher;

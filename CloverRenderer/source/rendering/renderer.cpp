@@ -91,7 +91,7 @@ bool Renderer::Render(float dt)
             sprite.position = XMFLOAT2(xPosDist(rng), yPosDist(rng));
             float size = sizeDist(rng);
             sprite.size = XMFLOAT2(size, size);
-            sprite.color = XMFLOAT4(colorDist(rng), colorDist(rng), colorDist(rng), 1.0f);
+            //sprite.color = XMFLOAT4(colorDist(rng), colorDist(rng), colorDist(rng), 1.0f);
             sprite.uvRect = m_DX2D->GetAtlasRegion(textures[texDist(rng)]).uvRect;
             sprite.layer = layerDist(rng);
         }
@@ -104,7 +104,7 @@ bool Renderer::Render(float dt)
         for (auto& sprite : randomSprites)
         {
             sprite.position = XMFLOAT2(xPosDist(rng), yPosDist(rng));
-            sprite.color = XMFLOAT4(colorDist(rng), colorDist(rng), colorDist(rng), 1.0f);
+            //sprite.color = XMFLOAT4(colorDist(rng), colorDist(rng), colorDist(rng), 1.0f);
         }
         elapsed = 0.0f;
     }
