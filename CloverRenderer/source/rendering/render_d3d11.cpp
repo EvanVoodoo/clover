@@ -1,6 +1,8 @@
 #include "rendering/render_d3d11.hpp"
 #include <DirectXTex.h>
 
+#pragma comment(lib, "DirectXTex.lib")
+
 using namespace clvr;
 
 DirectX2D::DirectX2D()
@@ -352,19 +354,6 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	if (!m_textureAtlas->Initialize(m_device, m_deviceContext, ATLAS_MAX_SIZE, ATLAS_MAX_SIZE))
 		return false;
 
-	m_textureAtlas->AddTexture(L"assets/textures/shrew1.jpg");
-	m_textureAtlas->AddTexture(L"assets/textures/shrew2.jpg");
-	m_textureAtlas->AddTexture(L"assets/textures/shrew3.jpg");
-	m_textureAtlas->AddTexture(L"assets/textures/freak.png");
-	m_textureAtlas->AddTexture(L"assets/textures/hihi.png");
-	m_textureAtlas->AddTexture(L"assets/textures/hamper.jpeg");
-	m_textureAtlas->AddTexture(L"assets/textures/ParticleSystemMenu.png");
-	m_textureAtlas->AddTexture(L"assets/textures/steve_frogs.jpg");
-	m_textureAtlas->AddTexture(L"assets/textures/time.png");
-
-	if (!m_textureAtlas->Build())
-		return false;
-
 	m_mvpCb.Init(m_device);
 	
 	BufferType::LightBufferType lightData = {};
@@ -608,6 +597,11 @@ void DirectX2D::EndScene()
 
 void DirectX2D::DrawSprite(const Sprite& sprite) { m_spriteBatcher->DrawSprite(sprite); }
 
+int DirectX2D::AddTexture(const wchar_t* filename)
+{
+	return m_textureAtlas->AddTexture(filename);
+}
+
 ID3D11ShaderResourceView* DirectX2D::LoadTexture(const wchar_t* filename)
 {
 	ScratchImage image;
@@ -621,6 +615,11 @@ ID3D11ShaderResourceView* DirectX2D::LoadTexture(const wchar_t* filename)
 		return nullptr;
 
 	return srv;
+}
+
+bool DirectX2D::BuildAtlas()
+{
+	return m_textureAtlas->Build();
 }
 
 ID3D11Device* DirectX2D::GetDevice()

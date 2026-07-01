@@ -1,5 +1,8 @@
 #include "framework.h"
 #include "core/engine.hpp"
+#include "game.hpp"
+
+using namespace clvr;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
@@ -9,10 +12,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    if (!clvr::Engine.Initialize(hInstance, nCmdShow))
+    if (!Engine.Initialize(hInstance, nCmdShow))
         return 0;
+    
+	Engine.GetECS()->CreateSystem<Game>();
 
-    clvr::Engine.Run();
-    clvr::Engine.Shutdown();
+    Engine.Run();
+    Engine.Shutdown();
     return 0;
 }

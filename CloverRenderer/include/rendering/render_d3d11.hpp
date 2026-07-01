@@ -41,8 +41,11 @@ namespace clvr
 
 		bool ReloadShaders() { return m_shaderManager->ReloadAll(); }
 
+		int AddTexture(const wchar_t* filename);
 		ID3D11ShaderResourceView* LoadTexture(const wchar_t* filename);
+
 		AtlasRegion GetAtlasRegion(const wchar_t* filename) { return m_textureAtlas->GetRegion(filename); }
+		bool BuildAtlas();
 
 		ID3D11Device* GetDevice();
 		ID3D11DeviceContext* GetDeviceContext();

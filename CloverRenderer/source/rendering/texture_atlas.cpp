@@ -1,176 +1,197 @@
 #include "rendering/texture_atlas.hpp"
 
+#include <DirectXTex.h>
+#include <vector>
+#include <map>
+#include <string>
+
 #define STB_RECT_PACK_IMPLEMENTATION
 #include "rendering/stb_rect_pack.h"
 
 using namespace clvr;
 
-TextureAtlas::TextureAtlas()
+struct TextureAtlas::Impl
 {
-	m_width = 0;
-	m_height = 0;
-	m_texture = nullptr;
-	m_srv = nullptr;
-	m_device = nullptr;
-	m_deviceContext = nullptr;
-}
+    struct PendingImage
+    {
+        ScratchImage image;
+        int width = 0;
+        int height = 0;
+    };
 
-TextureAtlas::TextureAtlas(const TextureAtlas&)
-{
-}
+    int width = 0;
+    int height = 0;
 
-TextureAtlas::~TextureAtlas()
-{
-}
+    std::vector<PendingImage> pendingImages;
+    std::vector<AtlasRegion> regions;
+    std::map<std::wstring, int> filenameToIndex;
+
+    std::vector<uint8_t> atlasData;
+    ID3D11Texture2D* texture = nullptr;
+    ID3D11ShaderResourceView* srv = nullptr;
+    ID3D11Device* device = nullptr;
+    ID3D11DeviceContext* deviceContext = nullptr;
+};
+
+TextureAtlas::TextureAtlas() : m_impl(std::make_unique<Impl>()) {}
+TextureAtlas::~TextureAtlas() = default;
+TextureAtlas::TextureAtlas(TextureAtlas&&) noexcept = default;
+TextureAtlas& TextureAtlas::operator=(TextureAtlas&&) noexcept = default;
 
 bool TextureAtlas::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int width, int height)
 {
-	m_device = device;
-	m_deviceContext = deviceContext;
-	m_width = width;
-	m_height = height;
-	return true;
+    m_impl->device = device;
+    m_impl->deviceContext = deviceContext;
+    m_impl->width = width;
+    m_impl->height = height;
+    return true;
 }
 
 void TextureAtlas::Shutdown()
 {
-	if (m_srv)
-	{
-		m_srv->Release();
-		m_srv = nullptr;
-	}
-	if (m_texture)
-	{
-		m_texture->Release();
-		m_texture = nullptr;
-	}
+    if (m_impl->srv)
+    {
+        m_impl->srv->Release();
+        m_impl->srv = nullptr;
+    }
+    if (m_impl->texture)
+    {
+        m_impl->texture->Release();
+        m_impl->texture = nullptr;
+    }
 }
 
 int TextureAtlas::AddTexture(const wchar_t* filename)
 {
-	PendingImage pendingImage;
-	HRESULT result = LoadFromWICFile(filename, WIC_FLAGS_NONE, nullptr, pendingImage.image);
-	if (FAILED(result))
-		return -1;
+    Impl::PendingImage pendingImage;
+    HRESULT result = LoadFromWICFile(filename, WIC_FLAGS_NONE, nullptr, pendingImage.image);
+    if (FAILED(result))
+        return -1;
 
-	const Image* img = pendingImage.image.GetImage(0, 0, 0);
-	pendingImage.width = static_cast<int>(img->width);
-	pendingImage.height = static_cast<int>(img->height);
+    const Image* img = pendingImage.image.GetImage(0, 0, 0);
+    pendingImage.width = static_cast<int>(img->width);
+    pendingImage.height = static_cast<int>(img->height);
 
-	int index = static_cast<int>(m_pendingImages.size());
-	m_pendingImages.push_back(std::move(pendingImage));
-	m_regions.push_back(AtlasRegion{ XMFLOAT4(0, 0, 0, 0) }); // placeholder, filled in by Build
-	m_filenameToIndex[filename] = index;
-	return index;
+    int index = static_cast<int>(m_impl->pendingImages.size());
+    m_impl->pendingImages.push_back(std::move(pendingImage));
+    m_impl->regions.push_back(AtlasRegion{ XMFLOAT4(0, 0, 0, 0) });
+    m_impl->filenameToIndex[filename] = index;
+    return index;
 }
 
 AtlasRegion TextureAtlas::GetRegion(const wchar_t* filename) const
 {
-	auto it = m_filenameToIndex.find(filename);
-	if (it == m_filenameToIndex.end())
-		return AtlasRegion{ XMFLOAT4(0, 0, 0, 0) };
-	return m_regions[it->second];
+    auto it = m_impl->filenameToIndex.find(filename);
+    if (it == m_impl->filenameToIndex.end())
+        return AtlasRegion{ XMFLOAT4(0, 0, 0, 0) };
+    return m_impl->regions[it->second];
 }
 
 bool TextureAtlas::Build()
 {
-	std::vector<stbrp_rect> rects(m_pendingImages.size());
-	for (int i = 0; i < static_cast<int>(m_pendingImages.size()); i++)
-	{
-		rects[i].id = i;
-		rects[i].w = m_pendingImages[i].width;
-		rects[i].h = m_pendingImages[i].height;
-	}
+    auto& pendingImages = m_impl->pendingImages;
+    auto& regions = m_impl->regions;
+    const int width = m_impl->width;
+    const int height = m_impl->height;
 
-	std::vector<stbrp_node> nodes(m_width);
-	stbrp_context context;
-	stbrp_init_target(&context, m_width, m_height, nodes.data(), m_width);
+    std::vector<stbrp_rect> rects(pendingImages.size());
+    for (int i = 0; i < static_cast<int>(pendingImages.size()); i++)
+    {
+        rects[i].id = i;
+        rects[i].w = pendingImages[i].width;
+        rects[i].h = pendingImages[i].height;
+    }
 
-	stbrp_pack_rects(&context, rects.data(), static_cast<int>(rects.size()));
+    std::vector<stbrp_node> nodes(width);
+    stbrp_context context;
+    stbrp_init_target(&context, width, height, nodes.data(), width);
 
-	for (size_t i = 0; i < rects.size(); i++)
-	{
-		m_regions[i].uvRect = XMFLOAT4(
-			(float)rects[i].x / m_width,
-			(float)rects[i].y / m_height,
-			(float)m_pendingImages[i].width / m_width,
-			(float)m_pendingImages[i].height / m_height
-		);
-	}
+    stbrp_pack_rects(&context, rects.data(), static_cast<int>(rects.size()));
 
-	m_atlasData.resize(m_width * m_height * 4, 0);
+    for (size_t i = 0; i < rects.size(); i++)
+    {
+        regions[i].uvRect = XMFLOAT4(
+            (float)rects[i].x / width,
+            (float)rects[i].y / height,
+            (float)pendingImages[i].width / width,
+            (float)pendingImages[i].height / height
+        );
+    }
 
-	for (int i = 0; i < (int)m_pendingImages.size(); i++)
-	{
-		DXGI_FORMAT originalFormat = m_pendingImages[i].image.GetMetadata().format;
+    m_impl->atlasData.resize(width * height * 4, 0);
+    auto& atlasData = m_impl->atlasData;
 
-		ScratchImage converted;
-		const ScratchImage* source = &m_pendingImages[i].image;
+    for (int i = 0; i < (int)pendingImages.size(); i++)
+    {
+        DXGI_FORMAT originalFormat = pendingImages[i].image.GetMetadata().format;
 
-		if (originalFormat != DXGI_FORMAT_R8G8B8A8_UNORM && originalFormat != DXGI_FORMAT_B8G8R8A8_UNORM && originalFormat != DXGI_FORMAT_B8G8R8X8_UNORM)
-		{
-			HRESULT hr = Convert(*source->GetImage(0, 0, 0), DXGI_FORMAT_R8G8B8A8_UNORM,
-				TEX_FILTER_DEFAULT, TEX_THRESHOLD_DEFAULT, converted);
-			if (FAILED(hr))
-				return false;
-			source = &converted;
-		}
+        ScratchImage converted;
+        const ScratchImage* source = &pendingImages[i].image;
 
-		const Image* img = source->GetImage(0, 0, 0);
-		int destX = rects[i].x;
-		int destY = rects[i].y;
+        if (originalFormat != DXGI_FORMAT_R8G8B8A8_UNORM && originalFormat != DXGI_FORMAT_B8G8R8A8_UNORM && originalFormat != DXGI_FORMAT_B8G8R8X8_UNORM)
+        {
+            HRESULT hr = Convert(*source->GetImage(0, 0, 0), DXGI_FORMAT_R8G8B8A8_UNORM,
+                TEX_FILTER_DEFAULT, TEX_THRESHOLD_DEFAULT, converted);
+            if (FAILED(hr))
+                return false;
+            source = &converted;
+        }
 
-		bool needsSwap = (originalFormat == DXGI_FORMAT_B8G8R8A8_UNORM ||
-			originalFormat == DXGI_FORMAT_B8G8R8X8_UNORM);
+        const Image* img = source->GetImage(0, 0, 0);
+        int destX = rects[i].x;
+        int destY = rects[i].y;
 
-		for (int row = 0; row < m_pendingImages[i].height; row++)
-		{
-			uint8_t* dest = m_atlasData.data() + ((destY + row) * m_width + destX) * 4;
-			const uint8_t* src = img->pixels + row * img->rowPitch;
+        bool needsSwap = (originalFormat == DXGI_FORMAT_B8G8R8A8_UNORM ||
+            originalFormat == DXGI_FORMAT_B8G8R8X8_UNORM);
 
-			if (needsSwap)
-			{
-				for (int col = 0; col < m_pendingImages[i].width; col++)
-				{
-					dest[col * 4 + 0] = src[col * 4 + 2];
-					dest[col * 4 + 1] = src[col * 4 + 1];
-					dest[col * 4 + 2] = src[col * 4 + 0];
-					dest[col * 4 + 3] = src[col * 4 + 3];
-				}
-			}
-			else
-			{
-				memcpy(dest, src, m_pendingImages[i].width * 4);
-			}
-		}
-	}
+        for (int row = 0; row < pendingImages[i].height; row++)
+        {
+            uint8_t* dest = atlasData.data() + ((destY + row) * width + destX) * 4;
+            const uint8_t* src = img->pixels + row * img->rowPitch;
 
-	D3D11_TEXTURE2D_DESC texDesc = {};
-	texDesc.Width = m_width;
-	texDesc.Height = m_height;
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+            if (needsSwap)
+            {
+                for (int col = 0; col < pendingImages[i].width; col++)
+                {
+                    dest[col * 4 + 0] = src[col * 4 + 2];
+                    dest[col * 4 + 1] = src[col * 4 + 1];
+                    dest[col * 4 + 2] = src[col * 4 + 0];
+                    dest[col * 4 + 3] = src[col * 4 + 3];
+                }
+            }
+            else
+            {
+                memcpy(dest, src, pendingImages[i].width * 4);
+            }
+        }
+    }
 
-	D3D11_SUBRESOURCE_DATA initData = {};
-	initData.pSysMem = m_atlasData.data();
-	initData.SysMemPitch = m_width * 4;
+    D3D11_TEXTURE2D_DESC texDesc = {};
+    texDesc.Width = width;
+    texDesc.Height = height;
+    texDesc.MipLevels = 1;
+    texDesc.ArraySize = 1;
+    texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    texDesc.SampleDesc.Count = 1;
+    texDesc.Usage = D3D11_USAGE_DEFAULT;
+    texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
-	HRESULT result = m_device->CreateTexture2D(&texDesc, &initData, &m_texture);
-	if (FAILED(result))
-		return false;
+    D3D11_SUBRESOURCE_DATA initData = {};
+    initData.pSysMem = atlasData.data();
+    initData.SysMemPitch = width * 4;
 
-	result = m_device->CreateShaderResourceView(m_texture, nullptr, &m_srv);
-	if (FAILED(result))
-		return false;
+    HRESULT result = m_impl->device->CreateTexture2D(&texDesc, &initData, &m_impl->texture);
+    if (FAILED(result))
+        return false;
 
-	return true;
+    result = m_impl->device->CreateShaderResourceView(m_impl->texture, nullptr, &m_impl->srv);
+    if (FAILED(result))
+        return false;
+
+    return true;
 }
 
 ID3D11ShaderResourceView* TextureAtlas::GetSRV() const
 {
-	return m_srv;
+    return m_impl->srv;
 }
