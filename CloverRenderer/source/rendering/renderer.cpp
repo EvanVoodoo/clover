@@ -67,29 +67,56 @@ bool Renderer::Frame(float dt)
 	return true;
 }
 
-void Renderer::DrawSprite(const Sprite& sprite) { m_DX2D->DrawSprite(sprite); }
+void Renderer::DrawSprite(const Sprite& sprite, const Transform& transform) { m_DX2D->DrawSprite(sprite, transform); }
 
 bool Renderer::Render(float dt)
 {
-	m_DX2D->BeginScene(0.1f, 0.1f, 0.1f, 1.0f);
+	m_DX2D->BeginScene(1.0f, 1.0f, 1.0f, 1.0f);
 
-	auto view = Engine.GetECS()->GetRegistry().view<SpriteComponent>();
+	UpdateLights();
 
-	// Collect for layer sort. view iteration order isn't layer order,
-	// and your batcher needs back-to-front, so gather then sort.
-	std::vector<const Sprite*> toDraw;
-	toDraw.reserve(view.size());
-	for (auto entity : view)
-		toDraw.push_back(&view.get<SpriteComponent>(entity).sprite);
+	auto view = Engine.GetECS()->GetRegistry().view<SpriteComponent, Transform>();
+
+	std::vector<std::pair<const Sprite*, const Transform*>> toDraw;
+	toDraw.reserve(view.size_hint());
+
+	for (auto [entity, sc, t] : view.each())
+		toDraw.emplace_back(&sc.sprite, &t);
 
 	std::stable_sort(toDraw.begin(), toDraw.end(),
-		[](const Sprite* a, const Sprite* b) { return a->layer < b->layer; });
+		[](const auto& a, const auto& b) {
+			return a.first->layer < b.first->layer;
+		});
 
-	for (const Sprite* s : toDraw)
-		DrawSprite(*s);
+	for (const auto& [sprite, transform] : toDraw)
+		DrawSprite(*sprite, *transform);
+
 
 	m_DX2D->EndScene();
 	return true;
+}
+
+void Renderer::UpdateLights()
+{
+	auto& registry = Engine.GetECS()->GetRegistry();
+	BufferType::LightBufferType lightData = {};
+
+	auto view = registry.view<Transform, Light>();
+	int count = 0;
+	for (auto [entity, transform, light] : view.each())
+	{
+		if (count >= MAX_LIGHTS)   // MAX_LIGHTS = your array size
+		{
+			assert(false && "More light entities than LightBufferType can hold");
+			break;
+		}
+
+		lightData.lights[count] = light;
+		++count;
+	}
+	lightData.lightCount = count;
+
+	m_DX2D->UpdateLights(lightData);   // forwards to m_lightCb.Update
 }
 
 int Renderer::AddTexture(const wchar_t* filename) { return m_DX2D->AddTexture(filename); }

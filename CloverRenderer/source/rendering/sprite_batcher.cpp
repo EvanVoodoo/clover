@@ -97,7 +97,7 @@ void SpriteBatcher::Begin()
 	m_indexCount = 0;
 }
 
-void SpriteBatcher::DrawSprite(const Sprite& sprite)
+void SpriteBatcher::DrawSprite(const Sprite& sprite, const Transform& transform)
 {
 	if (m_indexCount >= MAX_INDICES)
 		return;
@@ -118,15 +118,18 @@ void SpriteBatcher::DrawSprite(const Sprite& sprite)
 	};
 
 	XMFLOAT2 uvs[4] = {
-		{ uvLeft,  uvBottom },
-		{ uvRight, uvBottom },
-		{ uvRight, uvTop    },
-		{ uvLeft,  uvTop    }
+		{ uvLeft,  uvBottom }, { uvRight, uvBottom },
+		{ uvRight, uvTop    }, { uvLeft,  uvTop    }
 	};
+
+	const XMMATRIX world = transform.GetWorld();
 
 	for (int i = 0; i < 4; ++i)
 	{
-		m_vertexBufferPtr->position = XMFLOAT3(sprite.position.x + corners[i].x, sprite.position.y + corners[i].y, 0.5f);
+		XMVECTOR local = XMVectorSet(corners[i].x, corners[i].y, 0.5f, 1.0f);
+		XMVECTOR worldPos = XMVector3Transform(local, world);
+		XMStoreFloat3(&m_vertexBufferPtr->position, worldPos);
+
 		m_vertexBufferPtr->uv = uvs[i];
 		m_vertexBufferPtr->color = sprite.color;
 		m_vertexBufferPtr++;

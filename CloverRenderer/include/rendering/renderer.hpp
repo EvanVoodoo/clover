@@ -5,10 +5,11 @@
 #include "core/ecs.hpp"
 #include "rendering/render_d3d11.hpp"	
 
-const bool FULL_SCREEN = false;
+const bool FULL_SCREEN = true;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.3f;
+const int MAX_LIGHTS = 16;
 
 namespace clvr
 {
@@ -27,7 +28,7 @@ namespace clvr
 		void Render() {}
 
 		bool Frame(float dt);
-		void DrawSprite(const Sprite& sprite);
+		void DrawSprite(const Sprite& sprite, const Transform& transform);
 		void SetActiveShader(const std::wstring& name) { m_DX2D->SetActiveShader(name); }
 		void SetPostProcessShader(const std::wstring& name) { m_DX2D->SetPostProcessShader(name); }
 		bool LoadShader(const std::wstring& name, const wchar_t* vsFilename, const wchar_t* psFilename)
@@ -36,6 +37,8 @@ namespace clvr
 		}
 		bool ReloadShaders() { return m_DX2D->ReloadShaders(); }
 		Camera& GetCamera() { return m_DX2D->GetCamera(); }
+
+		void UpdateLights();
 
 		int AddTexture(const wchar_t* filename);
 		bool BuildAtlas();

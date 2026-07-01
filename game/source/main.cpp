@@ -15,7 +15,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     if (!Engine.Initialize(hInstance, nCmdShow))
         return 0;
     
-	Engine.GetECS()->CreateSystem<Game>();
+    Engine.GetECS()->CreateSystem<Renderer>();
+    Engine.GetECS()->CreateSystem<Game>();
 
     Engine.Run();
     Engine.Shutdown();

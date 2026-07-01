@@ -30,7 +30,7 @@ namespace clvr
 
 		void BeginScene(float, float, float, float);
 		void EndScene();
-		void DrawSprite(const Sprite& sprite);
+		void DrawSprite(const Sprite& sprite, const Transform& transform);
 		void SetActiveShader(const std::wstring& name) { m_shaderManager->SetActiveShader(name); }
 		void SetPostProcessShader(const std::wstring& name) { m_shaderManager->SetPostProcessShader(name); }
 
@@ -59,6 +59,11 @@ namespace clvr
 
 		void SetBackBufferRenderTarget();
 		void ResetViewport();
+
+		void UpdateLights(const BufferType::LightBufferType& data)
+		{
+			m_lightCb.Update(m_deviceContext, data);
+		}
 
 	private:
 		bool m_vsyncEnabled;

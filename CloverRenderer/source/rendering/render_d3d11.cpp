@@ -355,17 +355,7 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 		return false;
 
 	m_mvpCb.Init(m_device);
-	
-	BufferType::LightBufferType lightData = {};
-	lightData.lights[0] = { XMFLOAT3(0.0f, 0.0f, -1.0f), 0.1f, XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f };
-	lightData.lights[1] = { XMFLOAT3(100.0f, 0.0f, 0.0f), 20000.0f, XMFLOAT3(1.0f, 0.0f, 1.0f), 1.0f };
-	/*lightData.lights[2] = { XMFLOAT3(-500.0f, 0.0f, 0.0f), 10000.0f, XMFLOAT3(1.0f, 1.0f, 1.0f), 1.0f };
-	lightData.lights[3] = { XMFLOAT3(0.0f, 700.0f, 0.0f), 5000.0f, XMFLOAT3(0.0f, 1.0f, 1.0f), 1.0f };
-	lightData.lights[4] = { XMFLOAT3(200.0f, 100.0f, 0.0f), 7000.0f, XMFLOAT3(1.0f, 0.5f, 0.0f), 1.0f };*/
-	lightData.lightCount = 2;
-
 	m_lightCb.Init(m_device);
-	m_lightCb.Update(m_deviceContext, lightData);
 
 	return true;
 }
@@ -595,7 +585,7 @@ void DirectX2D::EndScene()
 	return;
 }
 
-void DirectX2D::DrawSprite(const Sprite& sprite) { m_spriteBatcher->DrawSprite(sprite); }
+void DirectX2D::DrawSprite(const Sprite& sprite, const Transform& transform) { m_spriteBatcher->DrawSprite(sprite, transform); }
 
 int DirectX2D::AddTexture(const wchar_t* filename)
 {

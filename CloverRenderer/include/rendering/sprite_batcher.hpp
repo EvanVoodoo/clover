@@ -20,7 +20,7 @@ namespace clvr
         void Shutdown();
 
         void Begin();
-        void DrawSprite(const Sprite& sprite);
+        void DrawSprite(const Sprite& sprite, const Transform& transform);
         void End();
 
     private:
