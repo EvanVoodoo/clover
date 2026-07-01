@@ -8,6 +8,7 @@ Engine::Engine()
 	m_renderer = nullptr;
 	m_window = nullptr;
     m_input = nullptr;
+    m_ecs = nullptr;
 }
 
 Engine::Engine(const Engine&)
@@ -22,6 +23,8 @@ Engine::~Engine()
 
 bool Engine::Initialize(HINSTANCE hInstance, int nCmdShow)
 {
+    m_ecs = new EntityComponentSystem();
+
 	m_input = new Input();
 	if (!m_input->Initialize())
 		return false;
