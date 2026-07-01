@@ -87,6 +87,49 @@ AtlasRegion TextureAtlas::GetRegion(const wchar_t* filename) const
     return m_impl->regions[it->second];
 }
 
+// Helper function to extend the padding of a sprite in the atlas by copying edge pixels and setting alpha to 0
+void ExtendSpritePadding(uint8_t* atlas, int atlasStride, int x, int y, int w, int h)
+{
+    auto pixelAt = [&](int px, int py) -> uint8_t* {
+        return atlas + (py * atlasStride + px) * 4;
+    };
+
+    // Top / bottom edges
+    for (int col = x; col < x + w; ++col)
+    {
+        uint8_t* dstTop = pixelAt(col, y - 1);
+        memcpy(dstTop, pixelAt(col, y), 4);
+        dstTop[3] = 0;
+
+        uint8_t* dstBottom = pixelAt(col, y + h);
+        memcpy(dstBottom, pixelAt(col, y + h - 1), 4);
+        dstBottom[3] = 0;
+    }
+
+    // Left / right edges
+    for (int row = y; row < y + h; ++row)
+    {
+        uint8_t* dstLeft = pixelAt(x - 1, row);
+        memcpy(dstLeft, pixelAt(x, row), 4);
+        dstLeft[3] = 0;
+
+        uint8_t* dstRight = pixelAt(x + w, row);
+        memcpy(dstRight, pixelAt(x + w - 1, row), 4);
+        dstRight[3] = 0;
+    }
+
+    // Corners
+    auto setCorner = [&](int cx, int cy, int srcx, int srcy) {
+        uint8_t* dst = pixelAt(cx, cy);
+        memcpy(dst, pixelAt(srcx, srcy), 4);
+        dst[3] = 0;
+    };
+    setCorner(x - 1, y - 1, x, y);
+    setCorner(x + w, y - 1, x + w - 1, y);
+    setCorner(x - 1, y + h, x, y + h - 1);
+    setCorner(x + w, y + h, x + w - 1, y + h - 1);
+}
+
 bool TextureAtlas::Build()
 {
     auto& pendingImages = m_impl->pendingImages;
@@ -98,8 +141,8 @@ bool TextureAtlas::Build()
     for (int i = 0; i < static_cast<int>(pendingImages.size()); i++)
     {
         rects[i].id = i;
-        rects[i].w = pendingImages[i].width;
-        rects[i].h = pendingImages[i].height;
+        rects[i].w = pendingImages[i].width + 2;
+        rects[i].h = pendingImages[i].height + 2;
     }
 
     std::vector<stbrp_node> nodes(width);
@@ -111,8 +154,8 @@ bool TextureAtlas::Build()
     for (size_t i = 0; i < rects.size(); i++)
     {
         regions[i].uvRect = XMFLOAT4(
-            (float)rects[i].x / width,
-            (float)rects[i].y / height,
+            (float)(rects[i].x + 1) / width,
+            (float)(rects[i].y + 1) / height,
             (float)pendingImages[i].width / width,
             (float)pendingImages[i].height / height
         );
@@ -138,8 +181,8 @@ bool TextureAtlas::Build()
         }
 
         const Image* img = source->GetImage(0, 0, 0);
-        int destX = rects[i].x;
-        int destY = rects[i].y;
+        int destX = rects[i].x + 1;
+        int destY = rects[i].y + 1;
 
         bool needsSwap = (originalFormat == DXGI_FORMAT_B8G8R8A8_UNORM ||
             originalFormat == DXGI_FORMAT_B8G8R8X8_UNORM);
@@ -164,6 +207,10 @@ bool TextureAtlas::Build()
                 memcpy(dest, src, pendingImages[i].width * 4);
             }
         }
+
+        // NEW: extend a 1-texel border around this sprite using its own edge pixels, alpha zeroed
+        ExtendSpritePadding(atlasData.data(), width, destX, destY,
+                            pendingImages[i].width, pendingImages[i].height);
     }
 
     D3D11_TEXTURE2D_DESC texDesc = {};

@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "core/engine.hpp"
 #include "game.hpp"
+#include "rendering/renderer.hpp"
 
 using namespace clvr;
 

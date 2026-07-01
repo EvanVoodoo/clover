@@ -1,6 +1,7 @@
 #include "game.hpp"
 #include "core/engine.hpp"
-#include <core/components.hpp>
+#include "core/components.hpp" 
+#include "rendering/renderer.hpp"
 
 using namespace clvr;
 
@@ -8,7 +9,6 @@ Game::Game() {
     SetupRenderer();
     SetupScene();
 }
-
 
 void Game::SetupRenderer()
 {
@@ -25,6 +25,7 @@ void Game::SetupRenderer()
     renderer.LoadShader(L"light", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/light.ps.hlsl");
     renderer.LoadShader(L"composite", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/composite.ps.hlsl");
     renderer.LoadShader(L"passthrough", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/post.ps.hlsl");
+    renderer.LoadShader(L"crt", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/crt.ps.hlsl");
     renderer.SetPostProcessShader(L"passthrough");
 }
 
@@ -38,6 +39,7 @@ void Game::SetupScene()
             L"../CloverRenderer/assets/textures/shrew1.jpg",
             L"../CloverRenderer/assets/textures/shrew2.jpg",
             L"../CloverRenderer/assets/textures/hamper.jpeg",
+            L"../CloverRenderer/assets/textures/saturn.png",
         };
         for (auto* t : textures)
             renderer.AddTexture(t);
@@ -50,7 +52,7 @@ void Game::SetupScene()
         cs.position = t.position;
         cs.size = { 600.0f, 600.0f };
         cs.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-        cs.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/shrew1.jpg").uvRect;
+        cs.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/saturn.png").uvRect;
         cs.layer = 0;
         ecs->CreateComponent<SpriteComponent>(centerEntity, cs);
     }
@@ -133,7 +135,7 @@ void Game::Update(float dt) {
 		for (auto [entity, sc, t] : spriteView.each())
 		{
 			// rotate all sprites slowly
-			t.rotation += dt * 0.1f;
+			//t.rotation += dt * 0.1f;
 			t.position.x += cosf(m_time) * dt * 300.0f;
 		}
     }

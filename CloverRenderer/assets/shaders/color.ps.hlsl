@@ -10,6 +10,6 @@ SamplerState sampler0 : register(s0);
 
 float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 {
-    float3 texColor = texture0.Sample(sampler0, input.uv);
-    return float4(texColor.rgb, 1) * input.color;
+    float4 texColor = texture0.Sample(sampler0, input.uv);
+    return texColor * input.color;
 }
