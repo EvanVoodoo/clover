@@ -24,7 +24,7 @@ namespace clvr
 		DirectX2D(const DirectX2D&);
 		~DirectX2D();
 
-		bool Initialize(int, int, bool, HWND, bool, float, float);
+		bool Initialize(int, int, bool, HWND, bool);
 		bool InitializeFullscreenQuad();
 		void Shutdown();
 

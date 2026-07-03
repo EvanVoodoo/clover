@@ -40,18 +40,20 @@ void Game::SetupScene()
         renderer.AddTexture(t);
     renderer.BuildAtlas();   // built ONCE, after all textures added, before first frame
 
-    auto centerEntity = ecs->CreateEntity();
-	auto& t = ecs->CreateComponent<Transform>(centerEntity);
-    t.position = { 0.0f, -300.0f };
-    clvr::Sprite cs;
-    cs.position = t.position;
-    cs.size = { 200.0f, 200.0f };
-    cs.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-    cs.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/saturn.png").uvRect;
-    cs.layer = 0;
-    cs.isOccluder = false;
-    ecs->CreateComponent<SpriteComponent>(centerEntity, cs);
-	ecs->CreateComponent<MovingSprite>(centerEntity);
+    /*{
+        auto centerEntity = ecs->CreateEntity();
+        auto& t = ecs->CreateComponent<Transform>(centerEntity);
+        t.position = { 0.0f, -300.0f };
+        clvr::Sprite cs;
+        cs.position = t.position;
+        cs.size = { 200.0f, 200.0f };
+        cs.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+        cs.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/shrew1.jpg").uvRect;
+        cs.layer = 0;
+        cs.isOccluder = false;
+        ecs->CreateComponent<SpriteComponent>(centerEntity, cs);
+        ecs->CreateComponent<MovingSprite>(centerEntity);
+    }*/
 
     {
 		// create wall of occluder sprites randomly around the scene
@@ -115,7 +117,7 @@ void Game::SetupScene()
         }
     }
 
-    {
+    /*{
         auto lightEntity = ecs->CreateEntity();
         ecs->CreateComponent<Transform>(lightEntity);
         auto& light = ecs->CreateComponent<Light>(lightEntity);
@@ -124,7 +126,7 @@ void Game::SetupScene()
         light.color = { 1.0f, 1.0f, 1.0f };
         light.intensity = 5000.0f;
         light.type = 1;
-    }
+    }*/
 }
 
 void Game::Update(float dt) {
@@ -133,40 +135,40 @@ void Game::Update(float dt) {
     auto ecs = Engine.GetECS();
 
     const float minI = 100.0f;
-    const float maxI = 5000.0f;
+    const float maxI = 500.0f;
     const float wanderRadius = 150.0f;
     const int   count = 10;
-
-    int index = 0;
-    auto lightView = ecs->GetRegistry().view<Light, MovingLight>();
-    for (auto [entity, light] : lightView.each())
     {
-        if (index >= count)
-            break;
+        int index = 0;
+        auto lightView = ecs->GetRegistry().view<Light, MovingLight>();
+        for (auto [entity, light] : lightView.each())
+        {
+            if (index >= count)
+                break;
 
-        if (light.type != 1)
-            continue;
+            if (light.type != 1)
+                continue;
 
-        // same deterministic base position as SetupScene()
-        float seedX = sinf((float) index * 12.9898f) * 43758.5453f;
-        float seedY = sinf((float) index * 78.233f) * 43758.5453f;
-        float baseX = fmodf(seedX, 1.0f) * 800.0f - 400.0f;
-        float baseY = fmodf(seedY, 1.0f) * 400.0f - 200.0f;
+            // same deterministic base position as SetupScene()
+            float seedX = sinf((float) index * 12.9898f) * 43758.5453f;
+            float seedY = sinf((float) index * 78.233f) * 43758.5453f;
+            float baseX = fmodf(seedX, 1.0f) * 800.0f - 400.0f;
+            float baseY = fmodf(seedY, 1.0f) * 400.0f - 200.0f;
 
-        // wander around that base position, phase-offset per light
-        float t = (float) index / count;
-        float phase = m_time + t * 2.0f * 3.1415927f;
-        float wanderX = cosf(phase * 0.7f) * wanderRadius;
-        float wanderY = sinf(phase * 0.9f) * wanderRadius;
+            // wander around that base position, phase-offset per light
+            float t = (float) index / count;
+            float phase = m_time + t * 2.0f * 3.1415927f;
+            float wanderX = cosf(phase * 0.7f) * wanderRadius;
+            float wanderY = sinf(phase * 0.9f) * wanderRadius;
 
-        light.direction = { baseX + wanderX, baseY + wanderY, 0.0f };
+            light.direction = { baseX + wanderX, baseY + wanderY, 0.0f };
 
-        float pulsePhase = m_time + t * 2.0f * 3.1415927f;
-        light.intensity = minI + 0.5f * (sinf(pulsePhase) + 1.0f) * (maxI - minI);
+            float pulsePhase = m_time + t * 2.0f * 3.1415927f;
+            light.intensity = minI + 0.5f * (sinf(pulsePhase) + 1.0f) * (maxI - minI);
 
-        ++index;
+            ++index;
+        }
     }
-
     {
         auto spriteView = ecs->GetRegistry().view<SpriteComponent, Transform, MovingSprite>();
 
@@ -212,6 +214,20 @@ void Game::Update(float dt) {
         camera.transform.rotation += (cameraSpeed * 0.1f * 2 * 3.1415927f) / 180.f;
     if (input->IsKeyDown('E'))
         camera.transform.rotation -= (cameraSpeed * 0.1f * 2 * 3.1415927f) / 180.f;
+
+	// zoom in/out with W/S keys by adjusting the camera's projection matrix
+    if (input->IsKeyDown('W'))
+    {
+		camera.zoom += cameraSpeed * 0.01f;
+		//if (camera.zoom > 5.0f)
+			//camera.zoom = 5.0f;
+    }
+    if (input->IsKeyDown('S'))
+    {
+		camera.zoom -= cameraSpeed * 0.01f;
+		if (camera.zoom < 0.1f)
+			camera.zoom = 0.1f;
+    }
 
     // camera moves according to its rotation
     if (input->IsKeyDown(VK_UP))

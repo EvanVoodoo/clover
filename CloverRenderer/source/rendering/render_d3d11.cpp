@@ -39,7 +39,7 @@ DirectX2D::~DirectX2D()
 {
 }
 
-bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen, float screenDepth, float screenNear)
+bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen)
 {
 	HRESULT result;
 	IDXGIFactory* factory;
@@ -306,9 +306,10 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	m_deviceContext->RSSetViewports(1, &m_viewport);
 
 	m_camera = Camera();
-
-	// Create the projection matrix for 2D rendering.
-	m_camera.projectionMatrix = XMMatrixOrthographicLH(m_viewport.Width, m_viewport.Height, screenNear, screenDepth);
+	m_camera.viewportWidth = m_viewport.Width;
+	m_camera.viewportHeight = m_viewport.Height;
+	m_camera.nearZ = m_viewport.MinDepth;
+	m_camera.farZ = m_viewport.MaxDepth;
 
 	// Initialize the world matrix to the identity matrix.
 	m_shaderManager = new ShaderManager();
@@ -658,7 +659,10 @@ void DirectX2D::OcclusionRender()
 	m_deviceContext->RSSetViewports(1, &lightViewport);
 
 	Camera occlusionCamera = m_camera;
-	occlusionCamera.projectionMatrix = XMMatrixOrthographicLH(lightViewport.Width, lightViewport.Height, lightViewport.MinDepth, lightViewport.MaxDepth);
+	occlusionCamera.viewportWidth = lightViewport.Width;
+	occlusionCamera.viewportHeight = lightViewport.Height;
+	occlusionCamera.nearZ = lightViewport.MinDepth;
+	occlusionCamera.farZ = lightViewport.MaxDepth;
 	occlusionCamera.transform.rotation = 0.0f;
 
 	// Set shader to occlusion shader

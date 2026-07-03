@@ -65,12 +65,19 @@ namespace clvr
 	struct Camera
 	{
 		Transform transform;
-		XMMATRIX projectionMatrix;
 		float speed = 500.0f; // units per second
+
+		float viewportWidth = 0.0f;
+		float viewportHeight = 0.0f;
+		float nearZ = 0.0f;
+		float farZ = 1.0f;
+
+		float zoom = 1.0f; // >1 = zoomed in, <1 = zoomed out
 
 		XMMATRIX GetProjectionMatrix()
 		{
-			return projectionMatrix;
+			// dividing by zoom shrinks the visible world area as zoom increases
+			return XMMatrixOrthographicLH(viewportWidth / zoom, viewportHeight / zoom, nearZ, farZ);
 		}
 
 		XMMATRIX GetWorldMatrix()

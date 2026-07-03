@@ -26,7 +26,7 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Create and initialize the Direct3D object.
 	m_DX2D = new DirectX2D;
 
-	result = m_DX2D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
+	result = m_DX2D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
