@@ -20,6 +20,7 @@ DirectX2D::DirectX2D()
 	m_samplerState = nullptr;
 	m_textureAtlas = nullptr;
 	m_framebuffer = nullptr;
+	m_occluderMaskFramebuffer = nullptr;
 	for (int i = 0; i < 16; ++i) {
 		m_occlusionFramebuffers[i] = nullptr;
 		m_shadowMapFbs[i] = nullptr;
@@ -336,6 +337,14 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 		return false;
 	}
 
+	m_occluderMaskFramebuffer = new Framebuffer();
+	result = m_occluderMaskFramebuffer->Initialize(m_device, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the occluder mask framebuffer", L"Error", MB_OK);
+		return false;
+	}
+
 	int lightSize = 2048;
 	for (int i = 0; i < 16; i++) {
 		m_occlusionFramebuffers[i] = new Framebuffer();
@@ -493,6 +502,13 @@ void DirectX2D::Shutdown()
 		}
 	}
 
+	if (m_occluderMaskFramebuffer)
+	{
+		m_occluderMaskFramebuffer->Shutdown();
+		delete m_occluderMaskFramebuffer;
+		m_occluderMaskFramebuffer = nullptr;
+	}
+
 	if (m_framebuffer)
 	{
 		m_framebuffer->Shutdown();
@@ -571,6 +587,18 @@ void DirectX2D::EndScene()
 
 	OcclusionRender();
 
+	m_occluderMaskFramebuffer->Bind(m_deviceContext);
+	float maskClear[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
+	m_deviceContext->ClearRenderTargetView(m_occluderMaskFramebuffer->GetRTV(), maskClear);
+
+	m_shaderManager->GetShader(L"occlusion")->Bind(m_deviceContext);
+
+	m_mvpCb.BindVS(m_deviceContext, 0);
+	ID3D11ShaderResourceView* srv = m_textureAtlas->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 1, &srv);
+	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	m_spriteBatcher->DrawOccludersToRT();
+
 	// Render lights to light framebuffer
 
 	m_shaderManager->GetShader(L"light")->Bind(m_deviceContext);
@@ -591,6 +619,8 @@ void DirectX2D::EndScene()
 	for (int i = 0; i < 16; i++)
 		shadowSrvs[i] = m_shadowMapFbs[i]->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 16, shadowSrvs);
+	ID3D11ShaderResourceView* maskSrv = m_occluderMaskFramebuffer->GetSRV();
+	m_deviceContext->PSSetShaderResources(16, 1, &maskSrv);
 
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
 	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
@@ -620,7 +650,7 @@ void DirectX2D::EndScene()
 
 	m_shaderManager->GetPostProcessShader()->Bind(m_deviceContext);
 
-	ID3D11ShaderResourceView* srv = m_finalFramebuffer->GetSRV();
+	srv = m_finalFramebuffer->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
 	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
 
@@ -664,6 +694,7 @@ void DirectX2D::OcclusionRender()
 	occlusionCamera.nearZ = lightViewport.MinDepth;
 	occlusionCamera.farZ = lightViewport.MaxDepth;
 	occlusionCamera.transform.rotation = 0.0f;
+	occlusionCamera.zoom = 1.0f;
 
 	// Set shader to occlusion shader
 

@@ -40,6 +40,7 @@ Texture2D shadowMap12 : register(t12);
 Texture2D shadowMap13 : register(t13);
 Texture2D shadowMap14 : register(t14);
 Texture2D shadowMap15 : register(t15);
+Texture2D occluderMask : register(t16);
 SamplerState sampler0 : register(s0);
 
 // matches lightSize used when building the occlusion/shadow maps in C++
@@ -92,6 +93,7 @@ struct PixelInputType
 float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 {
     float4 pixel = float4(0.1, 0.1, 0.1, 1); // ambient light
+    bool isOccluder = occluderMask.Sample(sampler0, input.uv).a > 0.5;
     for (int i = 0; i < lightCount; ++i)
     {
         Light l = lights[i];
@@ -124,20 +126,28 @@ float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 
             atten *= window;
 
-            // --- shadow lookup ---
-            // normalized distance from light center, matching how the
-            // occlusion/shadow-map pass was built (lightSize x lightSize ortho)
-            float r = dist / (LIGHT_SIZE * 0.5);
+            float lit = 0.0;
+            if (isOccluder)
+            {
+                lit = 0.001; // default-normal: no self-shadow test, distance attenuation only
+            }
+            else
+            {
+                // --- shadow lookup ---
+                // normalized distance from light center, matching how the
+                // occlusion/shadow-map pass was built (lightSize x lightSize ortho)
+                float r = dist / (LIGHT_SIZE * 0.5);
 
-            // angle of this fragment relative to the light, matched to
-            // the polar transform used when building the 1D shadow map
-            float theta = atan2(delta.y, delta.x);
-            float tc = (theta + PI) / (2.0 * PI);
+                // angle of this fragment relative to the light, matched to
+                // the polar transform used when building the 1D shadow map
+                float theta = atan2(delta.y, delta.x);
+                float tc = (theta + PI) / (2.0 * PI);
 
-            float shadowDist = SampleShadow(i, float2(tc, 0.0));
+                float shadowDist = SampleShadow(i, float2(tc, 0.0));
 
-            const float SHADOW_BIAS = 0.0;
-            float lit = step(r - SHADOW_BIAS, shadowDist);
+                const float SHADOW_BIAS = 0.0;
+                lit = step(r - SHADOW_BIAS, shadowDist);
+            }
 
             atten *= lit;
 

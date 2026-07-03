@@ -77,6 +77,7 @@ namespace clvr
 		ID3D11RenderTargetView* m_renderTargetView;
 		
 		Framebuffer* m_framebuffer;
+		Framebuffer* m_occluderMaskFramebuffer;
 		Framebuffer* m_lightFramebuffer;
 		Framebuffer* m_finalFramebuffer;
 		Framebuffer* m_occlusionFramebuffers[16];

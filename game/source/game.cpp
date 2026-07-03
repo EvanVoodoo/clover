@@ -72,6 +72,20 @@ void Game::SetupScene()
 			s.isOccluder = true;
 			ecs->CreateComponent<SpriteComponent>(entity, s);
 		}
+		// create ground plane occluder
+        {
+			auto entity = ecs->CreateEntity();
+			auto& t = ecs->CreateComponent<Transform>(entity);
+			t.position = { 0.0f, -400.0f };
+            clvr::Sprite s;
+            s.position = t.position;
+			s.size = { 16000.0f, 200.0f };
+            s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+            s.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/white.jpg").uvRect;
+            s.layer = 99;
+            s.isOccluder = true;
+            ecs->CreateComponent<SpriteComponent>(entity, s);
+        }
     }
 
     {
@@ -135,7 +149,7 @@ void Game::Update(float dt) {
     auto ecs = Engine.GetECS();
 
     const float minI = 100.0f;
-    const float maxI = 500.0f;
+    const float maxI = 5000.0f;
     const float wanderRadius = 150.0f;
     const int   count = 10;
     {
