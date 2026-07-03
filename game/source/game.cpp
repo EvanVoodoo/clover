@@ -16,17 +16,12 @@ void Game::SetupRenderer()
     auto& renderer = ecs->GetSystem<Renderer>();
     renderer.Initialize(Engine.GetWindow()->GetWidth(), Engine.GetWindow()->GetHeight(), Engine.GetWindow()->GetHWND());
 
-    renderer.LoadShader(L"default", L"../CloverRenderer/assets/shaders/color.vs.hlsl", L"../CloverRenderer/assets/shaders/color.ps.hlsl");
     renderer.LoadShader(L"grayscale", L"../CloverRenderer/assets/shaders/color.vs.hlsl", L"../CloverRenderer/assets/shaders/grayscale.ps.hlsl");
     renderer.LoadShader(L"inverted", L"../CloverRenderer/assets/shaders/color.vs.hlsl", L"../CloverRenderer/assets/shaders/inverted.ps.hlsl");
     renderer.LoadShader(L"chromatic", L"../CloverRenderer/assets/shaders/color.vs.hlsl", L"../CloverRenderer/assets/shaders/chromatic.ps.hlsl");
     renderer.LoadShader(L"wacky", L"../CloverRenderer/assets/shaders/color.vs.hlsl", L"../CloverRenderer/assets/shaders/wacky.ps.hlsl");
-
-    renderer.LoadShader(L"light", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/light.ps.hlsl");
-    renderer.LoadShader(L"composite", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/composite.ps.hlsl");
-    renderer.LoadShader(L"passthrough", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/post.ps.hlsl");
-    renderer.LoadShader(L"crt", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/crt.ps.hlsl");
-    renderer.SetPostProcessShader(L"passthrough");
+    //renderer.LoadShader(L"crt", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/crt.ps.hlsl");
+    //renderer.SetPostProcessShader(L"crt");
 }
 
 void Game::SetupScene()
@@ -34,65 +29,101 @@ void Game::SetupScene()
     auto ecs = Engine.GetECS();
     auto& renderer = ecs->GetSystem<Renderer>();
 
-    {
-        const wchar_t* textures[] = {
-            L"../CloverRenderer/assets/textures/shrew1.jpg",
-            L"../CloverRenderer/assets/textures/shrew2.jpg",
-            L"../CloverRenderer/assets/textures/hamper.jpeg",
-            L"../CloverRenderer/assets/textures/saturn.png",
-        };
-        for (auto* t : textures)
-            renderer.AddTexture(t);
-        renderer.BuildAtlas();   // built ONCE, after all textures added, before first frame
+    const wchar_t* textures[] = {
+        L"../CloverRenderer/assets/textures/shrew1.jpg",
+        L"../CloverRenderer/assets/textures/shrew2.jpg",
+        L"../CloverRenderer/assets/textures/hamper.jpeg",
+        L"../CloverRenderer/assets/textures/saturn.png",
+        L"../CloverRenderer/assets/textures/white.jpg",
+    };
+    for (auto* t : textures)
+        renderer.AddTexture(t);
+    renderer.BuildAtlas();   // built ONCE, after all textures added, before first frame
 
-        auto centerEntity = ecs->CreateEntity();
-		auto& t = ecs->CreateComponent<Transform>(centerEntity);
-        t.position = { 0.0f, 0.0f };
-        clvr::Sprite cs;
-        cs.position = t.position;
-        cs.size = { 600.0f, 600.0f };
-        cs.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-        cs.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/saturn.png").uvRect;
-        cs.layer = 0;
-        ecs->CreateComponent<SpriteComponent>(centerEntity, cs);
+    auto centerEntity = ecs->CreateEntity();
+	auto& t = ecs->CreateComponent<Transform>(centerEntity);
+    t.position = { 0.0f, -300.0f };
+    clvr::Sprite cs;
+    cs.position = t.position;
+    cs.size = { 200.0f, 200.0f };
+    cs.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    cs.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/saturn.png").uvRect;
+    cs.layer = 0;
+    cs.isOccluder = false;
+    ecs->CreateComponent<SpriteComponent>(centerEntity, cs);
+	ecs->CreateComponent<MovingSprite>(centerEntity);
+
+    {
+		// create wall of occluder sprites randomly around the scene
+		for (int i = 0; i < 10; ++i)
+		{
+			auto entity = ecs->CreateEntity();
+			auto& t = ecs->CreateComponent<Transform>(entity);
+			t.position = { (float) (rand() % 1600 - 800), (float) (rand() % 800 - 400) };
+			t.rotation = (float) (rand() % 360) * 3.1415927f / 180.0f;
+			clvr::Sprite s;
+			s.position = t.position;
+			s.size = { (float) (rand() % 100 + 50), (float) (rand() % 100 + 50) };
+			s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+            s.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/white.jpg").uvRect;
+			s.layer = rand() % 5;
+			s.isOccluder = true;
+			ecs->CreateComponent<SpriteComponent>(entity, s);
+		}
     }
 
     {
 		auto lightEntity = ecs->CreateEntity();
 		auto& transform = ecs->CreateComponent<Transform>(lightEntity);
 		auto& light = ecs->CreateComponent<Light>(lightEntity);
-		light.color = { 0.8f, 0.3f, 0.1f };
+		light.color = { 1.0f, 1.0f, 1.0f };
 		light.direction = { 0.0f, 0.0f, -1.0f };
-		light.intensity = 0.2f;
+		light.intensity = 0.1f;
 		light.type = 0; // directional light
     }
 
     {
-        // ten varied point lights arranged in a ring, differing color/position/intensity
+        // ten varied point lights randomly positioned across the scene
         const int count = 10;
         for (int i = 0; i < count; ++i)
         {
-            float t = (float)i / count;                 // 0..1 around the ring
-            float angle = t * 2.0f * 3.1415927f;
+            float t = (float) i / count;
 
             auto lightEntity = ecs->CreateEntity();
             ecs->CreateComponent<Transform>(lightEntity);
             auto& light = ecs->CreateComponent<Light>(lightEntity);
+            ecs->CreateComponent<MovingLight>(lightEntity);
 
-            // spread positions in a ring; direction.xy is overloaded as position for point lights
-            float radius = 700.0f;
-            light.direction = { cosf(angle) * radius, sinf(angle) * radius, 0.0f };
+            // deterministic pseudo-random base position, seeded by index
+            // (kept in sync with the wander logic in Update())
+            float seedX = sinf((float) i * 12.9898f) * 43758.5453f;
+            float seedY = sinf((float) i * 78.233f) * 43758.5453f;
+            float baseX = fmodf(seedX, 1.0f) * 800.0f - 400.0f;
+            float baseY = fmodf(seedY, 1.0f) * 400.0f - 200.0f;
 
-            // vary color by cycling hue-ish via the ring parameter
+            light.direction = { baseX, baseY, 0.0f };
+
+            float angle = t * 2.0f * 3.1415927f;
             light.color = {
                 0.5f + 0.5f * cosf(angle),
-                0.5f + 0.5f * cosf(angle + 2.094f),      // +120°
-                0.5f + 0.5f * cosf(angle + 4.188f)       // +240°
+                0.5f + 0.5f * cosf(angle + 2.094f),
+                0.5f + 0.5f * cosf(angle + 4.188f)
             };
 
-            light.intensity = 10000.0f + t * 20000.0f;   // 10000..30000, varied per light
-            light.type = 1;                              // point light
+            light.intensity = 1000.0f + t * 2000.0f;
+            light.type = 1;
         }
+    }
+
+    {
+        auto lightEntity = ecs->CreateEntity();
+        ecs->CreateComponent<Transform>(lightEntity);
+        auto& light = ecs->CreateComponent<Light>(lightEntity);
+
+        light.direction = { 0.0f, 0.0f, 0.0f };
+        light.color = { 1.0f, 1.0f, 1.0f };
+        light.intensity = 5000.0f;
+        light.type = 1;
     }
 }
 
@@ -101,42 +132,50 @@ void Game::Update(float dt) {
 
     auto ecs = Engine.GetECS();
 
-    const float minI = 1000.0f;
-    const float maxI = 50000.0f;
-    const float minR = 200.0f;      // closest to center
-    const float maxR = 700.0f;      // farthest out
+    const float minI = 100.0f;
+    const float maxI = 5000.0f;
+    const float wanderRadius = 150.0f;
     const int   count = 10;
 
     int index = 0;
-    auto lightView = ecs->GetRegistry().view<Light>();
-    for (auto entity : lightView)
+    auto lightView = ecs->GetRegistry().view<Light, MovingLight>();
+    for (auto [entity, light] : lightView.each())
     {
-        Light& light = lightView.get<Light>(entity);
+        if (index >= count)
+            break;
+
         if (light.type != 1)
             continue;
 
-        float base = (float)index / count;
-        float angle = base * 2.0f * 3.1415927f;           // fixed slot on the ring
+        // same deterministic base position as SetupScene()
+        float seedX = sinf((float) index * 12.9898f) * 43758.5453f;
+        float seedY = sinf((float) index * 78.233f) * 43758.5453f;
+        float baseX = fmodf(seedX, 1.0f) * 800.0f - 400.0f;
+        float baseY = fmodf(seedY, 1.0f) * 400.0f - 200.0f;
 
-        // radius oscillates in/out, phase-offset per light so they move 1 by 1
-        float phase = m_time + base * 2.0f * 3.1415927f;
-        float r = minR + 0.5f * (sinf(phase) + 1.0f) * (maxR - minR);
+        // wander around that base position, phase-offset per light
+        float t = (float) index / count;
+        float phase = m_time + t * 2.0f * 3.1415927f;
+        float wanderX = cosf(phase * 0.7f) * wanderRadius;
+        float wanderY = sinf(phase * 0.9f) * wanderRadius;
 
-        light.direction = { cosf(angle) * r, sinf(angle) * r, 0.0f };
+        light.direction = { baseX + wanderX, baseY + wanderY, 0.0f };
 
-        light.intensity = minI + 0.5f * (sinf(phase) + 1.0f) * (maxI - minI);
+        float pulsePhase = m_time + t * 2.0f * 3.1415927f;
+        light.intensity = minI + 0.5f * (sinf(pulsePhase) + 1.0f) * (maxI - minI);
 
         ++index;
     }
 
     {
-        auto spriteView = ecs->GetRegistry().view<SpriteComponent, Transform>();
+        auto spriteView = ecs->GetRegistry().view<SpriteComponent, Transform, MovingSprite>();
 
 		for (auto [entity, sc, t] : spriteView.each())
 		{
-			// rotate all sprites slowly
 			//t.rotation += dt * 0.1f;
-			t.position.x += cosf(m_time) * dt * 300.0f;
+			// slowly move the sprite in an ellipsis
+            t.position.x += (cosf(m_time) * dt * 300.0f);
+			t.position.y += (sinf(m_time) * dt * 300.0f);
 		}
     }
 
@@ -164,9 +203,9 @@ void Game::Update(float dt) {
     float cameraSpeedMult = 1.0f;
 
     if (input->IsKeyDown(VK_SHIFT))
-        cameraSpeedMult = 10.0f;
+        cameraSpeedMult *= 10.0f;
     if (input->IsKeyDown(VK_CONTROL))
-        cameraSpeedMult = 0.1f;
+        cameraSpeedMult *= 0.1f;
     float cameraSpeed = camera.speed * cameraSpeedMult * dt;
 
     if (input->IsKeyDown('Q'))

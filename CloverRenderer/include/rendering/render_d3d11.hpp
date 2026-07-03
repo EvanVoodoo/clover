@@ -30,6 +30,7 @@ namespace clvr
 
 		void BeginScene(float, float, float, float);
 		void EndScene();
+		void OcclusionRender();
 		void DrawSprite(const Sprite& sprite, const Transform& transform);
 		void SetActiveShader(const std::wstring& name) { m_shaderManager->SetActiveShader(name); }
 		void SetPostProcessShader(const std::wstring& name) { m_shaderManager->SetPostProcessShader(name); }
@@ -63,6 +64,7 @@ namespace clvr
 		void UpdateLights(const BufferType::LightBufferType& data)
 		{
 			m_lightCb.Update(m_deviceContext, data);
+			m_lights = data;
 		}
 
 	private:
@@ -77,6 +79,8 @@ namespace clvr
 		Framebuffer* m_framebuffer;
 		Framebuffer* m_lightFramebuffer;
 		Framebuffer* m_finalFramebuffer;
+		Framebuffer* m_occlusionFramebuffers[16];
+		Framebuffer* m_shadowMapFbs[16];
 
 		ID3D11Buffer* m_fullscreenQuadVB;
 		ID3D11Buffer* m_fullscreenQuadIB;
@@ -89,6 +93,9 @@ namespace clvr
 
 		ConstantBuffer<BufferType::MVPBufferType> m_mvpCb;
 		ConstantBuffer<BufferType::LightBufferType> m_lightCb;
+
+		// lights for the scene, updated each frame, used for shadow mapping
+		BufferType::LightBufferType m_lights;
 
 		ShaderManager* m_shaderManager;
 		SpriteBatcher* m_spriteBatcher;

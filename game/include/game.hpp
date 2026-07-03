@@ -4,6 +4,14 @@
 
 using namespace clvr;
 
+struct MovingLight {
+	MovingLight() = default;
+};
+
+struct MovingSprite {
+	MovingSprite() = default;
+};
+
 class Game : public System {
 public:
 	Game();

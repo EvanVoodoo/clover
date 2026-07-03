@@ -6,18 +6,19 @@ SpriteBatcher::SpriteBatcher()
 	: m_device(nullptr), m_deviceContext(nullptr),
 	m_vertexBuffer(nullptr), m_indexBuffer(nullptr),
 	m_vertexBufferBase(nullptr), m_vertexBufferPtr(nullptr),
-	m_indexCount(0)
-{
-}
+	m_indexCount(0),
+	m_occluderVertexBuffer(nullptr), m_occluderIndexBuffer(nullptr),
+	m_occluderVertexBufferBase(nullptr), m_occluderVertexBufferPtr(nullptr),
+	m_occluderIndexCount(0)
+{}
 
 SpriteBatcher::SpriteBatcher(const SpriteBatcher& other)
 {
-	(void)other;
+	(void) other;
 }
 
 SpriteBatcher::~SpriteBatcher()
-{
-}
+{}
 
 bool SpriteBatcher::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 {
@@ -26,6 +27,9 @@ bool SpriteBatcher::Initialize(ID3D11Device* device, ID3D11DeviceContext* device
 
 	m_vertexBufferBase = new Vertex[MAX_VERTICES];
 	m_vertexBufferPtr = m_vertexBufferBase;
+
+	m_occluderVertexBufferBase = new Vertex[MAX_VERTICES];
+	m_occluderVertexBufferPtr = m_occluderVertexBufferBase;
 
 	if (!InitializeBuffers())
 		return false;
@@ -69,6 +73,43 @@ bool SpriteBatcher::InitializeBuffers()
 	delete[] indices;
 	if (FAILED(result))
 		return false;
+
+	// Create occluder vertex buffer
+	D3D11_BUFFER_DESC occluderVertexBufferDesc = {};
+	occluderVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	occluderVertexBufferDesc.ByteWidth = sizeof(Vertex) * MAX_VERTICES;
+	occluderVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	occluderVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	result = m_device->CreateBuffer(&occluderVertexBufferDesc, nullptr, &m_occluderVertexBuffer);
+	if (FAILED(result))
+		return false;
+
+	// Create occluder index buffer
+	D3D11_BUFFER_DESC occluderIndexBufferDesc = {};
+	occluderIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	occluderIndexBufferDesc.ByteWidth = sizeof(unsigned int) * MAX_INDICES;
+	occluderIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	unsigned int* occluderIndices = new unsigned int[MAX_INDICES];
+	for (int i = 0; i < MAX_SPRITES; ++i)
+	{
+		occluderIndices[i * 6 + 0] = i * 4 + 0;
+		occluderIndices[i * 6 + 1] = i * 4 + 1;
+		occluderIndices[i * 6 + 2] = i * 4 + 2;
+		occluderIndices[i * 6 + 3] = i * 4 + 0;
+		occluderIndices[i * 6 + 4] = i * 4 + 2;
+		occluderIndices[i * 6 + 5] = i * 4 + 3;
+	}
+
+	D3D11_SUBRESOURCE_DATA occluderIndexData = {};
+	occluderIndexData.pSysMem = occluderIndices;
+
+	result = m_device->CreateBuffer(&occluderIndexBufferDesc, &occluderIndexData, &m_occluderIndexBuffer);
+	delete[] occluderIndices;
+	if (FAILED(result))
+		return false;
+
 	return true;
 }
 
@@ -89,12 +130,30 @@ void SpriteBatcher::Shutdown()
 		delete[] m_vertexBufferBase;
 		m_vertexBufferBase = nullptr;
 	}
+	if (m_occluderVertexBuffer)
+	{
+		m_occluderVertexBuffer->Release();
+		m_occluderVertexBuffer = nullptr;
+	}
+	if (m_occluderIndexBuffer)
+	{
+		m_occluderIndexBuffer->Release();
+		m_occluderIndexBuffer = nullptr;
+	}
+	if (m_occluderVertexBufferBase)
+	{
+		delete[] m_occluderVertexBufferBase;
+		m_occluderVertexBufferBase = nullptr;
+	}
 }
 
 void SpriteBatcher::Begin()
 {
 	m_vertexBufferPtr = m_vertexBufferBase;
 	m_indexCount = 0;
+
+	m_occluderVertexBufferPtr = m_occluderVertexBufferBase;
+	m_occluderIndexCount = 0;
 }
 
 void SpriteBatcher::DrawSprite(const Sprite& sprite, const Transform& transform)
@@ -136,6 +195,23 @@ void SpriteBatcher::DrawSprite(const Sprite& sprite, const Transform& transform)
 	}
 
 	m_indexCount += 6;
+
+	// Mirror occluder-flagged sprites into the separate occluder batch
+	if (sprite.isOccluder && m_occluderIndexCount < MAX_INDICES)
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			XMVECTOR local = XMVectorSet(corners[i].x, corners[i].y, 0.5f, 1.0f);
+			XMVECTOR worldPos = XMVector3Transform(local, world);
+			XMStoreFloat3(&m_occluderVertexBufferPtr->position, worldPos);
+
+			m_occluderVertexBufferPtr->uv = uvs[i];
+			m_occluderVertexBufferPtr->color = sprite.color;
+			m_occluderVertexBufferPtr++;
+		}
+
+		m_occluderIndexCount += 6;
+	}
 }
 
 void SpriteBatcher::End()
@@ -147,14 +223,37 @@ void SpriteBatcher::End()
 	D3D11_MAPPED_SUBRESOURCE mappedResource = {};
 	m_deviceContext->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	memcpy(mappedResource.pData, m_vertexBufferBase, sizeof(Vertex) * (m_indexCount / 6) * 4);
-
 	m_deviceContext->Unmap(m_vertexBuffer, 0);
 
-	// Set the vertex and index buffers
+	if (m_occluderIndexCount == 0)
+		return;
+
+	// Map the occluder vertex buffer and copy the occluder subset
+	D3D11_MAPPED_SUBRESOURCE occluderMappedResource = {};
+	m_deviceContext->Map(m_occluderVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &occluderMappedResource);
+	memcpy(occluderMappedResource.pData, m_occluderVertexBufferBase, sizeof(Vertex) * (m_occluderIndexCount / 6) * 4);
+	m_deviceContext->Unmap(m_occluderVertexBuffer, 0);
+}
+
+void SpriteBatcher::DrawToRT()
+{
 	unsigned int stride = sizeof(Vertex);
 	unsigned int offset = 0;
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 	m_deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_deviceContext->DrawIndexed(m_indexCount, 0, 0);
+}
+
+void SpriteBatcher::DrawOccludersToRT()
+{
+	if (m_occluderIndexCount == 0)
+		return;
+
+	unsigned int stride = sizeof(Vertex);
+	unsigned int offset = 0;
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_occluderVertexBuffer, &stride, &offset);
+	m_deviceContext->IASetIndexBuffer(m_occluderIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_deviceContext->DrawIndexed(m_occluderIndexCount, 0, 0);
 }
