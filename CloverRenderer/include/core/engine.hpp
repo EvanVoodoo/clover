@@ -2,29 +2,33 @@
 
 #include "core/window.hpp"
 #include "core/input.hpp"
-#include "rendering/renderer.hpp"
+#include "core/ecs.hpp"
 
 const int SCREEN_WIDTH = 1600;
 const int SCREEN_HEIGHT = 900;
 
 namespace clvr
 {
-	class Engine
+	class EngineClass
 	{
 	public:
-		Engine();
-		Engine(const Engine&);
-		~Engine();
-
 		bool Initialize(HINSTANCE hInstance, int nCmdShow);
 		void Shutdown();
 		void Run();
 
+		EntityComponentSystem* GetECS() { return m_ecs; }
+		Window* GetWindow() { return m_window; }
+		Input* GetInput() { return m_input; }
+
+		bool running = false;
+
 	private:
 		bool Frame(float dt);
 
-		Input* m_input;
-		Window* m_window;
-		Renderer* m_renderer;
+		EntityComponentSystem* m_ecs = nullptr;
+		Input* m_input = nullptr;
+		Window* m_window = nullptr;
 	};
+
+	extern EngineClass Engine;
 }

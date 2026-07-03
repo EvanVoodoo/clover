@@ -20,8 +20,10 @@ namespace clvr
         void Shutdown();
 
         void Begin();
-        void DrawSprite(const Sprite& sprite);
+        void DrawSprite(const Sprite& sprite, const Transform& transform);
         void End();
+        void DrawToRT();
+        void DrawOccludersToRT();
 
     private:
         bool InitializeBuffers();
@@ -35,5 +37,12 @@ namespace clvr
         Vertex* m_vertexBufferBase;
         Vertex* m_vertexBufferPtr;
         int m_indexCount;
+
+        ID3D11Buffer* m_occluderVertexBuffer;
+        ID3D11Buffer* m_occluderIndexBuffer;
+
+        Vertex* m_occluderVertexBufferBase;
+        Vertex* m_occluderVertexBufferPtr;
+        int m_occluderIndexCount;
     };
 }

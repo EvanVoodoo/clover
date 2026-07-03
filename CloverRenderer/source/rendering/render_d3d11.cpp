@@ -1,6 +1,8 @@
 #include "rendering/render_d3d11.hpp"
 #include <DirectXTex.h>
 
+#pragma comment(lib, "DirectXTex.lib")
+
 using namespace clvr;
 
 DirectX2D::DirectX2D()
@@ -18,6 +20,12 @@ DirectX2D::DirectX2D()
 	m_samplerState = nullptr;
 	m_textureAtlas = nullptr;
 	m_framebuffer = nullptr;
+	for (int i = 0; i < 16; ++i) {
+		m_occlusionFramebuffers[i] = nullptr;
+		m_shadowMapFbs[i] = nullptr;
+	}
+	m_lightFramebuffer = nullptr;
+	m_finalFramebuffer = nullptr;
 	m_fullscreenQuadIB = nullptr;
 	m_fullscreenQuadVB = nullptr;
 }
@@ -274,10 +282,10 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	blendState->Release();
 
 	D3D11_SAMPLER_DESC samplerDesc = {};
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
@@ -311,11 +319,57 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 		return false;
 	}
 
+	m_shaderManager->LoadShader(L"default", L"../CloverRenderer/assets/shaders/color.vs.hlsl", L"../CloverRenderer/assets/shaders/color.ps.hlsl");
+	m_shaderManager->LoadShader(L"light", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/light.ps.hlsl");
+	m_shaderManager->LoadShader(L"composite", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/composite.ps.hlsl");
+	m_shaderManager->LoadShader(L"passthrough", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/post.ps.hlsl");
+	m_shaderManager->LoadShader(L"occlusion", L"../CloverRenderer/assets/shaders/occlusion.vs.hlsl", L"../CloverRenderer/assets/shaders/occlusion.ps.hlsl");
+	m_shaderManager->LoadShader(L"shadow_map", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/shadow_map.ps.hlsl");
+	m_shaderManager->SetPostProcessShader(L"passthrough");
+
 	m_framebuffer = new Framebuffer();
 	result = m_framebuffer->Initialize(m_device, screenWidth, screenHeight);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the framebuffer", L"Error", MB_OK);
+		return false;
+	}
+
+	int lightSize = 2048;
+	for (int i = 0; i < 16; i++) {
+		m_occlusionFramebuffers[i] = new Framebuffer();
+		Framebuffer* fbo = m_occlusionFramebuffers[i];
+		result = fbo->Initialize(m_device, lightSize, lightSize);
+		if (!result)
+		{
+			MessageBox(hwnd, L"Could not initialize occlusion framebuffers", L"Error", MB_OK);
+			return false;
+		}
+
+		m_shadowMapFbs[i] = new Framebuffer();
+		fbo = m_shadowMapFbs[i];
+		// 1D shadow map for each light
+		result = fbo->Initialize(m_device, lightSize, 1);
+		if (!result) 
+		{
+			MessageBox(hwnd, L"Could not initialize shadow map framebuffers", L"Error", MB_OK);
+			return false;
+		}
+	}
+
+	m_lightFramebuffer = new Framebuffer();
+	result = m_lightFramebuffer->Initialize(m_device, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize light framebuffer", L"Error", MB_OK);
+		return false;
+	}
+
+	m_finalFramebuffer = new Framebuffer();
+	result = m_finalFramebuffer->Initialize(m_device, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize final framebuffer", L"Error", MB_OK);
 		return false;
 	}
 
@@ -334,20 +388,8 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	if (!m_textureAtlas->Initialize(m_device, m_deviceContext, ATLAS_MAX_SIZE, ATLAS_MAX_SIZE))
 		return false;
 
-	m_textureAtlas->AddTexture(L"assets/textures/shrew1.jpg");
-	m_textureAtlas->AddTexture(L"assets/textures/shrew2.jpg");
-	m_textureAtlas->AddTexture(L"assets/textures/shrew3.jpg");
-	m_textureAtlas->AddTexture(L"assets/textures/freak.png");
-	m_textureAtlas->AddTexture(L"assets/textures/hihi.png");
-	m_textureAtlas->AddTexture(L"assets/textures/hamper.jpeg");
-	m_textureAtlas->AddTexture(L"assets/textures/ParticleSystemMenu.png");
-	m_textureAtlas->AddTexture(L"assets/textures/steve_frogs.jpg");
-	m_textureAtlas->AddTexture(L"assets/textures/time.png");
-
-	if (!m_textureAtlas->Build())
-		return false;
-
 	m_mvpCb.Init(m_device);
+	m_lightCb.Init(m_device);
 
 	return true;
 }
@@ -420,6 +462,36 @@ void DirectX2D::Shutdown()
 	if (m_fullscreenQuadVB) { m_fullscreenQuadVB->Release(); m_fullscreenQuadVB = nullptr; }
 	if (m_fullscreenQuadIB) { m_fullscreenQuadIB->Release(); m_fullscreenQuadIB = nullptr; }
 
+	if (m_finalFramebuffer)
+	{
+		m_finalFramebuffer->Shutdown();
+		delete m_finalFramebuffer;
+		m_finalFramebuffer = nullptr;
+	}
+
+	if (m_lightFramebuffer)
+	{
+		m_lightFramebuffer->Shutdown();
+		delete m_lightFramebuffer;
+		m_lightFramebuffer = nullptr;
+	}
+
+	for (int i = 0; i < 16; i++)
+	{
+		if (m_occlusionFramebuffers[i])
+		{
+			m_occlusionFramebuffers[i]->Shutdown();
+			delete m_occlusionFramebuffers[i];
+			m_occlusionFramebuffers[i] = nullptr;
+		}
+		if (m_shadowMapFbs[i])
+		{
+			m_shadowMapFbs[i]->Shutdown();
+			delete m_shadowMapFbs[i];
+			m_shadowMapFbs[i] = nullptr;
+		}
+	}
+
 	if (m_framebuffer)
 	{
 		m_framebuffer->Shutdown();
@@ -476,7 +548,7 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 	// Shader handles the rest
 
 	m_shaderManager->GetActiveShader()->Bind(m_deviceContext);
-	BufferType::MVPBufferType mvpData = { XMMatrixIdentity(), GetViewMatrix(), GetProjectionMatrix() };
+	BufferType::MVPBufferType mvpData = m_camera.GetMVPBufferData();
 	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
 	m_mvpCb.BindVS(m_deviceContext, 0);
 
@@ -491,33 +563,65 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 void DirectX2D::EndScene()
 {
 	m_spriteBatcher->End();
+	m_spriteBatcher->DrawToRT();
 
-	// Unbind the framebuffer so we can render to the back buffer
-	SetBackBufferRenderTarget();
+	unsigned int stride = sizeof(Vertex);
+	unsigned int offset = 0;
 
-	/*Framebuffer lightFramebuffer;
-	lightFramebuffer.Initialize(m_device, static_cast<int>(m_viewport.Width), static_cast<int>(m_viewport.Height));
-	lightFramebuffer.Bind(m_deviceContext);
+	OcclusionRender();
+
+	// Render lights to light framebuffer
 
 	m_shaderManager->GetShader(L"light")->Bind(m_deviceContext);
+
+	float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	m_lightFramebuffer->Bind(m_deviceContext);
+	m_deviceContext->ClearRenderTargetView(m_lightFramebuffer->GetRTV(), color);
+
+	m_lightCb.BindPS(m_deviceContext, 1);
+
+	BufferType::InvViewProjectionBufferType invVPData = { XMMatrixTranspose(XMMatrixInverse(nullptr, GetViewMatrix() * GetProjectionMatrix())), XMFLOAT2(m_viewport.Width, m_viewport.Height) };
+	ConstantBuffer<BufferType::InvViewProjectionBufferType> invVPCB;																  
+	invVPCB.Init(m_device);
+	invVPCB.Update(m_deviceContext, invVPData);
+	invVPCB.BindPS(m_deviceContext, 2);
+
+	ID3D11ShaderResourceView* shadowSrvs[16];
+	for (int i = 0; i < 16; i++)
+		shadowSrvs[i] = m_shadowMapFbs[i]->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 16, shadowSrvs);
 
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
 	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	m_deviceContext->DrawIndexed(6, 0, 0);*/
+	m_deviceContext->DrawIndexed(6, 0, 0);
 
-	// final pass: render framebuffer to back buffer with post-processing shader
-	unsigned int stride = sizeof(Vertex);
-	unsigned int offset = 0;
+	// Composite the light framebuffer with the main framebuffer
 
-	BufferType::MVPBufferType mvpData = { XMMatrixIdentity(), GetViewMatrix(), GetProjectionMatrix() };
-	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
-	m_mvpCb.BindVS(m_deviceContext, 0);
-	ID3D11ShaderResourceView* srv = m_framebuffer->GetSRV();
-	m_deviceContext->PSSetShaderResources(0, 1, &srv);
+	m_finalFramebuffer->Bind(m_deviceContext);
+	m_deviceContext->ClearRenderTargetView(m_finalFramebuffer->GetRTV(), color);
+
+	m_shaderManager->GetShader(L"composite")->Bind(m_deviceContext);
+
+	ID3D11ShaderResourceView* srvs[2] = { m_framebuffer->GetSRV(), m_lightFramebuffer->GetSRV() };
+	m_deviceContext->PSSetShaderResources(0, 1, &srvs[0]);
+	m_deviceContext->PSSetShaderResources(1, 1, &srvs[1]);
 	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
 
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
+	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_deviceContext->DrawIndexed(6, 0, 0);
+
+	// final pass: render framebuffer to back buffer with post-processing shader
+	// Unbind the framebuffer so we can render to the back buffer
+	SetBackBufferRenderTarget();
+
 	m_shaderManager->GetPostProcessShader()->Bind(m_deviceContext);
+
+	ID3D11ShaderResourceView* srv = m_finalFramebuffer->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 1, &srv);
+	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
 
 	// Draw fullscreen quad
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
@@ -539,7 +643,89 @@ void DirectX2D::EndScene()
 	return;
 }
 
-void DirectX2D::DrawSprite(const Sprite& sprite) { m_spriteBatcher->DrawSprite(sprite); }
+void DirectX2D::OcclusionRender()
+{
+	// Render occlusion maps to occlusion framebuffers
+	ConstantBuffer<BufferType::MVPBufferType> occlusionMVPBuffer;
+	occlusionMVPBuffer.Init(m_device);
+
+	D3D11_VIEWPORT lightViewport = {};
+	float lightSize = 2048.0f;
+	lightViewport.Width = lightSize;
+	lightViewport.Height = lightSize;
+	lightViewport.MinDepth = 0.0f;
+	lightViewport.MaxDepth = 1.0f;
+	m_deviceContext->RSSetViewports(1, &lightViewport);
+
+	Camera occlusionCamera = m_camera;
+	occlusionCamera.projectionMatrix = XMMatrixOrthographicLH(lightViewport.Width, lightViewport.Height, lightViewport.MinDepth, lightViewport.MaxDepth);
+	occlusionCamera.transform.rotation = 0.0f;
+
+	// Set shader to occlusion shader
+
+	float occlusionClearColor[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
+	float shadowClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+	struct ResolutionBuffer
+	{
+		XMFLOAT2 screenSize;
+		XMFLOAT2 _pad;
+	};
+
+	ConstantBuffer<ResolutionBuffer> resolutionBuffer;
+	resolutionBuffer.Init(m_device);
+	resolutionBuffer.Update(m_deviceContext, { XMFLOAT2(lightViewport.Width, lightViewport.Height), XMFLOAT2(0.0f, 0.0f) });
+
+	unsigned int stride = sizeof(Vertex);
+	unsigned int offset = 0;
+
+	for (int i = 0; i < m_lights.lightCount; i++) {
+		Framebuffer* fbo = m_occlusionFramebuffers[i];
+		fbo->Bind(m_deviceContext);
+		// Clear the occlusion framebuffer to white (no occlusion)
+		m_deviceContext->ClearRenderTargetView(fbo->GetRTV(), occlusionClearColor);
+
+		m_shaderManager->GetShader(L"occlusion")->Bind(m_deviceContext);
+
+		// Move the camera to the light's position and set the viewport to the light's size
+		if (m_lights.lights[i].type == 1.0f) {
+			occlusionCamera.transform.position = { m_lights.lights[i].direction.x, m_lights.lights[i].direction.y };
+
+			BufferType::MVPBufferType mvpData = occlusionCamera.GetMVPBufferData();
+			occlusionMVPBuffer.Update(m_deviceContext, mvpData.Transposed());
+			occlusionMVPBuffer.BindVS(m_deviceContext, 0);
+			m_spriteBatcher->DrawOccludersToRT();
+		}
+	}
+
+	for (int i = 0; i < m_lights.lightCount; i++) {
+		Framebuffer* fbo = m_occlusionFramebuffers[i];
+		Framebuffer* shadowFbo = m_shadowMapFbs[i];
+		shadowFbo->Bind(m_deviceContext);
+		m_deviceContext->ClearRenderTargetView(shadowFbo->GetRTV(), shadowClearColor);
+
+		m_shaderManager->GetShader(L"shadow_map")->Bind(m_deviceContext);
+
+		ID3D11ShaderResourceView* srv = fbo->GetSRV();
+		m_deviceContext->PSSetShaderResources(0, 1, &srv);
+		m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+		resolutionBuffer.BindPS(m_deviceContext, 0);
+
+		m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
+		m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
+		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		m_deviceContext->DrawIndexed(6, 0, 0);
+	}
+
+	ResetViewport();
+}
+
+void DirectX2D::DrawSprite(const Sprite& sprite, const Transform& transform) { m_spriteBatcher->DrawSprite(sprite, transform); }
+
+int DirectX2D::AddTexture(const wchar_t* filename)
+{
+	return m_textureAtlas->AddTexture(filename);
+}
 
 ID3D11ShaderResourceView* DirectX2D::LoadTexture(const wchar_t* filename)
 {
@@ -556,6 +742,11 @@ ID3D11ShaderResourceView* DirectX2D::LoadTexture(const wchar_t* filename)
 	return srv;
 }
 
+bool DirectX2D::BuildAtlas()
+{
+	return m_textureAtlas->Build();
+}
+
 ID3D11Device* DirectX2D::GetDevice()
 {
 	return m_device;
@@ -568,18 +759,17 @@ ID3D11DeviceContext* DirectX2D::GetDeviceContext()
 
 XMMATRIX DirectX2D::GetProjectionMatrix()
 {
-	return m_camera.projectionMatrix;
+	return m_camera.GetProjectionMatrix();
 }
 
 XMMATRIX DirectX2D::GetWorldMatrix()
 {
-	// returns the identity matrix for 2D rendering
-	return XMMatrixIdentity();
+	return  m_camera.GetWorldMatrix();
 }
 
 XMMATRIX DirectX2D::GetViewMatrix()
 {
-	return XMMatrixInverse(nullptr, m_camera.transform.GetWorld());
+	return m_camera.GetViewMatrix();
 }
 
 void DirectX2D::GetVideoCardInfo(char* cardName, int& memory)

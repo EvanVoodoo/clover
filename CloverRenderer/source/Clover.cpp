@@ -9,14 +9,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    clvr::Engine* engine = new clvr::Engine;
-
-    if (!engine->Initialize(hInstance, nCmdShow))
+    if (!clvr::Engine.Initialize(hInstance, nCmdShow))
         return 0;
 
-    engine->Run();
-    engine->Shutdown();
-
-    delete engine;
+    clvr::Engine.Run();
+    clvr::Engine.Shutdown();
     return 0;
 }

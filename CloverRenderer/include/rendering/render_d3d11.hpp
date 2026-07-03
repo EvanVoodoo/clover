@@ -30,7 +30,8 @@ namespace clvr
 
 		void BeginScene(float, float, float, float);
 		void EndScene();
-		void DrawSprite(const Sprite& sprite);
+		void OcclusionRender();
+		void DrawSprite(const Sprite& sprite, const Transform& transform);
 		void SetActiveShader(const std::wstring& name) { m_shaderManager->SetActiveShader(name); }
 		void SetPostProcessShader(const std::wstring& name) { m_shaderManager->SetPostProcessShader(name); }
 
@@ -41,8 +42,11 @@ namespace clvr
 
 		bool ReloadShaders() { return m_shaderManager->ReloadAll(); }
 
+		int AddTexture(const wchar_t* filename);
 		ID3D11ShaderResourceView* LoadTexture(const wchar_t* filename);
+
 		AtlasRegion GetAtlasRegion(const wchar_t* filename) { return m_textureAtlas->GetRegion(filename); }
+		bool BuildAtlas();
 
 		ID3D11Device* GetDevice();
 		ID3D11DeviceContext* GetDeviceContext();
@@ -57,6 +61,12 @@ namespace clvr
 		void SetBackBufferRenderTarget();
 		void ResetViewport();
 
+		void UpdateLights(const BufferType::LightBufferType& data)
+		{
+			m_lightCb.Update(m_deviceContext, data);
+			m_lights = data;
+		}
+
 	private:
 		bool m_vsyncEnabled;
 		int m_videoCardMemory;
@@ -67,6 +77,10 @@ namespace clvr
 		ID3D11RenderTargetView* m_renderTargetView;
 		
 		Framebuffer* m_framebuffer;
+		Framebuffer* m_lightFramebuffer;
+		Framebuffer* m_finalFramebuffer;
+		Framebuffer* m_occlusionFramebuffers[16];
+		Framebuffer* m_shadowMapFbs[16];
 
 		ID3D11Buffer* m_fullscreenQuadVB;
 		ID3D11Buffer* m_fullscreenQuadIB;
@@ -78,6 +92,10 @@ namespace clvr
 		D3D11_VIEWPORT m_viewport;
 
 		ConstantBuffer<BufferType::MVPBufferType> m_mvpCb;
+		ConstantBuffer<BufferType::LightBufferType> m_lightCb;
+
+		// lights for the scene, updated each frame, used for shadow mapping
+		BufferType::LightBufferType m_lights;
 
 		ShaderManager* m_shaderManager;
 		SpriteBatcher* m_spriteBatcher;
