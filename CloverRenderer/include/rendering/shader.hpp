@@ -5,6 +5,7 @@
 #include <directxmath.h>
 #include <fstream>
 #include <map>
+#include <filesystem>
 
 using namespace DirectX;
 using namespace std;
@@ -29,7 +30,8 @@ namespace clvr
 		bool Initialize(ID3D11Device* device, HWND hwnd, const wchar_t* vs, const wchar_t* ps);
 		void Shutdown();
 		bool Bind(ID3D11DeviceContext* deviceContext);
-		bool Reload(ID3D11Device* device, HWND hwnd);
+		bool NeedsReload() const;
+		bool Reload(ID3D11Device* device, HWND hwnd); 
 
 	private:
 		bool InitializeShader(ID3D11Device*, HWND, const wchar_t*, const wchar_t*);
@@ -45,5 +47,8 @@ namespace clvr
 		ID3D11VertexShader* m_vertexShader;
 		ID3D11PixelShader* m_pixelShader;
 		ID3D11InputLayout* m_layout;
+
+		std::filesystem::file_time_type m_vsLastModifiedTime;
+		std::filesystem::file_time_type m_psLastModifiedTime;
 	};
 }

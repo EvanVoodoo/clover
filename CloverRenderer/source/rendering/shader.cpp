@@ -41,6 +41,19 @@ bool Shader::Bind(ID3D11DeviceContext* deviceContext)
 	return true;
 }
 
+static std::filesystem::file_time_type GetFileTime(const wchar_t* path)
+{
+	std::error_code ec;
+	auto t = std::filesystem::last_write_time(path, ec);
+	return ec ? std::filesystem::file_time_type{} : t;   // epoch on failure
+}
+
+bool Shader::NeedsReload() const
+{
+	return GetFileTime(m_vsFilename.c_str()) != m_vsLastModifiedTime
+		|| GetFileTime(m_psFilename.c_str()) != m_psLastModifiedTime;
+}
+
 bool Shader::Reload(ID3D11Device* device, HWND hwnd)
 {
 	ID3D11VertexShader* newVS = nullptr;
@@ -66,13 +79,21 @@ bool Shader::Reload(ID3D11Device* device, HWND hwnd)
 	m_pixelShader = newPS;
 	m_layout = newLayout;
 
+	m_vsLastModifiedTime = GetFileTime(m_vsFilename.c_str());
+	m_psLastModifiedTime = GetFileTime(m_psFilename.c_str());
+
 	return true;
 }
 
 bool Shader::InitializeShader(ID3D11Device* device, HWND hwnd, const wchar_t* vsFilename, const wchar_t* psFilename)
 {
-	return InitializeShaderInto(device, hwnd, vsFilename, psFilename,
-		&m_vertexShader, &m_pixelShader, &m_layout);
+	if (!InitializeShaderInto(device, hwnd, vsFilename, psFilename,
+		&m_vertexShader, &m_pixelShader, &m_layout))
+		return false;
+
+	m_vsLastModifiedTime = GetFileTime(vsFilename);
+	m_psLastModifiedTime = GetFileTime(psFilename);
+	return true;
 }
 
 bool Shader::InitializeShaderInto(ID3D11Device* device, HWND hwnd, const wchar_t* vsFilename, const wchar_t* psFilename,

@@ -8,8 +8,8 @@ struct PixelInputType
     float4 color : COLOR;
 };
 
-static const float warp = 1;
-static const float scan = 1;
+static const float warp = 0.75;
+static const float scan = 0.75;
 
 float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 {

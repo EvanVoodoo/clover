@@ -12,6 +12,6 @@ float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 {
     float2 uv = input.uv;
 
-    float4 pixel;
-    return texture0.Sample(sampler0, uv);
+    float4 pixel = texture0.Sample(sampler0, uv);
+    return float4(pixel.r, pixel.g, pixel.b, pixel.a);
 }
