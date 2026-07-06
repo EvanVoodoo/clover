@@ -4,8 +4,8 @@
 #include "core/input.hpp"
 #include "core/ecs.hpp"
 
-const int SCREEN_WIDTH = 1600;
-const int SCREEN_HEIGHT = 900;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1080;
 
 namespace clvr
 {

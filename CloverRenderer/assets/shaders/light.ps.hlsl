@@ -1,4 +1,4 @@
-#define MAX_LIGHTS 128
+#define MAX_LIGHTS 32
 #define PI 3.14159265
 
 struct Light
@@ -22,6 +22,7 @@ cbuffer M : register(b2)
     float2 screenSize;
     // matches lightSize used when building the occlusion/shadow maps in C++
     float lightSize;
+    float zoom;
     float directionalLightSize; // directional light occlusion viewport size (the "size" you set to max(width,height))
     float2 camPosition; // main camera's world position this frame
     float2 _pad2;
@@ -76,7 +77,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_TARGET
             float lit;
             if (isOccluder)
             {
-                lit = 0.01; // same default-normal treatment as point lights
+                lit = 0.5; // same default-normal treatment as point lights
             }
             else
             {
@@ -99,13 +100,13 @@ float4 ColorPixelShader(PixelInputType input) : SV_TARGET
             // both in world space now
             float2 lightWorld = l.direction.xy; // overloaded as position
             float2 delta = fragWorld - lightWorld;
-            float dist = length(delta);
+            float dist = length(delta) * zoom;
 
             // inverse-square core (with the singularity guard)
             float atten = 1.0 / (dist * dist + 1.0);
 
             // radius window that forces it to actually reach zero
-            float radius = length(screenSize);
+            float radius = length(lightSize);
             float window = saturate(1.0 - dist / radius);
             window *= window;
 
@@ -121,7 +122,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_TARGET
                 // --- shadow lookup ---
                 // normalized distance from light center, matching how the
                 // occlusion/shadow-map pass was built (lightSize x lightSize ortho)
-                float r = dist / (lightSize * 0.5);
+                float r = dist / (0.5 * lightSize);
 
                 // angle of this fragment relative to the light, matched to
                 // the polar transform used when building the 1D shadow map
@@ -132,7 +133,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_TARGET
                 lit = step(r - SHADOW_BIAS, shadowDist);
             }
 
-            atten *= lit;
+            atten *= lit * zoom * zoom;
 
             pixel.rgb += l.color * l.intensity * atten;
         }

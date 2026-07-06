@@ -71,7 +71,7 @@ void Renderer::DrawSprite(const Sprite& sprite, const Transform& transform) { m_
 
 bool Renderer::Render(float dt)
 {
-	m_DX2D->BeginScene(0.9f, 0.9f, 0.9f, 1.0f);
+	m_DX2D->BeginScene(1.0f, 1.0f, 1.0f, 1.0f);
 
 	UpdateLights();
 

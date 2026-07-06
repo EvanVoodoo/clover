@@ -4,6 +4,7 @@
 #pragma comment(lib, "DirectXTex.lib")
 
 #define LIGHT_SIZE 2048
+#define DIRECTIONAL_LIGHT_SIZE 2048
 
 using namespace clvr;
 
@@ -13,9 +14,6 @@ DirectX2D::DirectX2D()
 	m_device = nullptr;
 	m_deviceContext = nullptr;
 	m_renderTargetView = nullptr;
-	/*m_depthStencilBuffer = nullptr;
-	m_depthStencilState = nullptr;
-	m_depthStencilView = nullptr;*/
 	m_rasterState = nullptr;
 	m_shaderManager = nullptr;
 	m_spriteBatcher = nullptr;
@@ -285,9 +283,13 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDesc.BorderColor[0] = 1.0f;
+	samplerDesc.BorderColor[1] = 1.0f;
+	samplerDesc.BorderColor[2] = 1.0f;
+	samplerDesc.BorderColor[3] = 1.0f;
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
@@ -611,24 +613,28 @@ void DirectX2D::EndScene()
 
 	m_lightCb.BindPS(m_deviceContext, 1);
 
-	struct InvViewProjectionBuffer
+	struct M
 	{
 		XMMATRIX invViewProjection;
 		XMFLOAT2 screenSize;
-		float lightSize;
+		float zoomedLightSize;
+		float invZoom;
 		float directionalLightSize;
 		XMFLOAT2 camPosition;
-		XMFLOAT2 _pad2;
+		float _pad;
 	};
 
-	InvViewProjectionBuffer invVPData = { XMMatrixTranspose(XMMatrixInverse(nullptr, GetViewMatrix() * GetProjectionMatrix())), 
+	float invZoom = 1.f / m_camera.zoom;
+
+	M invVPData = { XMMatrixTranspose(XMMatrixInverse(nullptr, GetViewMatrix() * GetProjectionMatrix())), 
 										  XMFLOAT2(m_viewport.Width, m_viewport.Height), 
-										  static_cast<float>(LIGHT_SIZE) / m_camera.zoom,
-										  static_cast<float>(max(m_viewport.Width, m_viewport.Height)),
+										  static_cast<float>(LIGHT_SIZE) * invZoom,
+										  invZoom,
+										  static_cast<float>(LIGHT_SIZE)* invZoom,
 										  m_camera.transform.position,
-										  XMFLOAT2(0.0f, 0.0f)
+										  0.0f
 										};
-	ConstantBuffer<InvViewProjectionBuffer> invVPCB;
+	ConstantBuffer<M> invVPCB;
 	invVPCB.Init(m_device);
 	invVPCB.Update(m_deviceContext, invVPData);
 	invVPCB.BindPS(m_deviceContext, 2);
@@ -638,6 +644,7 @@ void DirectX2D::EndScene()
 	ID3D11ShaderResourceView* maskSrv = m_occluderMaskFramebuffer->GetSRV();
 	m_deviceContext->PSSetShaderResources(1, 1, &maskSrv);
 
+	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
 	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -713,7 +720,7 @@ void DirectX2D::OcclusionRender()
 
 	// set up viewport and camera for occlusion rendering for directional lights
 	D3D11_VIEWPORT directionalLightViewport = {};
-	float size = lightSize; //max(m_viewport.Width, m_viewport.Height);
+	float size = static_cast<float>(DIRECTIONAL_LIGHT_SIZE); //max(m_viewport.Width, m_viewport.Height);
 	directionalLightViewport.Width = size;
 	directionalLightViewport.Height = size;
 	directionalLightViewport.MinDepth = 0.0f;
@@ -725,7 +732,6 @@ void DirectX2D::OcclusionRender()
 	directionalOcclusionCamera.nearZ = directionalLightViewport.MinDepth;
 	directionalOcclusionCamera.farZ = directionalLightViewport.MaxDepth;
 	directionalOcclusionCamera.transform.rotation = 0.0f;
-	directionalOcclusionCamera.zoom = m_camera.zoom;
 
 	// Set shader to occlusion shader
 

@@ -94,7 +94,7 @@ void Game::SetupScene()
 		auto& light = ecs->CreateComponent<Light>(lightEntity);
 		light.color = { 1.0f, 1.0f, 1.0f };
 		light.direction = { 0.2f, -1.0f, 0.0f };
-		light.intensity = 0.3f;
+		light.intensity = .1f;
 		light.type = 0; // directional light
     }
 
@@ -148,8 +148,8 @@ void Game::Update(float dt) {
 
     auto ecs = Engine.GetECS();
 
-    const float minI = 10.0f;
-    const float maxI = 20000.0f;
+    const float minI = 1.0f;
+    const float maxI = 2000.0f;
     const float wanderRadius = 150.0f;
     {
         int index = 0;

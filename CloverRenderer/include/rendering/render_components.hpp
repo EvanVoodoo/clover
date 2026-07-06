@@ -4,7 +4,7 @@
 #include <directxmath.h>
 #include <core/transform.hpp>
 
-#define MAX_LIGHTS 128
+#define MAX_LIGHTS 32
 
 using namespace DirectX;
 
@@ -69,8 +69,10 @@ namespace clvr
 
 		float zoom = 1.0f; // >1 = zoomed in, <1 = zoomed out
 
-		XMMATRIX GetProjectionMatrix()
+		XMMATRIX GetProjectionMatrix(bool noZoom = false)
 		{
+			if (noZoom)
+				return XMMatrixOrthographicLH(viewportWidth, viewportHeight, nearZ, farZ);
 			// dividing by zoom shrinks the visible world area as zoom increases
 			return XMMatrixOrthographicLH(viewportWidth / zoom, viewportHeight / zoom, nearZ, farZ);
 		}
