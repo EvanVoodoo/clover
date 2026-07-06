@@ -3,6 +3,8 @@
 
 #pragma comment(lib, "DirectXTex.lib")
 
+#define LIGHT_SIZE 2048
+
 using namespace clvr;
 
 DirectX2D::DirectX2D()
@@ -21,9 +23,8 @@ DirectX2D::DirectX2D()
 	m_textureAtlas = nullptr;
 	m_framebuffer = nullptr;
 	m_occluderMaskFramebuffer = nullptr;
-	for (int i = 0; i < 16; ++i) {
+	for (int i = 0; i < MAX_LIGHTS; ++i) {
 		m_occlusionFramebuffers[i] = nullptr;
-		m_shadowMapFbs[i] = nullptr;
 	}
 	m_lightFramebuffer = nullptr;
 	m_finalFramebuffer = nullptr;
@@ -326,7 +327,8 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	m_shaderManager->LoadShader(L"composite", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/composite.ps.hlsl");
 	m_shaderManager->LoadShader(L"passthrough", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/post.ps.hlsl");
 	m_shaderManager->LoadShader(L"occlusion", L"../CloverRenderer/assets/shaders/occlusion.vs.hlsl", L"../CloverRenderer/assets/shaders/occlusion.ps.hlsl");
-	m_shaderManager->LoadShader(L"shadow_map", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/shadow_map.ps.hlsl");
+	m_shaderManager->LoadShader(L"shadow_map_directional", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/shadow_map_directional.ps.hlsl");
+	m_shaderManager->LoadShader(L"shadow_map_point", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/shadow_map_point.ps.hlsl");
 	m_shaderManager->SetPostProcessShader(L"passthrough");
 
 	m_framebuffer = new Framebuffer();
@@ -345,24 +347,23 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 		return false;
 	}
 
-	int lightSize = 2048;
-	for (int i = 0; i < 16; i++) {
+	int lightSize = LIGHT_SIZE;
+
+	m_shadowMapSingleFb = new Framebuffer();
+	result = m_shadowMapSingleFb->Initialize(m_device, lightSize, MAX_LIGHTS);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the single shadow map framebuffer", L"Error", MB_OK);
+		return false;
+	}
+
+	for (int i = 0; i < MAX_LIGHTS; i++) {
 		m_occlusionFramebuffers[i] = new Framebuffer();
 		Framebuffer* fbo = m_occlusionFramebuffers[i];
 		result = fbo->Initialize(m_device, lightSize, lightSize);
 		if (!result)
 		{
 			MessageBox(hwnd, L"Could not initialize occlusion framebuffers", L"Error", MB_OK);
-			return false;
-		}
-
-		m_shadowMapFbs[i] = new Framebuffer();
-		fbo = m_shadowMapFbs[i];
-		// 1D shadow map for each light
-		result = fbo->Initialize(m_device, lightSize, 1);
-		if (!result) 
-		{
-			MessageBox(hwnd, L"Could not initialize shadow map framebuffers", L"Error", MB_OK);
 			return false;
 		}
 	}
@@ -486,19 +487,20 @@ void DirectX2D::Shutdown()
 		m_lightFramebuffer = nullptr;
 	}
 
-	for (int i = 0; i < 16; i++)
+	if (m_shadowMapSingleFb)
+	{
+		m_shadowMapSingleFb->Shutdown();
+		delete m_shadowMapSingleFb;
+		m_shadowMapSingleFb = nullptr;
+	}
+
+	for (int i = 0; i < MAX_LIGHTS; i++)
 	{
 		if (m_occlusionFramebuffers[i])
 		{
 			m_occlusionFramebuffers[i]->Shutdown();
 			delete m_occlusionFramebuffers[i];
 			m_occlusionFramebuffers[i] = nullptr;
-		}
-		if (m_shadowMapFbs[i])
-		{
-			m_shadowMapFbs[i]->Shutdown();
-			delete m_shadowMapFbs[i];
-			m_shadowMapFbs[i] = nullptr;
 		}
 	}
 
@@ -609,18 +611,32 @@ void DirectX2D::EndScene()
 
 	m_lightCb.BindPS(m_deviceContext, 1);
 
-	BufferType::InvViewProjectionBufferType invVPData = { XMMatrixTranspose(XMMatrixInverse(nullptr, GetViewMatrix() * GetProjectionMatrix())), XMFLOAT2(m_viewport.Width, m_viewport.Height) };
-	ConstantBuffer<BufferType::InvViewProjectionBufferType> invVPCB;																  
+	struct InvViewProjectionBuffer
+	{
+		XMMATRIX invViewProjection;
+		XMFLOAT2 screenSize;
+		float lightSize;
+		float directionalLightSize;
+		XMFLOAT2 camPosition;
+		XMFLOAT2 _pad2;
+	};
+
+	InvViewProjectionBuffer invVPData = { XMMatrixTranspose(XMMatrixInverse(nullptr, GetViewMatrix() * GetProjectionMatrix())), 
+										  XMFLOAT2(m_viewport.Width, m_viewport.Height), 
+										  static_cast<float>(LIGHT_SIZE) / m_camera.zoom,
+										  static_cast<float>(max(m_viewport.Width, m_viewport.Height)),
+										  m_camera.transform.position,
+										  XMFLOAT2(0.0f, 0.0f)
+										};
+	ConstantBuffer<InvViewProjectionBuffer> invVPCB;
 	invVPCB.Init(m_device);
 	invVPCB.Update(m_deviceContext, invVPData);
 	invVPCB.BindPS(m_deviceContext, 2);
 
-	ID3D11ShaderResourceView* shadowSrvs[16];
-	for (int i = 0; i < 16; i++)
-		shadowSrvs[i] = m_shadowMapFbs[i]->GetSRV();
-	m_deviceContext->PSSetShaderResources(0, 16, shadowSrvs);
+	ID3D11ShaderResourceView* shadowSrv = m_shadowMapSingleFb->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 1, &shadowSrv);
 	ID3D11ShaderResourceView* maskSrv = m_occluderMaskFramebuffer->GetSRV();
-	m_deviceContext->PSSetShaderResources(16, 1, &maskSrv);
+	m_deviceContext->PSSetShaderResources(1, 1, &maskSrv);
 
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
 	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
@@ -681,12 +697,11 @@ void DirectX2D::OcclusionRender()
 	occlusionMVPBuffer.Init(m_device);
 
 	D3D11_VIEWPORT lightViewport = {};
-	float lightSize = 2048.0f;
+	float lightSize = static_cast<float>(LIGHT_SIZE);
 	lightViewport.Width = lightSize;
 	lightViewport.Height = lightSize;
 	lightViewport.MinDepth = 0.0f;
 	lightViewport.MaxDepth = 1.0f;
-	m_deviceContext->RSSetViewports(1, &lightViewport);
 
 	Camera occlusionCamera = m_camera;
 	occlusionCamera.viewportWidth = lightViewport.Width;
@@ -696,10 +711,26 @@ void DirectX2D::OcclusionRender()
 	occlusionCamera.transform.rotation = 0.0f;
 	occlusionCamera.zoom = 1.0f;
 
+	// set up viewport and camera for occlusion rendering for directional lights
+	D3D11_VIEWPORT directionalLightViewport = {};
+	float size = lightSize; //max(m_viewport.Width, m_viewport.Height);
+	directionalLightViewport.Width = size;
+	directionalLightViewport.Height = size;
+	directionalLightViewport.MinDepth = 0.0f;
+	directionalLightViewport.MaxDepth = 1.0f;
+
+	Camera directionalOcclusionCamera = m_camera;
+	directionalOcclusionCamera.viewportWidth = directionalLightViewport.Width;
+	directionalOcclusionCamera.viewportHeight = directionalLightViewport.Height;
+	directionalOcclusionCamera.nearZ = directionalLightViewport.MinDepth;
+	directionalOcclusionCamera.farZ = directionalLightViewport.MaxDepth;
+	directionalOcclusionCamera.transform.rotation = 0.0f;
+	directionalOcclusionCamera.zoom = m_camera.zoom;
+
 	// Set shader to occlusion shader
 
 	float occlusionClearColor[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
-	float shadowClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float shadowClearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	struct ResolutionBuffer
 	{
@@ -707,9 +738,13 @@ void DirectX2D::OcclusionRender()
 		XMFLOAT2 _pad;
 	};
 
-	ConstantBuffer<ResolutionBuffer> resolutionBuffer;
-	resolutionBuffer.Init(m_device);
-	resolutionBuffer.Update(m_deviceContext, { XMFLOAT2(lightViewport.Width, lightViewport.Height), XMFLOAT2(0.0f, 0.0f) });
+	ConstantBuffer<ResolutionBuffer> lightResolutionBuffer;
+	lightResolutionBuffer.Init(m_device);
+	lightResolutionBuffer.Update(m_deviceContext, { XMFLOAT2(lightViewport.Width, lightViewport.Height), XMFLOAT2(0.0f, 0.0f) });
+
+	ConstantBuffer<ResolutionBuffer> directionalResolutionBuffer;
+	directionalResolutionBuffer.Init(m_device);
+	directionalResolutionBuffer.Update(m_deviceContext, { XMFLOAT2(directionalLightViewport.Width, directionalLightViewport.Height), XMFLOAT2(0.0f, 0.0f) });
 
 	unsigned int stride = sizeof(Vertex);
 	unsigned int offset = 0;
@@ -722,8 +757,22 @@ void DirectX2D::OcclusionRender()
 
 		m_shaderManager->GetShader(L"occlusion")->Bind(m_deviceContext);
 
-		// Move the camera to the light's position and set the viewport to the light's size
-		if (m_lights.lights[i].type == 1.0f) {
+		if (m_lights.lights[i].type == 0.0f) {
+			m_deviceContext->RSSetViewports(1, &directionalLightViewport);
+
+			XMFLOAT2 dir = { m_lights.lights[i].direction.x, m_lights.lights[i].direction.y };
+			XMVECTOR dirVec = XMVector2Normalize(XMLoadFloat2(&dir));
+			XMStoreFloat2(&dir, dirVec);
+
+			directionalOcclusionCamera.transform.rotation = atan2f(dir.x, -dir.y);
+			BufferType::MVPBufferType mvpData = directionalOcclusionCamera.GetMVPBufferData();
+			occlusionMVPBuffer.Update(m_deviceContext, mvpData.Transposed());
+			occlusionMVPBuffer.BindVS(m_deviceContext, 0);
+			m_spriteBatcher->DrawOccludersToRT();
+		}
+		else if (m_lights.lights[i].type == 1.0f) {
+			m_deviceContext->RSSetViewports(1, &lightViewport);
+			// Move the camera to the light's position and set the viewport to the light's size
 			occlusionCamera.transform.position = { m_lights.lights[i].direction.x, m_lights.lights[i].direction.y };
 
 			BufferType::MVPBufferType mvpData = occlusionCamera.GetMVPBufferData();
@@ -733,24 +782,53 @@ void DirectX2D::OcclusionRender()
 		}
 	}
 
-	for (int i = 0; i < m_lights.lightCount; i++) {
-		Framebuffer* fbo = m_occlusionFramebuffers[i];
-		Framebuffer* shadowFbo = m_shadowMapFbs[i];
-		shadowFbo->Bind(m_deviceContext);
-		m_deviceContext->ClearRenderTargetView(shadowFbo->GetRTV(), shadowClearColor);
+	Framebuffer* shadowFbo = m_shadowMapSingleFb;
+	shadowFbo->Bind(m_deviceContext);
+	m_deviceContext->ClearRenderTargetView(shadowFbo->GetRTV(), shadowClearColor);
 
-		m_shaderManager->GetShader(L"shadow_map")->Bind(m_deviceContext);
+	D3D11_VIEWPORT rowViewport = {};
+	rowViewport.MinDepth = 0.0f;
+	rowViewport.MaxDepth = 1.0f;
+	rowViewport.TopLeftX = 0.0f;
+	rowViewport.Height = 1.0f;
+
+	for (int i = 0; i < m_lights.lightCount; i++)
+	{
+		rowViewport.TopLeftY = static_cast<float>(i);
+		Framebuffer* fbo = m_occlusionFramebuffers[i];
+
+		if (m_lights.lights[i].type == 0.0f) // directional
+		{
+			rowViewport.Width = directionalLightViewport.Width;
+			m_deviceContext->RSSetViewports(1, &rowViewport);
+
+			m_shaderManager->GetShader(L"shadow_map_directional")->Bind(m_deviceContext);
+			directionalResolutionBuffer.BindPS(m_deviceContext, 0);
+		}
+		else if (m_lights.lights[i].type == 1.0f) // point
+		{
+			rowViewport.Width = lightViewport.Width;
+			m_deviceContext->RSSetViewports(1, &rowViewport);
+
+			m_shaderManager->GetShader(L"shadow_map_point")->Bind(m_deviceContext);
+			lightResolutionBuffer.BindPS(m_deviceContext, 0);
+		}
+		else
+		{
+			continue; // unsupported light type -- skip, leave its row blank
+		}
 
 		ID3D11ShaderResourceView* srv = fbo->GetSRV();
 		m_deviceContext->PSSetShaderResources(0, 1, &srv);
 		m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
-		resolutionBuffer.BindPS(m_deviceContext, 0);
 
 		m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
 		m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
 		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		m_deviceContext->DrawIndexed(6, 0, 0);
 	}
+
+	ResetViewport();
 
 	ResetViewport();
 }

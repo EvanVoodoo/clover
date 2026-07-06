@@ -61,11 +61,11 @@ void Game::SetupScene()
 		{
 			auto entity = ecs->CreateEntity();
 			auto& t = ecs->CreateComponent<Transform>(entity);
-			t.position = { (float) (rand() % 1600 - 800), (float) (rand() % 800 - 400) };
+			t.position = { (float) (rand() % 3200 - 1600), (float) (rand() % 1600 - 800) };
 			t.rotation = (float) (rand() % 360) * 3.1415927f / 180.0f;
 			clvr::Sprite s;
 			s.position = t.position;
-			s.size = { (float) (rand() % 100 + 50), (float) (rand() % 100 + 50) };
+			s.size = { (float) (rand() % 200 + 100), (float) (rand() % 100 + 50) };
 			s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
             s.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/white.jpg").uvRect;
 			s.layer = rand() % 5;
@@ -73,7 +73,7 @@ void Game::SetupScene()
 			ecs->CreateComponent<SpriteComponent>(entity, s);
 		}
 		// create ground plane occluder
-        {
+        /*{
 			auto entity = ecs->CreateEntity();
 			auto& t = ecs->CreateComponent<Transform>(entity);
 			t.position = { 0.0f, -400.0f };
@@ -85,25 +85,25 @@ void Game::SetupScene()
             s.layer = 99;
             s.isOccluder = true;
             ecs->CreateComponent<SpriteComponent>(entity, s);
-        }
+        }*/
     }
 
-    {
+	{ // create a single directional light pointing downwards
 		auto lightEntity = ecs->CreateEntity();
 		auto& transform = ecs->CreateComponent<Transform>(lightEntity);
 		auto& light = ecs->CreateComponent<Light>(lightEntity);
 		light.color = { 1.0f, 1.0f, 1.0f };
-		light.direction = { 0.0f, 0.0f, -1.0f };
-		light.intensity = 0.1f;
+		light.direction = { 0.2f, -1.0f, 0.0f };
+		light.intensity = 0.3f;
 		light.type = 0; // directional light
     }
 
     {
-        // ten varied point lights randomly positioned across the scene
-        const int count = 10;
+        // varied point lights randomly positioned across the scene
+        const int count = 16;
         for (int i = 0; i < count; ++i)
         {
-            float t = (float) i / count;
+            float t = (float) i * i * 2.17f / count;
 
             auto lightEntity = ecs->CreateEntity();
             ecs->CreateComponent<Transform>(lightEntity);
@@ -114,8 +114,8 @@ void Game::SetupScene()
             // (kept in sync with the wander logic in Update())
             float seedX = sinf((float) i * 12.9898f) * 43758.5453f;
             float seedY = sinf((float) i * 78.233f) * 43758.5453f;
-            float baseX = fmodf(seedX, 1.0f) * 800.0f - 400.0f;
-            float baseY = fmodf(seedY, 1.0f) * 400.0f - 200.0f;
+            float baseX = fmodf(seedX, 1.0f) * 1600.0f - 800.0f;
+            float baseY = fmodf(seedY, 1.0f) * 800.0f - 400.0f;
 
             light.direction = { baseX, baseY, 0.0f };
 
@@ -126,10 +126,10 @@ void Game::SetupScene()
                 0.5f + 0.5f * cosf(angle + 4.188f)
             };
 
-            light.intensity = 1000.0f + t * 2000.0f;
+            light.intensity = 200.0f + t * 1000.0f;
             light.type = 1;
         }
-    }
+     }
 
     /*{
         auto lightEntity = ecs->CreateEntity();
@@ -148,29 +148,26 @@ void Game::Update(float dt) {
 
     auto ecs = Engine.GetECS();
 
-    const float minI = 100.0f;
-    const float maxI = 5000.0f;
+    const float minI = 10.0f;
+    const float maxI = 20000.0f;
     const float wanderRadius = 150.0f;
-    const int   count = 10;
     {
         int index = 0;
         auto lightView = ecs->GetRegistry().view<Light, MovingLight>();
+        const int count = static_cast<int>(lightView.size_hint());
         for (auto [entity, light] : lightView.each())
         {
-            if (index >= count)
-                break;
-
             if (light.type != 1)
                 continue;
 
             // same deterministic base position as SetupScene()
             float seedX = sinf((float) index * 12.9898f) * 43758.5453f;
             float seedY = sinf((float) index * 78.233f) * 43758.5453f;
-            float baseX = fmodf(seedX, 1.0f) * 800.0f - 400.0f;
-            float baseY = fmodf(seedY, 1.0f) * 400.0f - 200.0f;
+            float baseX = fmodf(seedX, 1.0f) * 1600.0f;
+            float baseY = fmodf(seedY, 1.0f) * 800.0f;
 
             // wander around that base position, phase-offset per light
-            float t = (float) index / count;
+            float t = (float) index * index * 2.17f / count;
             float phase = m_time + t * 2.0f * 3.1415927f;
             float wanderX = cosf(phase * 0.7f) * wanderRadius;
             float wanderY = sinf(phase * 0.9f) * wanderRadius;
@@ -266,7 +263,12 @@ void Game::Update(float dt) {
     }
 
     if (input->IsKeyDown('C'))
+    {
         camera.transform = Transform();
+		camera.zoom = 1.0f;
+		camera.nearZ = 0.0f;
+		camera.farZ = 1.0f;
+    }
 }
 
 void Game::Render() {}

@@ -35,14 +35,13 @@ float4 ColorPixelShader(PixelInputType input) : SV_TARGET
         // sample the occlusion map
         float4 data = texture0.Sample(sampler0, coord);
 
-        // current distance is how far from the top we've come
-        float dst = y / resolution.y;
-
         // if we've hit an opaque fragment (occluder), take the new distance
         // if it's less than what we have, use that for the ray
         float caster = data.a;
         if (caster > THRESHOLD)
         {
+            // current distance is how far from the top we've come
+            float dst = y / resolution.y;
             dist = min(dist, dst);
         }
     }

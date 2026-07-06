@@ -88,8 +88,7 @@ bool ShaderManager::ReloadAll()
 {
 	for (auto& pair : m_shaders)
 	{
-		if (!pair.second->NeedsReload())
-			continue;
+		if (!pair.second->NeedsReload()) continue;
 		if (!pair.second->Reload(m_device, m_hwnd))
 		{
 			return false; // Failed to reload a shaders

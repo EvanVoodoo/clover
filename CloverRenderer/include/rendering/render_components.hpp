@@ -4,6 +4,8 @@
 #include <directxmath.h>
 #include <core/transform.hpp>
 
+#define MAX_LIGHTS 128
+
 using namespace DirectX;
 
 namespace clvr
@@ -47,19 +49,12 @@ namespace clvr
 		};
 		struct LightBufferType
 		{
-			Light lights[16]; // MAX_LIGHTS = 16
+			Light lights[MAX_LIGHTS];
 			int lightCount;
 			XMFLOAT3 _pad;
 		};
-		struct InvViewProjectionBufferType
-		{
-			XMMATRIX invViewProjection;
-			XMFLOAT2 screenSize;
-			XMFLOAT2 _pad;
-		};
 		static_assert(sizeof(MVPBufferType) % 16 == 0, "MatrixBufferType must be 16-byte aligned");
 		static_assert(sizeof(LightBufferType) % 16 == 0, "LightBufferType must be 16-byte aligned");
-		static_assert(sizeof(InvViewProjectionBufferType) % 16 == 0, "InvViewProjectionBufferType must be 16-byte aligned");
 	}
 
 	struct Camera
@@ -67,8 +62,8 @@ namespace clvr
 		Transform transform;
 		float speed = 500.0f; // units per second
 
-		float viewportWidth = 0.0f;
-		float viewportHeight = 0.0f;
+		float viewportWidth = 1920.0f;
+		float viewportHeight = 1080.0f;
 		float nearZ = 0.0f;
 		float farZ = 1.0f;
 

@@ -80,8 +80,8 @@ namespace clvr
 		Framebuffer* m_occluderMaskFramebuffer;
 		Framebuffer* m_lightFramebuffer;
 		Framebuffer* m_finalFramebuffer;
-		Framebuffer* m_occlusionFramebuffers[16];
-		Framebuffer* m_shadowMapFbs[16];
+		Framebuffer* m_occlusionFramebuffers[MAX_LIGHTS];
+		Framebuffer* m_shadowMapSingleFb;
 
 		ID3D11Buffer* m_fullscreenQuadVB;
 		ID3D11Buffer* m_fullscreenQuadIB;

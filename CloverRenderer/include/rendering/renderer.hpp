@@ -5,11 +5,10 @@
 #include "core/ecs.hpp"
 #include "rendering/render_d3d11.hpp"	
 
-const bool FULL_SCREEN = true;
-const bool VSYNC_ENABLED = false;
+const bool FULL_SCREEN = false;
+const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.3f;
-const int MAX_LIGHTS = 16;
 
 namespace clvr
 {
