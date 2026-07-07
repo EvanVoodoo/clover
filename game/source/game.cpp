@@ -14,7 +14,7 @@ void Game::SetupRenderer()
 {
     auto ecs = Engine.GetECS();
     auto& renderer = ecs->GetSystem<Renderer>();
-    renderer.Initialize(Engine.GetWindow()->GetWidth(), Engine.GetWindow()->GetHeight(), Engine.GetWindow()->GetHWND());
+    renderer.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT, Engine.GetWindow()->GetHWND());
 
     renderer.LoadShader(L"grayscale", L"../CloverRenderer/assets/shaders/color.vs.hlsl", L"../CloverRenderer/assets/shaders/grayscale.ps.hlsl");
     renderer.LoadShader(L"inverted", L"../CloverRenderer/assets/shaders/color.vs.hlsl", L"../CloverRenderer/assets/shaders/inverted.ps.hlsl");
@@ -148,7 +148,7 @@ void Game::Update(float dt) {
 
     auto ecs = Engine.GetECS();
 
-    const float minI = 1.0f;
+    const float minI = 2000.0f;
     const float maxI = 2000.0f;
     const float wanderRadius = 150.0f;
     {

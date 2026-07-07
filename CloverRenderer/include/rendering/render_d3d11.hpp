@@ -66,6 +66,10 @@ namespace clvr
 			m_lightCb.Update(m_deviceContext, data);
 			m_lights = data;
 		}
+		void UpdateWindowSize(float w, float h)
+		{
+			m_currentWindowSize = { w, h };
+		}
 
 	private:
 		bool m_vsyncEnabled;
@@ -79,6 +83,7 @@ namespace clvr
 		Framebuffer* m_framebuffer;
 		Framebuffer* m_occluderMaskFramebuffer;
 		Framebuffer* m_lightFramebuffer;
+		Framebuffer* m_postFramebuffer;
 		Framebuffer* m_finalFramebuffer;
 		Framebuffer* m_occlusionFramebuffers[MAX_LIGHTS];
 		Framebuffer* m_shadowMapSingleFb;
@@ -92,6 +97,8 @@ namespace clvr
 		Camera m_camera;
 		D3D11_VIEWPORT m_viewport;
 
+		XMFLOAT2 m_currentWindowSize;
+
 		ConstantBuffer<BufferType::MVPBufferType> m_mvpCb;
 		ConstantBuffer<BufferType::LightBufferType> m_lightCb;
 
@@ -100,7 +107,8 @@ namespace clvr
 
 		ShaderManager* m_shaderManager;
 		SpriteBatcher* m_spriteBatcher;
-		ID3D11SamplerState* m_samplerState;
+		ID3D11SamplerState* m_pointSampler;
+		ID3D11SamplerState* m_linearSampler;
 		TextureAtlas* m_textureAtlas;
 	};
 }

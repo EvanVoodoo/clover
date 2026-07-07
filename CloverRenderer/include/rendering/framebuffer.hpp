@@ -10,7 +10,7 @@ namespace clvr
         Framebuffer();
         ~Framebuffer();
 
-        bool Initialize(ID3D11Device* device, int width, int height);
+        bool Initialize(ID3D11Device* device, int width, int height, DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM);
         void Shutdown();
 
         void Bind(ID3D11DeviceContext* deviceContext);

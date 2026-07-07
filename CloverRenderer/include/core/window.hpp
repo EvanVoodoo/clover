@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include "input.hpp"
+#include <functional>
 
 namespace clvr
 {
@@ -18,6 +19,7 @@ namespace clvr
 		HWND GetHWND() const;
 		int GetWidth() const;
 		int GetHeight() const;
+		void SetResizeCallback(std::function<void(int, int)> callback) { m_onResize = callback; }
 
 	private:
 		static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -28,5 +30,6 @@ namespace clvr
 		HINSTANCE m_hInstance;
 		int m_width;
 		int m_height;
+		std::function<void(int, int)> m_onResize;
 	};
 }

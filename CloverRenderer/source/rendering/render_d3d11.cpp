@@ -17,7 +17,8 @@ DirectX2D::DirectX2D()
 	m_rasterState = nullptr;
 	m_shaderManager = nullptr;
 	m_spriteBatcher = nullptr;
-	m_samplerState = nullptr;
+	m_pointSampler = nullptr;
+	m_linearSampler = nullptr;
 	m_textureAtlas = nullptr;
 	m_framebuffer = nullptr;
 	m_occluderMaskFramebuffer = nullptr;
@@ -25,6 +26,7 @@ DirectX2D::DirectX2D()
 		m_occlusionFramebuffers[i] = nullptr;
 	}
 	m_lightFramebuffer = nullptr;
+	m_postFramebuffer = nullptr;
 	m_finalFramebuffer = nullptr;
 	m_fullscreenQuadIB = nullptr;
 	m_fullscreenQuadVB = nullptr;
@@ -294,7 +296,13 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	result = m_device->CreateSamplerState(&samplerDesc, &m_samplerState);
+	result = m_device->CreateSamplerState(&samplerDesc, &m_pointSampler);
+	if (FAILED(result))
+		return false;
+
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+	result = m_device->CreateSamplerState(&samplerDesc, &m_linearSampler);
 	if (FAILED(result))
 		return false;
 
@@ -331,6 +339,7 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	m_shaderManager->LoadShader(L"occlusion", L"../CloverRenderer/assets/shaders/occlusion.vs.hlsl", L"../CloverRenderer/assets/shaders/occlusion.ps.hlsl");
 	m_shaderManager->LoadShader(L"shadow_map_directional", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/shadow_map_directional.ps.hlsl");
 	m_shaderManager->LoadShader(L"shadow_map_point", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/shadow_map_point.ps.hlsl");
+	m_shaderManager->LoadShader(L"letterbox", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/letterbox.ps.hlsl");
 	m_shaderManager->SetPostProcessShader(L"passthrough");
 
 	m_framebuffer = new Framebuffer();
@@ -371,10 +380,18 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	}
 
 	m_lightFramebuffer = new Framebuffer();
-	result = m_lightFramebuffer->Initialize(m_device, screenWidth, screenHeight);
+	result = m_lightFramebuffer->Initialize(m_device, screenWidth, screenHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize light framebuffer", L"Error", MB_OK);
+		return false;
+	}
+
+	m_postFramebuffer = new Framebuffer();
+	result = m_postFramebuffer->Initialize(m_device, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize post processing framebuffer", L"Error", MB_OK);
 		return false;
 	}
 
@@ -452,10 +469,16 @@ void DirectX2D::Shutdown()
 		m_swapChain->SetFullscreenState(false, NULL);
 	}
 
-	if (m_samplerState)
+	if (m_linearSampler)
 	{
-		m_samplerState->Release();
-		m_samplerState = nullptr;
+		m_linearSampler->Release();
+		m_linearSampler = nullptr;
+	}
+
+	if (m_pointSampler)
+	{
+		m_pointSampler->Release();
+		m_pointSampler = nullptr;
 	}
 
 	if (m_textureAtlas)
@@ -480,6 +503,13 @@ void DirectX2D::Shutdown()
 		m_finalFramebuffer->Shutdown();
 		delete m_finalFramebuffer;
 		m_finalFramebuffer = nullptr;
+	}
+
+	if (m_postFramebuffer)
+	{
+		m_postFramebuffer->Shutdown();
+		delete m_postFramebuffer;
+		m_postFramebuffer = nullptr;
 	}
 
 	if (m_lightFramebuffer)
@@ -575,7 +605,7 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 
 	ID3D11ShaderResourceView* srv = m_textureAtlas->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
-	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
 
 	m_spriteBatcher->Begin();
 
@@ -600,7 +630,7 @@ void DirectX2D::EndScene()
 	m_mvpCb.BindVS(m_deviceContext, 0);
 	ID3D11ShaderResourceView* srv = m_textureAtlas->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
-	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
 	m_spriteBatcher->DrawOccludersToRT();
 
 	// Render lights to light framebuffer
@@ -644,7 +674,7 @@ void DirectX2D::EndScene()
 	ID3D11ShaderResourceView* maskSrv = m_occluderMaskFramebuffer->GetSRV();
 	m_deviceContext->PSSetShaderResources(1, 1, &maskSrv);
 
-	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
 	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -652,32 +682,58 @@ void DirectX2D::EndScene()
 
 	// Composite the light framebuffer with the main framebuffer
 
-	m_finalFramebuffer->Bind(m_deviceContext);
-	m_deviceContext->ClearRenderTargetView(m_finalFramebuffer->GetRTV(), color);
+	m_postFramebuffer->Bind(m_deviceContext);
+	m_deviceContext->ClearRenderTargetView(m_postFramebuffer->GetRTV(), color);
 
 	m_shaderManager->GetShader(L"composite")->Bind(m_deviceContext);
 
 	ID3D11ShaderResourceView* srvs[2] = { m_framebuffer->GetSRV(), m_lightFramebuffer->GetSRV() };
 	m_deviceContext->PSSetShaderResources(0, 1, &srvs[0]);
 	m_deviceContext->PSSetShaderResources(1, 1, &srvs[1]);
-	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	m_deviceContext->PSSetSamplers(0, 1, &m_linearSampler);
 
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
 	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_deviceContext->DrawIndexed(6, 0, 0);
 
-	// final pass: render framebuffer to back buffer with post-processing shader
+	m_shaderManager->GetPostProcessShader()->Bind(m_deviceContext);
+
+	m_finalFramebuffer->Bind(m_deviceContext);
+	m_deviceContext->ClearRenderTargetView(m_finalFramebuffer->GetRTV(), color);
+
+	srv = m_postFramebuffer->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 1, &srv);
+	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
+
+	// Draw fullscreen quad
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
+	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_deviceContext->DrawIndexed(6, 0, 0);
+
+	// final pass: render last used framebuffer to back buffer for letterboxing
 	// Unbind the framebuffer so we can render to the back buffer
 	SetBackBufferRenderTarget();
 
-	m_shaderManager->GetPostProcessShader()->Bind(m_deviceContext);
+	m_shaderManager->GetShader(L"letterbox")->Bind(m_deviceContext);
 
 	srv = m_finalFramebuffer->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
-	m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
 
-	// Draw fullscreen quad
+	struct ResolutionBuffer
+	{
+		XMFLOAT2 screenSize;
+		XMFLOAT2 padding;
+	};
+
+	ResolutionBuffer resolution = { m_currentWindowSize, { 0.0f, 0.0f } };
+	ConstantBuffer<ResolutionBuffer> resolutionBuffer;
+	resolutionBuffer.Init(m_device);
+	resolutionBuffer.Update(m_deviceContext, resolution);
+	resolutionBuffer.BindPS(m_deviceContext, 0);
+
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
 	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -826,15 +882,13 @@ void DirectX2D::OcclusionRender()
 
 		ID3D11ShaderResourceView* srv = fbo->GetSRV();
 		m_deviceContext->PSSetShaderResources(0, 1, &srv);
-		m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+		m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
 
 		m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
 		m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
 		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		m_deviceContext->DrawIndexed(6, 0, 0);
 	}
-
-	ResetViewport();
 
 	ResetViewport();
 }

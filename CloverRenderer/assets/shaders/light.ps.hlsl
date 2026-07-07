@@ -40,6 +40,11 @@ float SampleShadow(int index, float u)
     return 1.0; // no shadow if out of range
 }
 
+float Dither(float2 screenPos)
+{
+    return (frac(sin(dot(screenPos, float2(12.9898, 78.233))) * 43758.5453) - 0.5) / 255.0;
+}
+
 struct PixelInputType
 {
     float4 position : SV_POSITION;
@@ -142,5 +147,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_TARGET
             // Handle other light types if needed
         }
     }
+    float ditherAmount = Dither(input.position.xy);
+    pixel += float4(ditherAmount, ditherAmount, ditherAmount, 0);
     return pixel;
 }

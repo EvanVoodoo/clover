@@ -8,6 +8,8 @@ using namespace clvr;
 Renderer::Renderer()
 {
 	m_DX2D = nullptr;
+
+	
 }
 
 Renderer::Renderer(const Renderer& other) {
@@ -32,6 +34,16 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
 		return false;
 	}
+
+	Engine.GetWindow()->SetResizeCallback([this](int w, int h)
+	{
+		if (m_DX2D)
+			m_DX2D->UpdateWindowSize(static_cast<float>(w), static_cast<float>(h));
+	});
+
+	// Update the window size in the DirectX2D object one time during initialization to ensure it has the correct size.
+	Window* window =Engine.GetWindow();
+	m_DX2D->UpdateWindowSize(static_cast<float>(window->GetWidth()), static_cast<float>(window->GetHeight()));
 
 	return true;
 }
@@ -90,7 +102,6 @@ bool Renderer::Render(float dt)
 
 	for (const auto& [sprite, transform] : toDraw)
 		DrawSprite(*sprite, *transform);
-
 
 	m_DX2D->EndScene();
 	return true;
