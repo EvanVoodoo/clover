@@ -1,4 +1,4 @@
-#define MAX_LIGHTS 32
+#define MAX_LIGHTS 64
 #define PI 3.14159265
 
 struct Light
@@ -54,7 +54,7 @@ struct PixelInputType
 
 float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 {
-    float3 amb = float3(0.1, 0.1, 0.1);
+    float3 amb = float3(0.05, 0.05, 0.05);
     float4 pixel = float4(amb.rgb, 1); // ambient light
     bool isOccluder = occluderMask.Sample(sampler0, input.uv).a > 0.5;
     const float SHADOW_BIAS = 0.002;

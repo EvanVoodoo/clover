@@ -115,6 +115,7 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 		{
 			if (displayModeList[i].Height == (unsigned int)screenHeight)
 			{
+				m_aspectRatio = (float)screenWidth / (float)screenHeight;
 				numerator = displayModeList[i].RefreshRate.Numerator;
 				denominator = displayModeList[i].RefreshRate.Denominator;
 			}
@@ -608,7 +609,6 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
 
 	m_spriteBatcher->Begin();
-
 }
 
 void DirectX2D::EndScene()
@@ -725,10 +725,11 @@ void DirectX2D::EndScene()
 	struct ResolutionBuffer
 	{
 		XMFLOAT2 screenSize;
-		XMFLOAT2 padding;
+		float aspectRatio;
+		float padding;
 	};
 
-	ResolutionBuffer resolution = { m_currentWindowSize, { 0.0f, 0.0f } };
+	ResolutionBuffer resolution = { m_currentWindowSize, m_aspectRatio, 0.0f };
 	ConstantBuffer<ResolutionBuffer> resolutionBuffer;
 	resolutionBuffer.Init(m_device);
 	resolutionBuffer.Update(m_deviceContext, resolution);
@@ -810,6 +811,8 @@ void DirectX2D::OcclusionRender()
 
 	unsigned int stride = sizeof(Vertex);
 	unsigned int offset = 0;
+
+	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
 
 	for (int i = 0; i < m_lights.lightCount; i++) {
 		Framebuffer* fbo = m_occlusionFramebuffers[i];

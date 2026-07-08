@@ -40,7 +40,7 @@ void Game::SetupScene()
         renderer.AddTexture(t);
     renderer.BuildAtlas();   // built ONCE, after all textures added, before first frame
 
-    /*{
+    {
         auto centerEntity = ecs->CreateEntity();
         auto& t = ecs->CreateComponent<Transform>(centerEntity);
         t.position = { 0.0f, -300.0f };
@@ -48,16 +48,16 @@ void Game::SetupScene()
         cs.position = t.position;
         cs.size = { 200.0f, 200.0f };
         cs.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-        cs.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/shrew1.jpg").uvRect;
+        cs.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/saturn.png").uvRect;
         cs.layer = 0;
         cs.isOccluder = false;
         ecs->CreateComponent<SpriteComponent>(centerEntity, cs);
         ecs->CreateComponent<MovingSprite>(centerEntity);
-    }*/
+    }
 
     {
 		// create wall of occluder sprites randomly around the scene
-		for (int i = 0; i < 10; ++i)
+		for (int i = 0; i < 32; ++i)
 		{
 			auto entity = ecs->CreateEntity();
 			auto& t = ecs->CreateComponent<Transform>(entity);
@@ -73,19 +73,19 @@ void Game::SetupScene()
 			ecs->CreateComponent<SpriteComponent>(entity, s);
 		}
 		// create ground plane occluder
-        /*{
+        {
 			auto entity = ecs->CreateEntity();
 			auto& t = ecs->CreateComponent<Transform>(entity);
 			t.position = { 0.0f, -400.0f };
             clvr::Sprite s;
             s.position = t.position;
-			s.size = { 16000.0f, 200.0f };
+			s.size = { 16000.0f, 64.0f };
             s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
             s.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/white.jpg").uvRect;
             s.layer = 99;
             s.isOccluder = true;
             ecs->CreateComponent<SpriteComponent>(entity, s);
-        }*/
+        }
     }
 
 	{ // create a single directional light pointing downwards
@@ -94,13 +94,13 @@ void Game::SetupScene()
 		auto& light = ecs->CreateComponent<Light>(lightEntity);
 		light.color = { 1.0f, 1.0f, 1.0f };
 		light.direction = { 0.2f, -1.0f, 0.0f };
-		light.intensity = .1f;
+		light.intensity = .25f;
 		light.type = 0; // directional light
     }
 
     {
         // varied point lights randomly positioned across the scene
-        const int count = 16;
+        const int count = 32;
         for (int i = 0; i < count; ++i)
         {
             float t = (float) i * i * 2.17f / count;
@@ -148,8 +148,8 @@ void Game::Update(float dt) {
 
     auto ecs = Engine.GetECS();
 
-    const float minI = 2000.0f;
-    const float maxI = 2000.0f;
+    const float minI = 10.0f;
+    const float maxI = 50000.0f;
     const float wanderRadius = 150.0f;
     {
         int index = 0;
@@ -180,17 +180,6 @@ void Game::Update(float dt) {
             ++index;
         }
     }
-    {
-        auto spriteView = ecs->GetRegistry().view<SpriteComponent, Transform, MovingSprite>();
-
-		for (auto [entity, sc, t] : spriteView.each())
-		{
-			//t.rotation += dt * 0.1f;
-			// slowly move the sprite in an ellipsis
-            t.position.x += (cosf(m_time) * dt * 300.0f);
-			t.position.y += (sinf(m_time) * dt * 300.0f);
-		}
-    }
 
 	auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
 	auto input = Engine.GetInput();
@@ -215,6 +204,19 @@ void Game::Update(float dt) {
     Camera& camera = renderer.GetCamera();
     float cameraSpeedMult = 1.0f;
 
+    {
+        auto spriteView = ecs->GetRegistry().view<SpriteComponent, Transform, MovingSprite>();
+
+        for (auto [entity, sc, t] : spriteView.each())
+        {
+            //t.rotation += dt * 0.1f;
+            // slowly move the sprite in an ellipsis
+            t.position.x += (cosf(m_time) * dt * 300.0f);
+            t.position.y += (sinf(m_time) * dt * 300.0f);
+			camera.transform = t; // follow the moving sprite with the camera
+        }
+    }
+
     if (input->IsKeyDown(VK_SHIFT))
         cameraSpeedMult *= 10.0f;
     if (input->IsKeyDown(VK_CONTROL))
@@ -229,15 +231,16 @@ void Game::Update(float dt) {
 	// zoom in/out with W/S keys by adjusting the camera's projection matrix
     if (input->IsKeyDown('W'))
     {
-		camera.zoom += cameraSpeed * 0.01f;
+		camera.zoom = camera.zoom * 1.01f;
 		//if (camera.zoom > 5.0f)
 			//camera.zoom = 5.0f;
     }
     if (input->IsKeyDown('S'))
     {
-		camera.zoom -= cameraSpeed * 0.01f;
-		if (camera.zoom < 0.1f)
-			camera.zoom = 0.1f;
+		camera.zoom = camera.zoom * 0.99f;
+		//camera.zoom -= cameraSpeed * 0.01f;
+		if (camera.zoom < 0.01f)
+			camera.zoom = 0.01f;
     }
 
     // camera moves according to its rotation

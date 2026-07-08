@@ -4,7 +4,7 @@
 #include <directxmath.h>
 #include <core/transform.hpp>
 
-#define MAX_LIGHTS 32
+#define MAX_LIGHTS 64
 
 using namespace DirectX;
 

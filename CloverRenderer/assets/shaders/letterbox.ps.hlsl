@@ -8,7 +8,8 @@ struct PixelInputType
 cbuffer ResolutionBuffer : register(b0)
 {
     float2 resolution;
-    float2 padding; // pad to 16 bytes
+    float aspectRatio; // width / height
+    float padding; // pad to 16 bytes
 };
 
 Texture2D texture0 : register(t0);
@@ -19,7 +20,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_TARGET
     float2 uv = input.uv;
     
     float screenRatio = resolution.x / resolution.y;
-    float targetRatio = 16.0 / 9.0;
+    float targetRatio = aspectRatio;
     
     bool isLetterbox = screenRatio < targetRatio;
     
