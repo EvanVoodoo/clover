@@ -7,6 +7,7 @@ Framebuffer::Framebuffer()
 	m_texture = nullptr;
 	m_renderTargetView = nullptr;
 	m_srv = nullptr;
+	m_format = DXGI_FORMAT_R8G8B8A8_UNORM;
 }
 
 Framebuffer::~Framebuffer()
@@ -15,6 +16,8 @@ Framebuffer::~Framebuffer()
 
 bool Framebuffer::Initialize(ID3D11Device* device, int width, int height, DXGI_FORMAT format)
 {
+	m_format = format;   // cache for Resize()
+
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 	textureDesc.Width = width;
 	textureDesc.Height = height;
@@ -45,6 +48,12 @@ bool Framebuffer::Initialize(ID3D11Device* device, int width, int height, DXGI_F
 		return false;
 
 	return true;
+}
+
+bool Framebuffer::Resize(ID3D11Device* device, int width, int height)
+{
+	Shutdown();   // releases m_texture/m_renderTargetView/m_srv, already handles null-checks
+	return Initialize(device, width, height, m_format);
 }
 
 void Framebuffer::Shutdown()

@@ -14,8 +14,10 @@ namespace clvr
 		virtual ~System() = default;
 		virtual void Update(float) {}
 		virtual void Render() {}
+		virtual void Inspect(float) {}
 		int priority = 0;
 		std::string title = {};
+
 	};
 	
 	class EntityComponentSystem
@@ -29,6 +31,7 @@ namespace clvr
 		void DeleteEntity(Entity);
 		void UpdateSystems(float);
 		void RenderSystems();
+		void InspectSystems(float);
 		void RemovedDeleted();
 		template <typename T, typename... Args>
 		decltype(auto) CreateComponent(Entity entity, Args&&... args);

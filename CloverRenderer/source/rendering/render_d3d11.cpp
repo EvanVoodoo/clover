@@ -55,9 +55,6 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	D3D_FEATURE_LEVEL featureLevel;
 	ID3D11Texture2D* backBufferPtr;
-	//D3D11_TEXTURE2D_DESC depthBufferDesc;
-	//D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-	//D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
 	D3D11_RASTERIZER_DESC rasterDesc;
 
 	// Get the refresh rate of the monitor that matches the screen width and height provided.
@@ -611,7 +608,7 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 	m_spriteBatcher->Begin();
 }
 
-void DirectX2D::EndScene()
+void DirectX2D::RenderScene()
 {
 	m_spriteBatcher->End();
 	m_spriteBatcher->DrawToRT();
@@ -729,7 +726,7 @@ void DirectX2D::EndScene()
 		float padding;
 	};
 
-	ResolutionBuffer resolution = { m_currentWindowSize, m_aspectRatio, 0.0f };
+	ResolutionBuffer resolution = { m_currentWindowSize, 16.f/9.f, 0.0f };
 	ConstantBuffer<ResolutionBuffer> resolutionBuffer;
 	resolutionBuffer.Init(m_device);
 	resolutionBuffer.Update(m_deviceContext, resolution);
@@ -740,18 +737,23 @@ void DirectX2D::EndScene()
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_deviceContext->DrawIndexed(6, 0, 0);
 
+	return;
+}
+
+void DirectX2D::EndScene() {
 	// Present the back buffer to the screen since rendering is complete.
 	if (m_vsyncEnabled)
 	{
 		// Lock to screen refresh rate.
 		m_swapChain->Present(1, 0);
+		return;
 	}
 	else
 	{
 		// Present as fast as possible.
 		m_swapChain->Present(0, 0);
+		return;
 	}
-	return;
 }
 
 void DirectX2D::OcclusionRender()
@@ -969,4 +971,65 @@ void DirectX2D::ResetViewport()
 	m_deviceContext->RSSetViewports(1, &m_viewport);
 
 	return;
+}
+
+void DirectX2D::UpdateWindowSize(float w, float h)
+{
+	ResizeBuffers(static_cast<int>(w), static_cast<int>(h));
+}
+
+void DirectX2D::ResizeBuffers(int width, int height)
+{
+	// Prevent crashes if called before initialization finishes or if minimized
+	if (!m_swapChain || width == 0 || height == 0) return;
+
+	// 1. Unbind active render target from the pipeline context
+	m_deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+
+	// 2. Release the old back buffer reference
+	if (m_renderTargetView)
+	{
+		m_renderTargetView->Release();
+		m_renderTargetView = nullptr;
+	}
+
+	// 3. Resize DXGI SwapChain buffers to match new Win32 size
+	// Passing 0 for format/flags tells DXGI to preserve current configurations
+	HRESULT hr = m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+	if (FAILED(hr)) return;
+
+	// 4. Recreate the Main Render Target View from the back buffer
+	ID3D11Texture2D* backBuffer = nullptr;
+	hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
+	if (SUCCEEDED(hr))
+	{
+		m_device->CreateRenderTargetView(backBuffer, nullptr, &m_renderTargetView);
+		backBuffer->Release();
+	}
+
+	// 5. Resize the full-screen-resolution intermediate render targets to match.
+	// These are fixed-size textures created in Initialize() at screenWidth/screenHeight —
+	// they don't auto-follow the swapchain, so each needs to release its old
+	// texture/RTV/SRV and recreate at the new dimensions.
+	m_framebuffer->Resize(m_device, width, height);
+	m_occluderMaskFramebuffer->Resize(m_device, width, height);
+	m_lightFramebuffer->Resize(m_device, width, height); // keep DXGI_FORMAT_R16G16B16A16_FLOAT
+	m_postFramebuffer->Resize(m_device, width, height);
+	m_finalFramebuffer->Resize(m_device, width, height);
+
+	// NOTE: m_shadowMapSingleFb and m_occlusionFramebuffers[] are intentionally
+	// NOT resized here — they're sized off LIGHT_SIZE/DIRECTIONAL_LIGHT_SIZE,
+	// not screen resolution, and stay fixed regardless of window size.
+
+	// 6. Sync class state metrics with actual viewport dimensions
+	m_currentWindowSize = XMFLOAT2(static_cast<float>(width), static_cast<float>(height));
+	m_aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+	m_viewport.Width = static_cast<float>(width);
+	m_viewport.Height = static_cast<float>(height);
+	m_viewport.MinDepth = 0.0f;
+	m_viewport.MaxDepth = 1.0f;
+	m_viewport.TopLeftX = 0.0f;
+	m_viewport.TopLeftY = 0.0f;
+
+	ResetViewport();
 }

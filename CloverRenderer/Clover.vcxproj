@@ -106,7 +106,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -125,7 +125,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -143,6 +143,7 @@
     <ClInclude Include="include\core\ecs.hpp" />
     <ClInclude Include="include\core\engine.hpp" />
     <ClInclude Include="include\Clover.h" />
+    <ClInclude Include="include\core\imgui_layer.hpp" />
     <ClInclude Include="include\core\input.hpp" />
     <ClInclude Include="include\core\transform.hpp" />
     <ClInclude Include="include\core\window.hpp" />
@@ -223,6 +224,14 @@
     <ClInclude Include="include\entt\tools.hpp" />
     <ClInclude Include="include\entt\tools\davey.hpp" />
     <ClInclude Include="include\framework.h" />
+    <ClInclude Include="include\imgui\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="include\imgui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="include\imgui\imconfig.h" />
+    <ClInclude Include="include\imgui\imgui.h" />
+    <ClInclude Include="include\imgui\imgui_internal.h" />
+    <ClInclude Include="include\imgui\imstb_rectpack.h" />
+    <ClInclude Include="include\imgui\imstb_textedit.h" />
+    <ClInclude Include="include\imgui\imstb_truetype.h" />
     <ClInclude Include="include\rendering\framebuffer.hpp" />
     <ClInclude Include="include\rendering\renderer.hpp" />
     <ClInclude Include="include\rendering\render_components.hpp" />
@@ -237,6 +246,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\core\ecs.cpp" />
+    <ClCompile Include="source\core\imgui_layer.cpp" />
+    <ClCompile Include="source\imgui\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="source\imgui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="source\imgui\imgui.cpp" />
+    <ClCompile Include="source\imgui\imgui_draw.cpp" />
+    <ClCompile Include="source\imgui\imgui_tables.cpp" />
+    <ClCompile Include="source\imgui\imgui_widgets.cpp" />
     <ClCompile Include="source\rendering\framebuffer.cpp" />
     <ClCompile Include="source\rendering\shader_manager.cpp" />
     <ClCompile Include="source\rendering\texture_atlas.cpp" />

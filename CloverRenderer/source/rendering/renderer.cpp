@@ -9,7 +9,8 @@ Renderer::Renderer()
 {
 	m_DX2D = nullptr;
 
-	
+	priority = -1;
+	title = "Renderer";
 }
 
 Renderer::Renderer(const Renderer& other) {
@@ -23,7 +24,6 @@ Renderer::~Renderer() {
 bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result;
-
 
 	// Create and initialize the Direct3D object.
 	m_DX2D = new DirectX2D;
@@ -44,6 +44,8 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Update the window size in the DirectX2D object one time during initialization to ensure it has the correct size.
 	Window* window =Engine.GetWindow();
 	m_DX2D->UpdateWindowSize(static_cast<float>(window->GetWidth()), static_cast<float>(window->GetHeight()));
+
+	Engine.GetImGuiLayer()->Init(hwnd, m_DX2D->GetDevice(), m_DX2D->GetDeviceContext());
 
 	return true;
 }
@@ -103,7 +105,12 @@ bool Renderer::Render(float dt)
 	for (const auto& [sprite, transform] : toDraw)
 		DrawSprite(*sprite, *transform);
 
+	m_DX2D->RenderScene();
+
+	Engine.GetImGuiLayer()->EndFrame();
+
 	m_DX2D->EndScene();
+
 	return true;
 }
 

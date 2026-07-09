@@ -22,6 +22,13 @@ bool EngineClass::Initialize(HINSTANCE hInstance, int nCmdShow)
 
 void EngineClass::Shutdown()
 {
+    if (m_imgui)
+    {
+		m_imgui->Shutdown();
+		delete m_imgui;
+		m_imgui = nullptr;
+    }
+
     if (m_window)
     {
         m_window->Shutdown();
@@ -69,6 +76,10 @@ void EngineClass::Run()
             auto now = std::chrono::steady_clock::now();
             float deltaTime = std::chrono::duration<float>(now - lastTime).count();
             lastTime = now;
+
+			m_imgui->BeginFrame();
+
+			GetECS()->InspectSystems(deltaTime);
 
 			GetECS()->UpdateSystems(deltaTime);
 

@@ -1,4 +1,5 @@
 #include "core/window.hpp"
+#include "core/imgui_layer.hpp"
 
 using namespace clvr;
 
@@ -78,30 +79,33 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 		return DefWindowProc(hwnd, message, wParam, lParam);
 	}
 
+	if (ImGuiLayer::WndProcHandler(hwnd, message, wParam, lParam))
+		return true;
+
 	switch (message)
 	{
-	case WM_KEYDOWN:
-		window->m_input->KeyDown(static_cast<unsigned int>(wParam));
-		return 0;
-	case WM_KEYUP:
-		window->m_input->KeyUp(static_cast<unsigned int>(wParam));
-		return 0;
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		return 0;
-	case WM_SIZE:
-	{
-		if (window) // guard against messages arriving before GWLP_USERDATA is set
+		case WM_KEYDOWN:
+			window->m_input->KeyDown(static_cast<unsigned int>(wParam));
+			return 0;
+		case WM_KEYUP:
+			window->m_input->KeyUp(static_cast<unsigned int>(wParam));
+			return 0;
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			return 0;
+		case WM_SIZE:
 		{
-			window->m_width = LOWORD(lParam);
-			window->m_height = HIWORD(lParam);
+			if (window) // guard against messages arriving before GWLP_USERDATA is set
+			{
+				window->m_width = LOWORD(lParam);
+				window->m_height = HIWORD(lParam);
 
-			if (window->m_onResize)
-				window->m_onResize(window->m_width, window->m_height);
+				if (window->m_onResize)
+					window->m_onResize(window->m_width, window->m_height);
+			}
+			//return 0;
 		}
-		//return 0;
-	}
-	default:
-		return DefWindowProc(hwnd, message, wParam, lParam);
+		default:
+			return DefWindowProc(hwnd, message, wParam, lParam);
 	}
 }

@@ -29,6 +29,7 @@ namespace clvr
 		void Shutdown();
 
 		void BeginScene(float, float, float, float);
+		void RenderScene();
 		void EndScene();
 		void OcclusionRender();
 		void DrawSprite(const Sprite& sprite, const Transform& transform);
@@ -66,10 +67,8 @@ namespace clvr
 			m_lightCb.Update(m_deviceContext, data);
 			m_lights = data;
 		}
-		void UpdateWindowSize(float w, float h)
-		{
-			m_currentWindowSize = { w, h };
-		}
+		void UpdateWindowSize(float w, float h);
+		void ResizeBuffers(int width, int height);
 
 	private:
 		bool m_vsyncEnabled;

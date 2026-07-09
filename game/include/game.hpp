@@ -19,10 +19,8 @@ public:
 
 	void Update(float);
 	void Render();
+	void Inspect(float);
 
-
-	int priority = 0;
-	std::string title = "GameSystem";
 private:
 	void SetupRenderer();
 	void SetupScene();

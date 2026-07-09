@@ -6,6 +6,9 @@
 using namespace clvr;
 
 Game::Game() {
+    priority = 10;
+    title = "GameSystem";
+
     SetupRenderer();
     SetupScene();
 }
@@ -98,15 +101,35 @@ void Game::SetupScene()
 		light.type = 0; // directional light
     }
 
+	{ // create a single directional light pointing downwards
+		auto lightEntity = ecs->CreateEntity();
+		auto& transform = ecs->CreateComponent<Transform>(lightEntity);
+		auto& light = ecs->CreateComponent<Light>(lightEntity);
+		light.color = { 1.0f, 1.0f, 1.0f };
+		light.direction = { 0.2f, -1.0f, 0.0f };
+		light.intensity = .25f;
+		light.type = 0; // directional light
+    }
+
+	{ // create a single directional light pointing downwards
+		auto lightEntity = ecs->CreateEntity();
+		auto& transform = ecs->CreateComponent<Transform>(lightEntity);
+		auto& light = ecs->CreateComponent<Light>(lightEntity);
+		light.color = { 1.0f, 1.0f, 1.0f };
+		light.direction = { 0.2f, -1.0f, 0.0f };
+		light.intensity = .25f;
+		light.type = 0; // directional light
+    }
+
     {
         // varied point lights randomly positioned across the scene
-        const int count = 32;
+        const int count = 4;
         for (int i = 0; i < count; ++i)
         {
             float t = (float) i * i * 2.17f / count;
 
             auto lightEntity = ecs->CreateEntity();
-            ecs->CreateComponent<Transform>(lightEntity);
+            auto& transform = ecs->CreateComponent<Transform>(lightEntity);
             auto& light = ecs->CreateComponent<Light>(lightEntity);
             ecs->CreateComponent<MovingLight>(lightEntity);
 
@@ -117,7 +140,8 @@ void Game::SetupScene()
             float baseX = fmodf(seedX, 1.0f) * 1600.0f - 800.0f;
             float baseY = fmodf(seedY, 1.0f) * 800.0f - 400.0f;
 
-            light.direction = { baseX, baseY, 0.0f };
+			transform.position = { baseX, baseY };
+            light.direction = { transform.position.x, transform.position.y, 0.0f };
 
             float angle = t * 2.0f * 3.1415927f;
             light.color = {
@@ -148,38 +172,39 @@ void Game::Update(float dt) {
 
     auto ecs = Engine.GetECS();
 
-    const float minI = 10.0f;
-    const float maxI = 50000.0f;
-    const float wanderRadius = 150.0f;
-    {
-        int index = 0;
-        auto lightView = ecs->GetRegistry().view<Light, MovingLight>();
-        const int count = static_cast<int>(lightView.size_hint());
-        for (auto [entity, light] : lightView.each())
-        {
-            if (light.type != 1)
-                continue;
+    //const float minI = 10.0f;
+    //const float maxI = 50000.0f;
+    //const float wanderRadius = 150.0f;
+    //{
+    //    int index = 0;
+    //    auto lightView = ecs->GetRegistry().view<Light, Transform, MovingLight>();
+    //    const int count = static_cast<int>(lightView.size_hint());
+    //    for (auto [entity, light, transform] : lightView.each())
+    //    {
+    //        if (light.type != 1)
+    //            continue;
 
-            // same deterministic base position as SetupScene()
-            float seedX = sinf((float) index * 12.9898f) * 43758.5453f;
-            float seedY = sinf((float) index * 78.233f) * 43758.5453f;
-            float baseX = fmodf(seedX, 1.0f) * 1600.0f;
-            float baseY = fmodf(seedY, 1.0f) * 800.0f;
+    //        // same deterministic base position as SetupScene()
+    //        float seedX = sinf((float) index * 12.9898f) * 43758.5453f;
+    //        float seedY = sinf((float) index * 78.233f) * 43758.5453f;
+    //        float baseX = fmodf(seedX, 1.0f) * 1600.0f;
+    //        float baseY = fmodf(seedY, 1.0f) * 800.0f;
 
-            // wander around that base position, phase-offset per light
-            float t = (float) index * index * 2.17f / count;
-            float phase = m_time + t * 2.0f * 3.1415927f;
-            float wanderX = cosf(phase * 0.7f) * wanderRadius;
-            float wanderY = sinf(phase * 0.9f) * wanderRadius;
+    //        // wander around that base position, phase-offset per light
+    //        float t = (float) index * index * 2.17f / count;
+    //        float phase = m_time + t * 2.0f * 3.1415927f;
+    //        float wanderX = cosf(phase * 0.7f) * wanderRadius;
+    //        float wanderY = sinf(phase * 0.9f) * wanderRadius;
 
-            light.direction = { baseX + wanderX, baseY + wanderY, 0.0f };
+    //        light.direction = { baseX + wanderX, baseY + wanderY, 0.0f };
+    //        transform.position = { light.direction.x, light.direction.y }; // update the Transform position to match the light's direction
 
-            float pulsePhase = m_time + t * 2.0f * 3.1415927f;
-            light.intensity = minI + 0.5f * (sinf(pulsePhase) + 1.0f) * (maxI - minI);
+    //        float pulsePhase = m_time + t * 2.0f * 3.1415927f;
+    //        light.intensity = minI + 0.5f * (sinf(pulsePhase) + 1.0f) * (maxI - minI);
 
-            ++index;
-        }
-    }
+    //        ++index;
+    //    }
+    //}
 
 	auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
 	auto input = Engine.GetInput();
@@ -209,11 +234,12 @@ void Game::Update(float dt) {
 
         for (auto [entity, sc, t] : spriteView.each())
         {
-            //t.rotation += dt * 0.1f;
+			t.scale = { 1.0f + 0.5f * sinf(m_time), 1.0f + 0.5f * cosf(m_time) };
+            t.rotation += (sinf(m_time) * dt * 2.0f);
             // slowly move the sprite in an ellipsis
             t.position.x += (cosf(m_time) * dt * 300.0f);
             t.position.y += (sinf(m_time) * dt * 300.0f);
-			camera.transform = t; // follow the moving sprite with the camera
+			//camera.transform = t; // follow the moving sprite with the camera
         }
     }
 
@@ -275,3 +301,51 @@ void Game::Update(float dt) {
 }
 
 void Game::Render() {}
+
+void Game::Inspect(float dt) {
+	ImGui::Begin("Game System");
+
+    ImGui::Text("Frame time: %.3f s", dt);
+
+    // example: iterate lights and show their properties
+    auto view = Engine.GetECS()->GetRegistry().view<Transform, Light>();
+    int i = 0;
+    for (auto [entity, transform, light] : view.each())
+    {
+        ImGui::PushID(i++);
+        string label = "";
+        if (light.type == 0.f) {
+			label = "Directional Light";
+            if (ImGui::TreeNode(label.c_str()))
+            {
+                float angle = atan2f(light.direction.y, light.direction.x);
+
+                if (ImGui::SliderAngle("Direction", &angle, -180.0f, 180.0f))
+                {
+                    light.direction.x = cosf(angle);
+                    light.direction.y = sinf(angle);
+                }
+                ImGui::ColorEdit3("Color", &light.color.x);
+                ImGui::DragFloat("Intensity", &light.intensity, 0.01f, 0.0f, 10.0f);
+                ImGui::TreePop();
+            }
+        }
+        else if (light.type == 1.f) {
+			label = "Point Light";
+            if (ImGui::TreeNode(label.c_str()))
+            {
+                if (ImGui::DragFloat2("Position", &transform.position.x)) {
+                    light.direction.x = transform.position.x;
+                    light.direction.y = transform.position.y;
+                }
+                ImGui::ColorEdit3("Color", &light.color.x);
+                ImGui::DragFloat("Intensity", &light.intensity);
+                ImGui::TreePop();
+            }
+        }
+        
+        ImGui::PopID();
+    }
+
+	ImGui::End();
+}

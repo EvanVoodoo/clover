@@ -43,9 +43,6 @@ namespace clvr
 		bool BuildAtlas();
 		AtlasRegion GetAtlasRegion(const wchar_t* filename); // if not already exposed
 
-		int priority = 0;
-		std::string title = "Renderer";
-
 	private:
 		bool Render(float dt);
 
