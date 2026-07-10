@@ -101,26 +101,6 @@ void Game::SetupScene()
 		light.type = 0; // directional light
     }
 
-	{ // create a single directional light pointing downwards
-		auto lightEntity = ecs->CreateEntity();
-		auto& transform = ecs->CreateComponent<Transform>(lightEntity);
-		auto& light = ecs->CreateComponent<Light>(lightEntity);
-		light.color = { 1.0f, 1.0f, 1.0f };
-		light.direction = { 0.2f, -1.0f, 0.0f };
-		light.intensity = .25f;
-		light.type = 0; // directional light
-    }
-
-	{ // create a single directional light pointing downwards
-		auto lightEntity = ecs->CreateEntity();
-		auto& transform = ecs->CreateComponent<Transform>(lightEntity);
-		auto& light = ecs->CreateComponent<Light>(lightEntity);
-		light.color = { 1.0f, 1.0f, 1.0f };
-		light.direction = { 0.2f, -1.0f, 0.0f };
-		light.intensity = .25f;
-		light.type = 0; // directional light
-    }
-
     {
         // varied point lights randomly positioned across the scene
         const int count = 4;

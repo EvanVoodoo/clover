@@ -25,6 +25,7 @@ namespace clvr
 
 		void Update(float dt);
 		void Render() {}
+		void Inspect(float);
 
 		bool Frame(float dt);
 		void DrawSprite(const Sprite& sprite, const Transform& transform);
@@ -36,6 +37,9 @@ namespace clvr
 		}
 		bool ReloadShaders() { return m_DX2D->ReloadShaders(); }
 		Camera& GetCamera() { return m_DX2D->GetCamera(); }
+
+		bool SetFullscreen(bool fullscreen) { return m_DX2D->SetFullscreen(fullscreen); }
+		bool IsFullscreen() const { return m_DX2D->IsFullscreen(); }
 
 		void UpdateLights();
 

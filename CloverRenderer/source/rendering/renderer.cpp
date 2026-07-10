@@ -137,6 +137,19 @@ void Renderer::UpdateLights()
 	m_DX2D->UpdateLights(lightData);   // forwards to m_lightCb.Update
 }
 
+void Renderer::Inspect(float dt)
+{
+	ImGui::Begin("Graphics Settings");
+
+	bool fullscreen = IsFullscreen();
+	if (ImGui::Checkbox("Fullscreen", &fullscreen))
+	{
+		SetFullscreen(fullscreen);
+	}
+
+	ImGui::End();
+}
+
 int Renderer::AddTexture(const wchar_t* filename) { return m_DX2D->AddTexture(filename); }
 bool Renderer::BuildAtlas() { return m_DX2D->BuildAtlas(); }
 AtlasRegion Renderer::GetAtlasRegion(const wchar_t* f) { return m_DX2D->GetAtlasRegion(f); }

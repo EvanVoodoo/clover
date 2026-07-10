@@ -746,13 +746,22 @@ void DirectX2D::EndScene() {
 	{
 		// Lock to screen refresh rate.
 		m_swapChain->Present(1, 0);
-		return;
 	}
 	else
 	{
 		// Present as fast as possible.
 		m_swapChain->Present(0, 0);
-		return;
+	}
+
+	if (m_isFullscreen)
+	{
+		BOOL actuallyFullscreen = FALSE;
+		m_swapChain->GetFullscreenState(&actuallyFullscreen, nullptr);
+		if (!actuallyFullscreen)
+		{
+			// DXGI kicked us out without us asking — sync our state to match.
+			m_isFullscreen = false;
+		}
 	}
 }
 
@@ -1032,4 +1041,72 @@ void DirectX2D::ResizeBuffers(int width, int height)
 	m_viewport.TopLeftY = 0.0f;
 
 	ResetViewport();
+}
+
+bool DirectX2D::SetFullscreen(bool fullscreen)
+{
+	if (fullscreen == m_isFullscreen)
+		return true; // already in the requested state
+
+	if (fullscreen)
+	{
+		// Query the output (monitor) currently associated with the swap chain
+		// so we target its native resolution rather than assuming primary adapter output 0.
+		IDXGIOutput* output = nullptr;
+		HRESULT result = m_swapChain->GetContainingOutput(&output);
+		if (FAILED(result))
+			return false;
+
+		DXGI_OUTPUT_DESC outputDesc;
+		output->GetDesc(&outputDesc);
+
+		// DesktopCoordinates gives us the monitor's native resolution.
+		int nativeWidth = outputDesc.DesktopCoordinates.right - outputDesc.DesktopCoordinates.left;
+		int nativeHeight = outputDesc.DesktopCoordinates.bottom - outputDesc.DesktopCoordinates.top;
+
+		output->Release();
+
+		DXGI_MODE_DESC modeDesc = {};
+		modeDesc.Width = nativeWidth;
+		modeDesc.Height = nativeHeight;
+		modeDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		modeDesc.RefreshRate.Numerator = 0;   // let DXGI pick the closest supported refresh rate
+		modeDesc.RefreshRate.Denominator = 1;
+		modeDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		modeDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+
+		// ResizeTarget first: this tells DXGI which display mode we want BEFORE
+		// entering exclusive fullscreen, otherwise it just stretches the current
+		// windowed size to fill the screen instead of switching to native res.
+		result = m_swapChain->ResizeTarget(&modeDesc);
+		if (FAILED(result))
+			return false;
+
+		result = m_swapChain->SetFullscreenState(TRUE, nullptr);
+		if (FAILED(result))
+			return false;
+
+		// SetFullscreenState triggers a WM_SIZE, which should route through
+		// Window's resize callback -> UpdateWindowSize -> ResizeBuffers.
+		// We don't call ResizeBuffers directly here to avoid double-resizing.
+	}
+	else
+	{
+		HRESULT result = m_swapChain->SetFullscreenState(FALSE, nullptr);
+		if (FAILED(result))
+			return false;
+
+		// Restore to a sane windowed size; adjust to whatever your Window class
+		// considers the "last windowed resolution" if you track that separately.
+		DXGI_MODE_DESC modeDesc = {};
+		modeDesc.Width = static_cast<UINT>(m_currentWindowSize.x);
+		modeDesc.Height = static_cast<UINT>(m_currentWindowSize.y);
+		modeDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		modeDesc.RefreshRate.Numerator = 0;
+		modeDesc.RefreshRate.Denominator = 1;
+		m_swapChain->ResizeTarget(&modeDesc);
+	}
+
+	m_isFullscreen = fullscreen;
+	return true;
 }

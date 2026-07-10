@@ -103,7 +103,7 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				if (window->m_onResize)
 					window->m_onResize(window->m_width, window->m_height);
 			}
-			//return 0;
+			return 0;
 		}
 		default:
 			return DefWindowProc(hwnd, message, wParam, lParam);

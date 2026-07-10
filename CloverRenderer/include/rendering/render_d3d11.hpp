@@ -70,11 +70,15 @@ namespace clvr
 		void UpdateWindowSize(float w, float h);
 		void ResizeBuffers(int width, int height);
 
+		bool SetFullscreen(bool fullscreen);
+		bool IsFullscreen() const { return m_isFullscreen; }
+
 	private:
 		bool m_vsyncEnabled;
 		int m_videoCardMemory;
 		char m_videoCardDescription[128];
 		float m_aspectRatio = 1920.0f / 1080.0f;
+		bool m_isFullscreen = false;
 		IDXGISwapChain* m_swapChain;
 		ID3D11Device* m_device;
 		ID3D11DeviceContext* m_deviceContext;
