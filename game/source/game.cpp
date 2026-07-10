@@ -55,7 +55,7 @@ void Game::SetupScene()
         cs.layer = 0;
         cs.isOccluder = false;
         ecs->CreateComponent<SpriteComponent>(centerEntity, cs);
-        ecs->CreateComponent<MovingSprite>(centerEntity);
+        //ecs->CreateComponent<MovingSprite>(centerEntity);
     }
 
     {
@@ -346,6 +346,28 @@ void Game::Inspect(float dt) {
         
         ImGui::PopID();
     }
+
+	auto spriteView = Engine.GetECS()->GetRegistry().view<Transform, SpriteComponent>();
+	for (auto [entity, transform, sprite] : spriteView.each())
+	{
+		ImGui::PushID(i++);
+		string label = "Sprite " + std::to_string(i);
+		if (ImGui::TreeNode(label.c_str()))
+		{
+			if (ImGui::DragFloat2("Position", &transform.position.x)) {
+				sprite.sprite.position.x = transform.position.x;
+				sprite.sprite.position.y = transform.position.y;
+			}
+            ImGui::DragFloat2("Size", &sprite.sprite.size.x, 1.0f, 0.0f);
+            ImGui::DragFloat2("Scale", &transform.scale.x);
+			if (ImGui::SliderAngle("Rotation", &transform.rotation, -180.0f, 180.0f)) {
+				// rotation is in radians
+			}
+			ImGui::ColorEdit4("Color", &sprite.sprite.color.x);
+			ImGui::TreePop();
+		}
+		ImGui::PopID();
+	}
 
 	ImGui::End();
 }
