@@ -22,5 +22,3 @@ A custom 2D renderer built from scratch in C++ with DirectX 11, developed as a g
 - **Debug UI:** Dear ImGui
 
 ## Screenshots
-
-*(add a GIF or screenshot here — the light accumulation buffer looks great and is worth leading with)*
