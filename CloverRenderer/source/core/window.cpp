@@ -105,6 +105,22 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			}
 			return 0;
 		}
+		case WM_ACTIVATE:
+		{
+			if (LOWORD(wParam) == WA_INACTIVE)
+			{
+				// Window is being deactivated
+				// Handle deactivation logic here if needed
+			}
+			else
+			{
+				// Window is being activated
+				// Handle activation logic here if needed
+				if (window && window->m_onActivateWindow)
+					window->m_onActivateWindow();
+			}
+			return 0;
+		}
 		default:
 			return DefWindowProc(hwnd, message, wParam, lParam);
 	}

@@ -35,14 +35,21 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	Engine.GetWindow()->SetResizeCallback([this](int w, int h)
+	Window* window = Engine.GetWindow();
+	window->SetResizeCallback([this](int w, int h)
 	{
 		if (m_DX2D)
 			m_DX2D->UpdateWindowSize(static_cast<float>(w), static_cast<float>(h));
 	});
 
+	window->SetActivateWindowCallback([this]()
+	{
+		if (m_DX2D) 
+			if (m_DX2D->IsFullscreen() != m_fullscreenMemory)
+				m_DX2D->SetFullscreen(m_fullscreenMemory);
+	});
+
 	// Update the window size in the DirectX2D object one time during initialization to ensure it has the correct size.
-	Window* window =Engine.GetWindow();
 	m_DX2D->UpdateWindowSize(static_cast<float>(window->GetWidth()), static_cast<float>(window->GetHeight()));
 
 	Engine.GetImGuiLayer()->Init(hwnd, m_DX2D->GetDevice(), m_DX2D->GetDeviceContext());

@@ -38,7 +38,12 @@ namespace clvr
 		bool ReloadShaders() { return m_DX2D->ReloadShaders(); }
 		Camera& GetCamera() { return m_DX2D->GetCamera(); }
 
-		bool SetFullscreen(bool fullscreen) { return m_DX2D->SetFullscreen(fullscreen); }
+		bool SetFullscreen(bool fullscreen) { 
+			bool result = m_DX2D->SetFullscreen(fullscreen);
+			if (result)
+				m_fullscreenMemory = fullscreen;
+			return result;
+		}
 		bool IsFullscreen() const { return m_DX2D->IsFullscreen(); }
 
 		void UpdateLights();
@@ -52,5 +57,6 @@ namespace clvr
 
 	private:
 		DirectX2D* m_DX2D;
+		bool m_fullscreenMemory = false;
 	};
 }
