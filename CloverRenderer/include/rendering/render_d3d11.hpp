@@ -32,7 +32,11 @@ namespace clvr
 		void RenderScene();
 		void EndScene();
 		void OcclusionRender();
+
+		void SetupLayer(const SpriteLayer& layer);
+		void DrawLayer(const SpriteLayer& layer);
 		void DrawSprite(const Sprite& sprite, const Transform& transform);
+
 		void SetActiveShader(const std::wstring& name) { m_shaderManager->SetActiveShader(name); }
 		void SetPostProcessShader(const std::wstring& name) { m_shaderManager->SetPostProcessShader(name); }
 

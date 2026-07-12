@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include <directxmath.h>
 #include <core/transform.hpp>
+#include <string>
 
 #define MAX_LIGHTS 64
 
@@ -10,6 +11,13 @@ using namespace DirectX;
 
 namespace clvr
 {
+	struct SpriteLayer
+	{
+		unsigned int id = 0;
+		std::string layerName = "Sprite Layer";
+		float parallaxFactor = 1.0f; // 1.0 = normal speed, <1.0 = slower, >1.0 = faster
+	};
+
 	struct Sprite
 	{
 		XMFLOAT2 position;
@@ -17,9 +25,14 @@ namespace clvr
 		XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		XMFLOAT4 uvRect; // x, y = top-left in UV space; z, w = width, height in UV space
 		XMFLOAT2 pivot;
+		SpriteLayer* layer;
 		float rotation;
-		unsigned int layer = 0;
 		bool isOccluder = true; // if true, this sprite will be used for occlusion rendering
+	};
+
+	struct SpriteComponent
+	{
+		Sprite sprite;   // reuse your existing Sprite struct as the payload
 	};
 
 	struct Vertex

@@ -25,6 +25,11 @@ void Game::SetupRenderer()
     renderer.LoadShader(L"wacky", L"../CloverRenderer/assets/shaders/color.vs.hlsl", L"../CloverRenderer/assets/shaders/wacky.ps.hlsl");
     renderer.LoadShader(L"crt", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/crt.ps.hlsl");
     //renderer.SetPostProcessShader(L"crt");
+
+	renderer.CreateSpriteLayer(3, 0.2f, "Further Background Layer");
+	renderer.CreateSpriteLayer(2, 0.5f, "Background Layer");
+	renderer.CreateSpriteLayer(1, 1.0f, "Sprite Layer");
+	renderer.CreateSpriteLayer(0, 1.0f, "Default Layer");
 }
 
 void Game::SetupScene()
@@ -52,7 +57,8 @@ void Game::SetupScene()
         cs.size = { 200.0f, 200.0f };
         cs.color = { 1.0f, 1.0f, 1.0f, 1.0f };
         cs.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/saturn.png").uvRect;
-        cs.layer = 0;
+		SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(1);
+        cs.layer = renderer.FindOrCreateSpriteLayer(1);
         cs.isOccluder = false;
         ecs->CreateComponent<SpriteComponent>(centerEntity, cs);
         //ecs->CreateComponent<MovingSprite>(centerEntity);
@@ -60,21 +66,51 @@ void Game::SetupScene()
 
     {
 		// create wall of occluder sprites randomly around the scene
-		for (int i = 0; i < 32; ++i)
-		{
-			auto entity = ecs->CreateEntity();
-			auto& t = ecs->CreateComponent<Transform>(entity);
-			t.position = { (float) (rand() % 3200 - 1600), (float) (rand() % 1600 - 800) };
-			t.rotation = (float) (rand() % 360) * 3.1415927f / 180.0f;
-			clvr::Sprite s;
-			s.position = t.position;
-			s.size = { (float) (rand() % 200 + 100), (float) (rand() % 100 + 50) };
-			s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+        for (int i = 0; i < 32; ++i)
+        {
+            auto entity = ecs->CreateEntity();
+            auto& t = ecs->CreateComponent<Transform>(entity);
+            t.position = { (float) (rand() % 3200 - 1600), (float) (rand() % 1600 - 800) };
+            t.rotation = (float) (rand() % 360) * 3.1415927f / 180.0f;
+            clvr::Sprite s;
+            s.position = t.position;
+            s.size = { (float) (rand() % 200 + 100), (float) (rand() % 100 + 50) };
+            s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
             s.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/white.jpg").uvRect;
-			s.layer = rand() % 5;
-			s.isOccluder = true;
-			ecs->CreateComponent<SpriteComponent>(entity, s);
-		}
+            s.layer = renderer.FindOrCreateSpriteLayer(0);
+            s.isOccluder = true;
+            ecs->CreateComponent<SpriteComponent>(entity, s);
+        }
+        for (int i = 0; i < 32; ++i)
+        {
+            auto entity = ecs->CreateEntity();
+            auto& t = ecs->CreateComponent<Transform>(entity);
+            t.position = { (float) (rand() % 3200 - 1600), (float) (rand() % 1600 - 800) };
+            t.rotation = (float) (rand() % 360) * 3.1415927f / 180.0f;
+            clvr::Sprite s;
+            s.position = t.position;
+            s.size = { (float) (rand() % 400 + 200), (float) (rand() % 200 + 100) };
+            s.color = { 0.5f, 0.0f, 1.0f, 1.0f };
+            s.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/white.jpg").uvRect;
+			SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(2);
+            s.layer = layer;
+            s.isOccluder = false;
+            ecs->CreateComponent<SpriteComponent>(entity, s);
+        }
+        {
+            auto entity = ecs->CreateEntity();
+            auto& t = ecs->CreateComponent<Transform>(entity);
+            t.position = { 0, 0 };
+            clvr::Sprite s;
+            s.position = t.position;
+            s.size = { 3000, 3000 };
+            s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+            s.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/shrew1.jpg").uvRect;
+			SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(3);
+            s.layer = layer;
+            s.isOccluder = false;
+            ecs->CreateComponent<SpriteComponent>(entity, s);
+        }
 		// create ground plane occluder
         {
 			auto entity = ecs->CreateEntity();
@@ -85,7 +121,7 @@ void Game::SetupScene()
 			s.size = { 16000.0f, 64.0f };
             s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
             s.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/white.jpg").uvRect;
-            s.layer = 99;
+            s.layer = renderer.FindOrCreateSpriteLayer(0);
             s.isOccluder = true;
             ecs->CreateComponent<SpriteComponent>(entity, s);
         }
@@ -283,6 +319,8 @@ void Game::Update(float dt) {
 void Game::Render() {}
 
 void Game::Inspect(float dt) {
+	auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
+
 	ImGui::Begin("Game System");
 
     ImGui::Text("Frame time: %.3f s", dt);
@@ -344,6 +382,25 @@ void Game::Inspect(float dt) {
 				// rotation is in radians
 			}
 			ImGui::ColorEdit4("Color", &sprite.sprite.color.x);
+
+            const auto& layers = renderer.GetSpriteLayers();
+            SpriteLayer* currentLayer = renderer.FindSpriteLayer(sprite.sprite.layer->id);
+            std::string currentLayerName = currentLayer ? currentLayer->layerName : "None";
+
+            if (ImGui::BeginCombo("Layer", currentLayerName.c_str()))
+            {
+                for (SpriteLayer* layer : layers)
+                {
+                    bool isSelected = (layer == currentLayer);
+                    if (ImGui::Selectable(layer->layerName.c_str(), isSelected))
+                        sprite.sprite.layer = layer;
+
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+
 			ImGui::TreePop();
 		}
 		ImGui::PopID();

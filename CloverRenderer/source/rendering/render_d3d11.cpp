@@ -594,25 +594,11 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 	m_framebuffer->Bind(m_deviceContext);
 	m_deviceContext->ClearRenderTargetView(m_framebuffer->GetRTV(), color);
 
-	// Shader handles the rest
-
-	m_shaderManager->GetActiveShader()->Bind(m_deviceContext);
-	BufferType::MVPBufferType mvpData = m_camera.GetMVPBufferData();
-	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
-	m_mvpCb.BindVS(m_deviceContext, 0);
-
-	ID3D11ShaderResourceView* srv = m_textureAtlas->GetSRV();
-	m_deviceContext->PSSetShaderResources(0, 1, &srv);
-	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
-
-	m_spriteBatcher->Begin();
+	// Draw layer handles the rest
 }
 
 void DirectX2D::RenderScene()
 {
-	m_spriteBatcher->End();
-	m_spriteBatcher->DrawToRT();
-
 	unsigned int stride = sizeof(Vertex);
 	unsigned int offset = 0;
 
@@ -905,6 +891,34 @@ void DirectX2D::OcclusionRender()
 	}
 
 	ResetViewport();
+}
+
+void DirectX2D::SetupLayer(const SpriteLayer& layer)
+{
+	m_shaderManager->GetActiveShader()->Bind(m_deviceContext);
+
+	ID3D11ShaderResourceView* srv = m_textureAtlas->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 1, &srv);
+	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
+
+	// Scale camera position by parallax factor before building the view matrix
+	Transform newTransform = m_camera.transform;
+	newTransform.position = {
+		newTransform.position.x * layer.parallaxFactor,
+		newTransform.position.y * layer.parallaxFactor
+	};
+
+	BufferType::MVPBufferType mvpData = { GetWorldMatrix(), XMMatrixInverse(nullptr, newTransform.GetWorld()), GetProjectionMatrix() };
+	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
+	m_mvpCb.BindVS(m_deviceContext, 0);
+
+	m_spriteBatcher->Begin();
+}
+
+void DirectX2D::DrawLayer(const SpriteLayer& layer)
+{
+	m_spriteBatcher->End();
+	m_spriteBatcher->DrawToRT();
 }
 
 void DirectX2D::DrawSprite(const Sprite& sprite, const Transform& transform) { m_spriteBatcher->DrawSprite(sprite, transform); }

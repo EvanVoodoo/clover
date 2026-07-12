@@ -52,11 +52,17 @@ namespace clvr
 		bool BuildAtlas();
 		AtlasRegion GetAtlasRegion(const wchar_t* filename); // if not already exposed
 
+		SpriteLayer* CreateSpriteLayer(const unsigned int id, float parallaxFactor = 1.0f, const std::string& layerName = "");
+		SpriteLayer* FindSpriteLayer(unsigned int id);
+		SpriteLayer* FindOrCreateSpriteLayer(unsigned int id);
+		std::vector<SpriteLayer*>& GetSpriteLayers() { return m_spriteLayers; }
+
 	private:
 		bool Render(float dt);
 
 	private:
 		DirectX2D* m_DX2D;
 		bool m_fullscreenMemory = false;
+		std::vector<SpriteLayer*> m_spriteLayers; // store sprite layers for sorting
 	};
 }

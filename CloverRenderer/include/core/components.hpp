@@ -3,8 +3,5 @@
 
 namespace clvr
 {
-    struct SpriteComponent
-    {
-        Sprite sprite;   // reuse your existing Sprite struct as the payload
-    };
+    
 }
