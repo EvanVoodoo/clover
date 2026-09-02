@@ -1,5 +1,6 @@
 #include "core/engine.hpp"
 #include <chrono>
+#include <core/scene.hpp>
 
 using namespace clvr;
 
@@ -16,6 +17,10 @@ bool EngineClass::Initialize(HINSTANCE hInstance, int nCmdShow)
     m_window = new Window();
     if (!m_window->Initialize(hInstance, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT, m_input))
         return false;
+
+	m_imgui = new ImGuiLayer();
+
+    GetECS()->CreateSystem<SceneManager>();
 
     return true;
 }
@@ -78,6 +83,8 @@ void EngineClass::Run()
             lastTime = now;
 
 			m_imgui->BeginFrame();
+
+            ImGui::DockSpaceOverViewport();
 
 			GetECS()->InspectSystems(deltaTime);
 

@@ -27,6 +27,7 @@ DirectX2D::DirectX2D()
 	}
 	m_lightFramebuffer = nullptr;
 	m_postFramebuffer = nullptr;
+	m_letterboxFramebuffer = nullptr;
 	m_finalFramebuffer = nullptr;
 	m_fullscreenQuadIB = nullptr;
 	m_fullscreenQuadVB = nullptr;
@@ -393,6 +394,14 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 		return false;
 	}
 
+	m_letterboxFramebuffer = new Framebuffer();
+	result = m_letterboxFramebuffer->Initialize(m_device, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize letterbox framebuffer", L"Error", MB_OK);
+		return false;
+	}
+
 	m_finalFramebuffer = new Framebuffer();
 	result = m_finalFramebuffer->Initialize(m_device, screenWidth, screenHeight);
 	if (!result)
@@ -510,6 +519,13 @@ void DirectX2D::Shutdown()
 		m_postFramebuffer = nullptr;
 	}
 
+	if (m_letterboxFramebuffer)
+	{
+		m_letterboxFramebuffer->Shutdown();
+		delete m_letterboxFramebuffer;
+		m_letterboxFramebuffer = nullptr;
+	}
+
 	if (m_lightFramebuffer)
 	{
 		m_lightFramebuffer->Shutdown();
@@ -597,7 +613,7 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 	// Draw layer handles the rest
 }
 
-void DirectX2D::RenderScene()
+void* DirectX2D::RenderScene()
 {
 	unsigned int stride = sizeof(Vertex);
 	unsigned int offset = 0;
@@ -682,8 +698,8 @@ void DirectX2D::RenderScene()
 
 	m_shaderManager->GetPostProcessShader()->Bind(m_deviceContext);
 
-	m_finalFramebuffer->Bind(m_deviceContext);
-	m_deviceContext->ClearRenderTargetView(m_finalFramebuffer->GetRTV(), color);
+	m_letterboxFramebuffer->Bind(m_deviceContext);
+	m_deviceContext->ClearRenderTargetView(m_letterboxFramebuffer->GetRTV(), color);
 
 	srv = m_postFramebuffer->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
@@ -695,13 +711,16 @@ void DirectX2D::RenderScene()
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_deviceContext->DrawIndexed(6, 0, 0);
 
-	// final pass: render last used framebuffer to back buffer for letterboxing
-	// Unbind the framebuffer so we can render to the back buffer
-	SetBackBufferRenderTarget();
+	// final pass: render the letterboxed image into m_finalFramebuffer.
+// This is the texture ImGui::Image() should display — it already has
+// the black bars baked in, so ImGui stretching it just scales the
+// whole letterboxed frame uniformly (which is fine).
+	m_finalFramebuffer->Bind(m_deviceContext);
+	m_deviceContext->ClearRenderTargetView(m_finalFramebuffer->GetRTV(), color);
 
 	m_shaderManager->GetShader(L"letterbox")->Bind(m_deviceContext);
 
-	srv = m_finalFramebuffer->GetSRV();
+	srv = m_letterboxFramebuffer->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
 	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
 
@@ -712,7 +731,7 @@ void DirectX2D::RenderScene()
 		float padding;
 	};
 
-	ResolutionBuffer resolution = { m_currentWindowSize, 16.f/9.f, 0.0f };
+	ResolutionBuffer resolution = { m_sceneWindowSize, 16.f / 9.f, 0.0f };
 	ConstantBuffer<ResolutionBuffer> resolutionBuffer;
 	resolutionBuffer.Init(m_device);
 	resolutionBuffer.Update(m_deviceContext, resolution);
@@ -723,7 +742,11 @@ void DirectX2D::RenderScene()
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_deviceContext->DrawIndexed(6, 0, 0);
 
-	return;
+	// Rebind the back buffer so the ImGui backend's own draw calls
+	// (ImGui_ImplDX11_RenderDrawData) land in the swapchain, not m_finalFramebuffer.
+	SetBackBufferRenderTarget();
+
+	return (void*) m_finalFramebuffer->GetSRV();
 }
 
 void DirectX2D::EndScene() {
@@ -985,6 +1008,9 @@ void DirectX2D::SetBackBufferRenderTarget()
 	// Bind the render target view and depth stencil buffer to the output render pipeline.
 	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, nullptr);
 
+	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	m_deviceContext->ClearRenderTargetView(m_renderTargetView, clearColor);
+
 	return;
 }
 
@@ -998,7 +1024,15 @@ void DirectX2D::ResetViewport()
 
 void DirectX2D::UpdateWindowSize(float w, float h)
 {
-	ResizeBuffers(static_cast<int>(w), static_cast<int>(h));
+	if (w <= 0.0f || h <= 0.0f) return; // ignore invalid sizes
+	if (m_currentWindowSize.x != static_cast<float>(w) || m_currentWindowSize.y != static_cast<float>(h)) // only resize if the size has actually changed
+		ResizeBuffers(static_cast<int>(w), static_cast<int>(h));
+}
+
+void DirectX2D::UpdateSceneWindowSize(float w, float h)
+{
+	if (w <= 0.0f || h <= 0.0f) return; // ignore invalid sizes
+	if (m_sceneWindowSize.x != static_cast<float>(w) || m_sceneWindowSize.y != static_cast<float>(h)) m_sceneWindowSize = XMFLOAT2(w, h);
 }
 
 void DirectX2D::ResizeBuffers(int width, int height)
@@ -1038,6 +1072,7 @@ void DirectX2D::ResizeBuffers(int width, int height)
 	m_occluderMaskFramebuffer->Resize(m_device, width, height);
 	m_lightFramebuffer->Resize(m_device, width, height); // keep DXGI_FORMAT_R16G16B16A16_FLOAT
 	m_postFramebuffer->Resize(m_device, width, height);
+	m_letterboxFramebuffer->Resize(m_device, width, height);
 	m_finalFramebuffer->Resize(m_device, width, height);
 
 	// NOTE: m_shadowMapSingleFb and m_occlusionFramebuffers[] are intentionally

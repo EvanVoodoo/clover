@@ -1,6 +1,7 @@
 #pragma once
 
 #include <directxmath.h>
+#include <string>
 
 using namespace DirectX;
 
@@ -8,6 +9,7 @@ namespace clvr
 {
 	struct Transform
 	{
+		std::string name = "";
 		XMFLOAT2 position;
 		XMFLOAT2 scale;
 		float rotation;

@@ -145,6 +145,7 @@
     <ClInclude Include="include\Clover.h" />
     <ClInclude Include="include\core\imgui_layer.hpp" />
     <ClInclude Include="include\core\input.hpp" />
+    <ClInclude Include="include\core\scene.hpp" />
     <ClInclude Include="include\core\transform.hpp" />
     <ClInclude Include="include\core\window.hpp" />
     <ClInclude Include="include\entt\config\config.h" />
@@ -247,6 +248,7 @@
   <ItemGroup>
     <ClCompile Include="source\core\ecs.cpp" />
     <ClCompile Include="source\core\imgui_layer.cpp" />
+    <ClCompile Include="source\core\scene.cpp" />
     <ClCompile Include="source\imgui\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="source\imgui\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="source\imgui\imgui.cpp" />

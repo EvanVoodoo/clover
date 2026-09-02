@@ -29,7 +29,7 @@ namespace clvr
 		void Shutdown();
 
 		void BeginScene(float, float, float, float);
-		void RenderScene();
+		void* RenderScene();
 		void EndScene();
 		void OcclusionRender();
 
@@ -72,6 +72,7 @@ namespace clvr
 			m_lights = data;
 		}
 		void UpdateWindowSize(float w, float h);
+		void UpdateSceneWindowSize(float w, float h);
 		void ResizeBuffers(int width, int height);
 
 		bool SetFullscreen(bool fullscreen);
@@ -92,6 +93,7 @@ namespace clvr
 		Framebuffer* m_occluderMaskFramebuffer;
 		Framebuffer* m_lightFramebuffer;
 		Framebuffer* m_postFramebuffer;
+		Framebuffer* m_letterboxFramebuffer;
 		Framebuffer* m_finalFramebuffer;
 		Framebuffer* m_occlusionFramebuffers[MAX_LIGHTS];
 		Framebuffer* m_shadowMapSingleFb;
@@ -106,6 +108,7 @@ namespace clvr
 		D3D11_VIEWPORT m_viewport;
 
 		XMFLOAT2 m_currentWindowSize;
+		XMFLOAT2 m_sceneWindowSize;
 
 		ConstantBuffer<BufferType::MVPBufferType> m_mvpCb;
 		ConstantBuffer<BufferType::LightBufferType> m_lightCb;

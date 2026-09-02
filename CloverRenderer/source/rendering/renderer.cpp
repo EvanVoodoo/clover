@@ -92,7 +92,7 @@ void Renderer::DrawSprite(const Sprite& sprite, const Transform& transform) { m_
 
 bool Renderer::Render(float dt)
 {
-	m_DX2D->BeginScene(1.0f, 1.0f, 1.0f, 1.0f);
+	m_DX2D->BeginScene(1.0f, 1.0f, 1.0f, 0.0f);
 
 	UpdateLights();
 
@@ -117,7 +117,13 @@ bool Renderer::Render(float dt)
 		m_DX2D->DrawLayer(*layer);
 	}
 
-	m_DX2D->RenderScene();
+	ImGui::Begin("Game Scene", nullptr);
+
+	ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+	m_DX2D->UpdateSceneWindowSize(viewportSize.x, viewportSize.y);
+	ImGui::Image(m_DX2D->RenderScene(), viewportSize);
+
+	ImGui::End();
 
 	Engine.GetImGuiLayer()->EndFrame();
 
