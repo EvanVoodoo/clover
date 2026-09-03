@@ -198,6 +198,8 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, HWND h
 		swapChainDesc.Windowed = true;
 	}
 
+	m_isFullscreen = fullscreen;
+
 	// Set the scan line ordering and scaling to unspecified.
 	swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
