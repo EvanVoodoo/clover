@@ -714,9 +714,17 @@ void* DirectX2D::RenderScene()
 	m_deviceContext->DrawIndexed(6, 0, 0);
 
 	// final pass: render the letterboxed image into m_finalFramebuffer.
-// This is the texture ImGui::Image() should display — it already has
-// the black bars baked in, so ImGui stretching it just scales the
-// whole letterboxed frame uniformly (which is fine).
+	// This is the texture that should be displayed in ImGui::Image() in editor mode,
+	// and the regular backbuffer in game mode.
+	struct ResolutionBuffer
+	{
+		XMFLOAT2 screenSize;
+		float aspectRatio;
+		float padding;
+	};
+
+	ConstantBuffer<ResolutionBuffer> resolutionBuffer;
+#ifdef CLOVER_EDITOR
 	m_finalFramebuffer->Bind(m_deviceContext);
 	m_deviceContext->ClearRenderTargetView(m_finalFramebuffer->GetRTV(), color);
 
@@ -726,15 +734,7 @@ void* DirectX2D::RenderScene()
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
 	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
 
-	struct ResolutionBuffer
-	{
-		XMFLOAT2 screenSize;
-		float aspectRatio;
-		float padding;
-	};
-
 	ResolutionBuffer resolution = { m_sceneWindowSize, 16.f / 9.f, 0.0f };
-	ConstantBuffer<ResolutionBuffer> resolutionBuffer;
 	resolutionBuffer.Init(m_device);
 	resolutionBuffer.Update(m_deviceContext, resolution);
 	resolutionBuffer.BindPS(m_deviceContext, 0);
@@ -748,7 +748,28 @@ void* DirectX2D::RenderScene()
 	// (ImGui_ImplDX11_RenderDrawData) land in the swapchain, not m_finalFramebuffer.
 	SetBackBufferRenderTarget();
 
-	return (void*) m_finalFramebuffer->GetSRV();
+	return (void*)m_finalFramebuffer->GetSRV();
+#else 
+	SetBackBufferRenderTarget();
+
+	m_shaderManager->GetShader(L"letterbox")->Bind(m_deviceContext);
+
+	srv = m_letterboxFramebuffer->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 1, &srv);
+	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
+
+	ResolutionBuffer resolution = { m_currentWindowSize, 16.f / 9.f, 0.0f };
+	resolutionBuffer.Init(m_device);
+	resolutionBuffer.Update(m_deviceContext, resolution);
+	resolutionBuffer.BindPS(m_deviceContext, 0);
+
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_fullscreenQuadVB, &stride, &offset);
+	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_deviceContext->DrawIndexed(6, 0, 0);
+
+	return (void*)nullptr; // don't need to return a texture in game mode, since we render directly to the backbuffer
+#endif
 }
 
 void DirectX2D::EndScene() {

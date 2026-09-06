@@ -52,7 +52,9 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Update the window size in the DirectX2D object one time during initialization to ensure it has the correct size.
 	m_DX2D->UpdateWindowSize(static_cast<float>(window->GetWidth()), static_cast<float>(window->GetHeight()));
 
+#ifdef CLOVER_EDITOR
 	Engine.GetImGuiLayer()->Init(hwnd, m_DX2D->GetDevice(), m_DX2D->GetDeviceContext());
+#endif
 
 	return true;
 }
@@ -117,6 +119,7 @@ bool Renderer::Render(float dt)
 		m_DX2D->DrawLayer(*layer);
 	}
 
+#ifdef CLOVER_EDITOR
 	ImGui::Begin("Game Scene", nullptr);
 
 	ImVec2 viewportSize = ImGui::GetContentRegionAvail();
@@ -126,6 +129,9 @@ bool Renderer::Render(float dt)
 	ImGui::End();
 
 	Engine.GetImGuiLayer()->EndFrame();
+#else
+	m_DX2D->RenderScene();
+#endif
 
 	m_DX2D->EndScene();
 

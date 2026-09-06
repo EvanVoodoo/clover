@@ -18,7 +18,9 @@ bool EngineClass::Initialize(HINSTANCE hInstance, int nCmdShow)
     if (!m_window->Initialize(hInstance, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT, m_input))
         return false;
 
-	m_imgui = new ImGuiLayer();
+#ifdef CLOVER_EDITOR
+    m_imgui = new ImGuiLayer();
+#endif
 
     GetECS()->CreateSystem<SceneManager>();
 
@@ -82,11 +84,13 @@ void EngineClass::Run()
             float deltaTime = std::chrono::duration<float>(now - lastTime).count();
             lastTime = now;
 
+#ifdef CLOVER_EDITOR
 			m_imgui->BeginFrame();
 
             ImGui::DockSpaceOverViewport();
 
 			GetECS()->InspectSystems(deltaTime);
+#endif // CLOVER_EDITOR
 
 			GetECS()->UpdateSystems(deltaTime);
 
