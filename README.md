@@ -11,7 +11,7 @@ A custom 2D renderer built from scratch in C++ with DirectX 11, developed as a g
 - Framebuffer-based post-processing pipeline
 - Point and directional lighting with real-time shadows
 - Entity-Component-System architecture (EnTT)
-- ImGui debug overlay
+- ImGui editor overlay
 
 ## Tech Stack
 

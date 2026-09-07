@@ -81,7 +81,7 @@ void Game::SetupScene()
             s.isOccluder = true;
             ecs->CreateComponent<SpriteComponent>(entity, s);
         }
-        for (int i = 0; i < 32; ++i)
+        /*for (int i = 0; i < 32; ++i)
         {
             auto entity = ecs->CreateEntity();
             auto& t = ecs->CreateComponent<Transform>(entity);
@@ -96,7 +96,7 @@ void Game::SetupScene()
             s.layer = layer;
             s.isOccluder = false;
             ecs->CreateComponent<SpriteComponent>(entity, s);
-        }
+        }*/
         {
             auto entity = ecs->CreateEntity();
             auto& t = ecs->CreateComponent<Transform>(entity);
