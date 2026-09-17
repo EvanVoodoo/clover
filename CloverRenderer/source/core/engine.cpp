@@ -2,6 +2,46 @@
 #include <chrono>
 #include <core/scene.hpp>
 
+namespace clvr {
+	bool IsMouseMoving() {
+		return Engine.GetInput()->IsMouseMoving();
+	}
+
+	bool IsKeyDown(unsigned int keycode) {
+		return Engine.GetInput()->IsKeyDown(keycode);
+	}
+
+	bool IsMouseButtonDown(unsigned int button) {
+		return Engine.GetInput()->IsMouseButtonDown(button);
+	}
+
+	bool IsMouseButtonUp(unsigned int button) {
+		return !Engine.GetInput()->IsMouseButtonDown(button);
+	}
+
+	bool WasKeyJustReleased(unsigned int key) {
+		return Engine.GetInput()->WasKeyJustReleased(key);
+	}
+
+	bool WasKeyJustPressed(unsigned int key) {
+		return Engine.GetInput()->WasKeyJustPressed(key);
+	}
+
+	bool WasMouseButtonJustReleased(unsigned int button) {
+		return Engine.GetInput()->WasMouseButtonJustReleased(button);
+	}
+
+	bool WasMouseButtonJustPressed(unsigned int button) {
+		return Engine.GetInput()->WasMouseButtonJustPressed(button);
+	}
+
+	void GetMousePosition(int& x, int& y) {
+		const int* pos = Engine.GetInput()->GetMousePosition();
+		x = pos[0];
+		y = pos[1];
+	}
+}
+
 using namespace clvr;
 
 EngineClass clvr::Engine;

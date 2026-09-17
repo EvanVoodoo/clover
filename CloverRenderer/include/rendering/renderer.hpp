@@ -6,7 +6,7 @@
 #include "rendering/render_d3d11.hpp"	
 
 const bool FULL_SCREEN = false;
-const bool VSYNC_ENABLED = true;
+const bool VSYNC_ENABLED = false;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.3f;
 
@@ -17,10 +17,11 @@ namespace clvr
 	{
 	public:
 		Renderer();
-		Renderer(const Renderer&);
+		Renderer(const Renderer&) = delete;
+		Renderer& operator=(const Renderer&) = delete;
 		~Renderer();
 
-		bool Initialize(int, int, HWND);
+		bool Initialize(int, int);
 		void Shutdown();
 
 		void Update(float dt);
@@ -36,7 +37,7 @@ namespace clvr
 			return m_DX2D->LoadShader(name, vsFilename, psFilename);
 		}
 		bool ReloadShaders() { return m_DX2D->ReloadShaders(); }
-		Camera& GetCamera() { return m_DX2D->GetCamera(); }
+		Camera& GetActiveCamera() { return m_DX2D->GetActiveCamera(); }
 
 		bool SetFullscreen(bool fullscreen) { 
 			bool result = m_DX2D->SetFullscreen(fullscreen);

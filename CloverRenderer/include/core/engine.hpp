@@ -10,6 +10,19 @@ const int SCREEN_HEIGHT = 1080;
 
 namespace clvr
 {
+	bool IsMouseMoving();
+	bool IsKeyDown(unsigned int keycode);
+	bool IsMouseButtonDown(unsigned int button);
+	void GetMousePosition(int& x, int& y);
+	bool WasKeyJustReleased(unsigned int key);
+	bool WasKeyJustPressed(unsigned int key);
+	bool WasMouseButtonJustReleased(unsigned int button);
+	bool WasMouseButtonJustPressed(unsigned int button);
+
+#ifdef CLOVER_EDITOR
+	enum class EditorMode { Editing, Playing };
+#endif
+
 	class EngineClass
 	{
 	public:
@@ -24,6 +37,11 @@ namespace clvr
 
 		bool running = false;
 
+#ifdef CLOVER_EDITOR
+		EditorMode GetEditorMode() const { return m_editorMode; }
+		void SetEditorMode(EditorMode mode) { m_editorMode = mode; }
+#endif
+
 	private:
 		bool Frame(float dt);
 
@@ -31,6 +49,9 @@ namespace clvr
 		Input* m_input = nullptr;
 		Window* m_window = nullptr;
 		ImGuiLayer* m_imgui = nullptr;
+#ifdef CLOVER_EDITOR
+		EditorMode m_editorMode = EditorMode::Editing;
+#endif
 	};
 
 	extern EngineClass Engine;

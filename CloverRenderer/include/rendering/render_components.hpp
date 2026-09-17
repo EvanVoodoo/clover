@@ -23,7 +23,7 @@ namespace clvr
 		XMFLOAT2 position;
 		XMFLOAT2 size;
 		XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		XMFLOAT4 uvRect; // x, y = top-left in UV space; z, w = width, height in UV space
+		XMFLOAT4 uvRect = { 0.0f, 0.0f, 1.0f, 1.0f }; // x, y = top-left in UV space; z, w = width, height in UV space
 		XMFLOAT2 pivot;
 		SpriteLayer* layer;
 		float rotation;

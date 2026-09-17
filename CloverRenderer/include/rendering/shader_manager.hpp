@@ -24,11 +24,16 @@ namespace clvr
         void SetPostProcessShader(const std::wstring& name);
         Shader* GetPostProcessShader();
 
+		int* GetTest() { return test; } // Example of a getter for the pointer member variable
+
     private:
         ID3D11Device* m_device;
         HWND m_hwnd;
         std::map<std::wstring, Shader*> m_shaders;
         Shader* m_activeShader;
         Shader* m_postProcessShader;
+		int* test = nullptr; // Example of a pointer member variable
+
+        bool m_isDestroyed = false;
 	};
 }

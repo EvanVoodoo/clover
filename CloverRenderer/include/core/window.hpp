@@ -10,8 +10,6 @@ namespace clvr
 	{
 	public:
 		Window();
-		Window(const Window&);
-		~Window();
 
 		bool Initialize(HINSTANCE hInstance, int nCmdShow, int width, int height, Input* input);
 		void Shutdown();
@@ -23,6 +21,7 @@ namespace clvr
 		void SetActivateWindowCallback(std::function<void()> callback) { m_onActivateWindow = callback; }
 
 	private:
+		static void SetMousePosition(Window*, LPARAM);
 		static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 		Input* m_input;

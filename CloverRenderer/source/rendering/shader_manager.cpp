@@ -9,12 +9,21 @@ ShaderManager::ShaderManager()
 
 ShaderManager::~ShaderManager()
 {
+	// Signal that destruction happened — helps catch dangling-pointer misuse
+	m_isDestroyed = true;
+	OutputDebugStringA("ShaderManager::~ShaderManager destructor called\n");
+
+#ifdef _DEBUG
+	// Optional: hard stop in debug builds if something calls back in after destruction
+	assert(m_isDestroyed);
+#endif
 }
 
 bool ShaderManager::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	m_device = device;
 	m_hwnd = hwnd;
+	test = new int(42); // Example of allocating a pointer member variable
 	return true;
 }
 
@@ -36,19 +45,75 @@ void ShaderManager::Shutdown()
 
 bool ShaderManager::LoadShader(const std::wstring& name, const wchar_t* vsFilename, const wchar_t* psFilename)
 {
-	if (m_shaders.find(name) != m_shaders.end())
-	{
-		return false; // Shader with this name already exists
+	// Defensive checks to avoid crashes when ShaderManager is in an invalid state.
+	// If 'this' is null or internal state appears invalid, fail gracefully and log.
+	if (m_isDestroyed) {
+		OutputDebugStringA("ShaderManager::LoadShader called after destruction\n");
+		return false;
 	}
 
-	Shader* shader = new Shader();
+	// Basic validation of required members
+	if (vsFilename == nullptr || psFilename == nullptr) {
+		OutputDebugStringA("ShaderManager::LoadShader: null shader filename parameter\n");
+		return false;
+	}
+	if (m_device == nullptr || m_hwnd == nullptr) {
+		OutputDebugStringA("ShaderManager::LoadShader: manager not initialized (null device or hwnd)\n");
+		return false;
+	}
+	// Validate that the map object seems usable by catching exceptions from STL operations.
+	try {
+		if (m_shaders.find(name) != m_shaders.end())
+		{
+			return false; // Shader with this name already exists
+		}
+	}
+	catch (const std::exception& e)
+	{
+		OutputDebugStringA("ShaderManager::LoadShader: exception accessing m_shaders: ");
+		OutputDebugStringA(e.what());
+		OutputDebugStringA("\n");
+		return false;
+	}
+
+
+	Shader* shader = nullptr;
+	try {
+		shader = new Shader();
+	}
+	catch (const std::bad_alloc&)
+	{
+		OutputDebugStringA("ShaderManager::LoadShader: allocation failed\n");
+		return false;
+	}
+	catch (...)
+	{
+		OutputDebugStringA("ShaderManager::LoadShader: unknown exception during allocation\n");
+		return false;
+	}
 	if (!shader->Initialize(m_device, m_hwnd, vsFilename, psFilename))
 	{
 		delete shader;
 		return false;
 	}
 
-	m_shaders[name] = shader;
+	try {
+		m_shaders[name] = shader;
+	}
+	catch (const std::exception& e)
+	{
+		OutputDebugStringA("ShaderManager::LoadShader: exception inserting into m_shaders: ");
+		OutputDebugStringA(e.what());
+		OutputDebugStringA("\n");
+		delete shader;
+		return false;
+	}
+	catch (...)
+	{
+		OutputDebugStringA("ShaderManager::LoadShader: unknown exception inserting into m_shaders\n");
+		delete shader;
+		return false;
+	}
 
 	if (!m_activeShader)
 	{

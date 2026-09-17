@@ -1,7 +1,5 @@
 #include "rendering/renderer.hpp"
-#include <random>
 #include <core/engine.hpp>
-#include <core/components.hpp>
 
 using namespace clvr;
 
@@ -13,25 +11,21 @@ Renderer::Renderer()
 	title = "Renderer";
 }
 
-Renderer::Renderer(const Renderer& other) {
-
-}
-
 Renderer::~Renderer() {
 
 }
 
-bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
+bool Renderer::Initialize(int screenWidth, int screenHeight)
 {
 	bool result;
 
 	// Create and initialize the Direct3D object.
-	m_DX2D = new DirectX2D;
+	m_DX2D = new DirectX2D();
 
-	result = m_DX2D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN);
+	result = m_DX2D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, FULL_SCREEN);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
+		MessageBox(Engine.GetWindow()->GetHWND(), L"Could not initialize Direct3D", L"Error", MB_OK);
 		return false;
 	}
 
@@ -53,7 +47,7 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_DX2D->UpdateWindowSize(static_cast<float>(window->GetWidth()), static_cast<float>(window->GetHeight()));
 
 #ifdef CLOVER_EDITOR
-	Engine.GetImGuiLayer()->Init(hwnd, m_DX2D->GetDevice(), m_DX2D->GetDeviceContext());
+	Engine.GetImGuiLayer()->Init(Engine.GetWindow()->GetHWND(), m_DX2D->GetDevice(), m_DX2D->GetDeviceContext());
 #endif
 
 	return true;
@@ -122,10 +116,16 @@ bool Renderer::Render(float dt)
 #ifdef CLOVER_EDITOR
 	ImGui::Begin("Game Scene", nullptr);
 
+	ImVec2 viewportPos = ImGui::GetCursorScreenPos();
 	ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 	m_DX2D->UpdateSceneWindowSize(viewportSize.x, viewportSize.y);
 	ImGui::Image(m_DX2D->RenderScene(), viewportSize);
 
+	// TODO: Draw gizmos here, after the scene is rendered but before ImGui::End() so they appear on top of the scene
+
+	// Rebind the back buffer so the ImGui backend's own draw calls
+	// (ImGui_ImplDX11_RenderDrawData) land in the swapchain, not m_finalFramebuffer.
+	m_DX2D->SetBackBufferRenderTarget();
 	ImGui::End();
 
 	Engine.GetImGuiLayer()->EndFrame();

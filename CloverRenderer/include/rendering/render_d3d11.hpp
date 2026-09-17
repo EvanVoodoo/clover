@@ -9,6 +9,7 @@
 #include <d3d11.h>
 #include <directxmath.h>
 #include "shader_manager.hpp"
+#include <memory>
 #include "sprite_batcher.hpp"
 #include "texture_atlas.hpp"
 #include "framebuffer.hpp"
@@ -21,10 +22,11 @@ namespace clvr
 	{
 	public:
 		DirectX2D();
-		DirectX2D(const DirectX2D&);
+		//DirectX2D(const DirectX2D&) = delete;
+		//DirectX2D& operator=(const DirectX2D&) = delete;
 		~DirectX2D();
 
-		bool Initialize(int, int, bool, HWND, bool);
+		bool Initialize(int, int, bool, bool);
 		bool InitializeFullscreenQuad();
 		void Shutdown();
 
@@ -37,15 +39,12 @@ namespace clvr
 		void DrawLayer(const SpriteLayer& layer);
 		void DrawSprite(const Sprite& sprite, const Transform& transform);
 
-		void SetActiveShader(const std::wstring& name) { m_shaderManager->SetActiveShader(name); }
-		void SetPostProcessShader(const std::wstring& name) { m_shaderManager->SetPostProcessShader(name); }
+		void SetActiveShader(const std::wstring& name);
+		void SetPostProcessShader(const std::wstring& name);
 
-		bool LoadShader(const std::wstring& name, const wchar_t* vsFilename, const wchar_t* psFilename)
-		{
-			return m_shaderManager->LoadShader(name, vsFilename, psFilename);
-		}
+		bool LoadShader(const std::wstring& name, const wchar_t* vsFilename, const wchar_t* psFilename);
 
-		bool ReloadShaders() { return m_shaderManager->ReloadAll(); }
+		bool ReloadShaders();
 
 		int AddTexture(const wchar_t* filename);
 		ID3D11ShaderResourceView* LoadTexture(const wchar_t* filename);
@@ -59,7 +58,7 @@ namespace clvr
 		XMMATRIX GetProjectionMatrix();
 		XMMATRIX GetWorldMatrix();
 		XMMATRIX GetViewMatrix();
-		Camera& GetCamera() { return m_camera; }
+		Camera& GetActiveCamera();
 
 		void GetVideoCardInfo(char*, int&);
 
@@ -103,8 +102,12 @@ namespace clvr
 
 		ID3D11RasterizerState* m_rasterState;
 
-		// main camera for 2D rendering
-		Camera m_camera;
+		// main cameras for 2D rendering
+#ifdef CLOVER_EDITOR
+		Camera m_editorCamera;
+#endif
+		Camera m_gameCamera;
+
 		D3D11_VIEWPORT m_viewport;
 
 		XMFLOAT2 m_currentWindowSize;
@@ -116,7 +119,7 @@ namespace clvr
 		// lights for the scene, updated each frame, used for shadow mapping
 		BufferType::LightBufferType m_lights;
 
-		ShaderManager* m_shaderManager;
+		std::unique_ptr<ShaderManager> m_shaderManager;
 		SpriteBatcher* m_spriteBatcher;
 		ID3D11SamplerState* m_pointSampler;
 		ID3D11SamplerState* m_linearSampler;
