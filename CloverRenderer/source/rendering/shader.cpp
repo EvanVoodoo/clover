@@ -1,20 +1,20 @@
 #include "rendering/shader.hpp"
+#include <d3dcompiler.h>
+#include <fstream>
 
 using namespace clvr;
 
 Shader::Shader()
+	: Resource(ResourceType::Shader)
 {
 	m_vertexShader = nullptr;
 	m_pixelShader = nullptr;
 	m_layout = nullptr;
 }
 
-Shader::Shader(const Shader& other)
-{
-}
-
 Shader::~Shader()
 {
+	Shutdown();
 }
 
 bool Shader::Initialize(ID3D11Device* device, HWND hwnd, const wchar_t* vs, const wchar_t* ps)

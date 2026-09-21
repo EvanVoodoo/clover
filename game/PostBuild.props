@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ImportGroup Label="PropertySheets" />
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup />
+	<ItemDefinitionGroup />
+	<!-- ==========================================================
+       Add new post-build copies here as ItemGroup entries.
+       No need to touch the Target below for a plain file/folder copy.
+       ========================================================== -->
+	<ItemGroup>
+		<PostBuildCopy Include="$(ProjectDir)assets">
+			<Dest>$(OutDir)assets</Dest>
+		</PostBuildCopy>
+		<PostBuildCopy Include="$(SolutionDir)assets">
+			<Dest>$(OutDir)CloverRenderer\assets</Dest>
+		</PostBuildCopy>
+		<!--
+    <PostBuildCopy Include="$(SolutionDir)SomeOtherFolder">
+      <Dest>$(OutDir)SomeOtherFolder</Dest>
+    </PostBuildCopy>
+    -->
+	</ItemGroup>
+
+	<Target Name="RunPostBuildSteps" AfterTargets="Build">
+
+		<Message Text="Copying from: %(PostBuildCopy.Identity) to %(PostBuildCopy.Dest)"
+				  Importance="high"
+				  Condition="'@(PostBuildCopy)' != ''" />
+
+		<!-- Runs one xcopy per PostBuildCopy entry above -->
+		<Exec Command="xcopy /E /I /Y &quot;%(PostBuildCopy.Identity)&quot; &quot;%(PostBuildCopy.Dest)&quot;"
+			  Condition="'@(PostBuildCopy)' != ''" />
+
+		<!-- ==========================================================
+         Add non-copy post-build commands here (codegen, validation,
+         packaging steps, etc.) as additional <Exec> lines.
+         ========================================================== -->
+		<!-- <Exec Command="some_other_tool.exe -flag" /> -->
+
+	</Target>
+</Project>

@@ -3,10 +3,10 @@
 #include <memory>
 #include "entt/entity/fwd.hpp"
 #include <rendering/sprite_batcher.hpp>
-#include <rendering/texture.hpp>
 
 namespace clvr {
 	struct Transform;
+	class Texture;
 
 	struct GizmoAxisParams {
 		Transform transform;
@@ -36,7 +36,7 @@ namespace clvr {
 
 	protected:
 		void Initialize(const Texture& xAxisTexture, const Texture& yAxisTexture);
-		virtual void ExamineMousePosition();
+		void ExamineMousePosition();
 
 		float GetDeltaX();
 		float GetDeltaY();

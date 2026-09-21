@@ -4,6 +4,7 @@
 #include "core/input.hpp"
 #include "core/ecs.hpp"
 #include "imgui_layer.hpp"
+#include "resources/resource_manager.hpp"
 
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1080;
@@ -18,6 +19,8 @@ namespace clvr
 	bool WasKeyJustPressed(unsigned int key);
 	bool WasMouseButtonJustReleased(unsigned int button);
 	bool WasMouseButtonJustPressed(unsigned int button);
+	const std::wstring ToWString(const std::string& str);
+	bool IsDevEnvironment();
 
 #ifdef CLOVER_EDITOR
 	enum class EditorMode { Editing, Playing };
@@ -33,6 +36,7 @@ namespace clvr
 		EntityComponentSystem* GetECS() { return m_ecs; }
 		Window* GetWindow() { return m_window; }
 		Input* GetInput() { return m_input; }
+		ResourceManager* GetResourceManager() { return m_resourceManager; }
 		ImGuiLayer* GetImGuiLayer() { return m_imgui; }
 
 		bool running = false;
@@ -49,6 +53,7 @@ namespace clvr
 		Input* m_input = nullptr;
 		Window* m_window = nullptr;
 		ImGuiLayer* m_imgui = nullptr;
+		ResourceManager* m_resourceManager = nullptr;
 #ifdef CLOVER_EDITOR
 		EditorMode m_editorMode = EditorMode::Editing;
 #endif

@@ -390,6 +390,7 @@
     <ClInclude Include="include\core\input.hpp" />
     <ClInclude Include="include\core\scene.hpp" />
     <ClInclude Include="include\core\transform.hpp" />
+    <ClInclude Include="include\core\translate_gizmo.hpp" />
     <ClInclude Include="include\core\window.hpp" />
     <ClInclude Include="include\DirectXTex\DirectXTex.h" />
     <ClInclude Include="include\entt\config\config.h" />
@@ -488,6 +489,8 @@
     <ClInclude Include="include\rendering\texture.hpp" />
     <ClInclude Include="include\rendering\texture_atlas.hpp" />
     <ClInclude Include="include\resource.h" />
+    <ClInclude Include="include\resources\resource.hpp" />
+    <ClInclude Include="include\resources\resource_manager.hpp" />
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -495,6 +498,7 @@
     <ClCompile Include="source\core\gizmo.cpp" />
     <ClCompile Include="source\core\imgui_layer.cpp" />
     <ClCompile Include="source\core\scene.cpp" />
+    <ClCompile Include="source\core\translate_gizmo.cpp" />
     <ClCompile Include="source\imgui\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="source\imgui\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="source\imgui\imgui.cpp" />
@@ -514,6 +518,7 @@
     <ClCompile Include="source\Clover.cpp" />
     <ClCompile Include="source\rendering\shader.cpp" />
     <ClCompile Include="source\rendering\sprite_batcher.cpp" />
+    <ClCompile Include="source\resources\resource_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Clover.rc" />

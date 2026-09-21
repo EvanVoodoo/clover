@@ -1,19 +1,16 @@
 #pragma once
 
 #include <d3d11.h>
-#include <d3dcompiler.h>
 #include <directxmath.h>
-#include <fstream>
-#include <map>
 #include <filesystem>
+#include "resources/resource.hpp"
 
 using namespace DirectX;
 using namespace std;
 
 namespace clvr
 {
-
-	class Shader
+	class Shader : public Resource
 	{
 	private:
 		struct MatrixBufferType
@@ -25,14 +22,19 @@ namespace clvr
 
 	public:
 		Shader();
-		Shader(const Shader&);
+		Shader(const Shader&) = delete;
 		~Shader();
 		bool Initialize(ID3D11Device* device, HWND hwnd, const wchar_t* vs, const wchar_t* ps);
 		void Shutdown();
 		bool Bind(ID3D11DeviceContext* deviceContext);
 		bool NeedsReload() const;
 		bool Reload(ID3D11Device* device, HWND hwnd); 
-
+		
+		// TODO: Implement GetPath that uses the shader filenames to create a unique path string
+		std::string GetPath(const wchar_t* vsFilename, const wchar_t* psFilename) {
+			return "";
+		}
+	
 	private:
 		bool InitializeShader(ID3D11Device*, HWND, const wchar_t*, const wchar_t*);
 		bool InitializeShaderInto(ID3D11Device* device, HWND hwnd, const wchar_t* vsFilename, const wchar_t* psFilename,

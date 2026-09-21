@@ -35,6 +35,27 @@ namespace clvr {
 		return Engine.GetInput()->WasMouseButtonJustPressed(button);
 	}
 
+    const std::wstring ToWString(const std::string& str)
+    {
+        // Source - https://stackoverflow.com/a/246811
+        // Posted by Matt Dillard, modified by community. See post 'Timeline' for change history
+        // Retrieved 2026-09-21, License - CC BY-SA 3.0
+
+        return std::wstring(str.begin(), str.end());
+    }
+
+    bool IsDevEnvironment() {
+		// check if environment variable CLVR_DEV_MODE is set to "1"
+        char* envVar = nullptr;
+        size_t len = 0;
+        errno_t err = _dupenv_s(&envVar, &len, "CLVR_DEV_MODE");
+
+        bool isDev = (err == 0 && envVar != nullptr && std::string(envVar) == "1");
+
+        free(envVar); // _dupenv_s allocates with malloc — you own this memory, must free it
+        return isDev;
+    }
+
 	void GetMousePosition(int& x, int& y) {
 		const int* pos = Engine.GetInput()->GetMousePosition();
 		x = pos[0];
@@ -58,6 +79,10 @@ bool EngineClass::Initialize(HINSTANCE hInstance, int nCmdShow)
     if (!m_window->Initialize(hInstance, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT, m_input))
         return false;
 
+	m_resourceManager = new ResourceManager();
+    if (!m_resourceManager)
+        return false;
+
 #ifdef CLOVER_EDITOR
     m_imgui = new ImGuiLayer();
 #endif
@@ -75,6 +100,12 @@ void EngineClass::Shutdown()
 		delete m_imgui;
 		m_imgui = nullptr;
     }
+
+	if (m_resourceManager)
+	{
+		delete m_resourceManager;
+		m_resourceManager = nullptr;
+	}
 
     if (m_window)
     {

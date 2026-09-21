@@ -5,6 +5,16 @@
 using namespace clvr;
 using namespace DirectX;
 
+Texture::Texture()
+	: Resource(ResourceType::Texture)
+{
+}
+
+Texture::~Texture()
+{
+    Shutdown();
+}
+
 bool Texture::Load(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename)
 {
     ScratchImage image;

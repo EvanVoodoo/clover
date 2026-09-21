@@ -1,21 +1,27 @@
 #pragma once
 #include <d3d11.h>
 #include <wrl/client.h>
+#include "resources/resource.hpp"
 
 namespace clvr
 {
     using Microsoft::WRL::ComPtr;
 
-    class Texture
+	class Texture : public Resource
     {
     public:
-        Texture() = default;
-        ~Texture() = default;                                // ComPtr releases automatically
+        Texture();
+        ~Texture();                                // ComPtr releases automatically
 
         Texture(const Texture&) = delete;                     // Texture owns a GPU resource — move-only
         Texture& operator=(const Texture&) = delete;
         Texture(Texture&&) noexcept = default;                // ComPtr's move ctor nulls the source
         Texture& operator=(Texture&&) noexcept = default;
+
+		// TODO: Implement GetPath that uses the texture filename to create a unique path string
+		std::string GetPath(const wchar_t* filename) {
+            return "";
+		}
 
         bool Load(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename);
         void Shutdown();                                       // optional — ComPtr::Reset() does this too

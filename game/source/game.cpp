@@ -24,7 +24,7 @@ void Game::SetupRenderer()
     renderer.LoadShader(L"chromatic", L"../CloverRenderer/assets/shaders/color.vs.hlsl", L"../CloverRenderer/assets/shaders/chromatic.ps.hlsl");
     renderer.LoadShader(L"wacky", L"../CloverRenderer/assets/shaders/color.vs.hlsl", L"../CloverRenderer/assets/shaders/wacky.ps.hlsl");
     renderer.LoadShader(L"crt", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/crt.ps.hlsl");
-    renderer.SetPostProcessShader(L"crt");
+    //renderer.SetPostProcessShader(L"crt");
 
 	renderer.CreateSpriteLayer(3, 0.2f, "Further Background Layer");
 	renderer.CreateSpriteLayer(2, 0.5f, "Background Layer");

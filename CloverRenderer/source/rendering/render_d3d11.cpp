@@ -1,6 +1,7 @@
 #include "rendering/render_d3d11.hpp"
 #include <DirectXTex.h>
 #include <core/engine.hpp>
+#include <resources/resource_manager.hpp>
 
 #pragma comment(lib, "DirectXTex.lib")
 
@@ -341,14 +342,33 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, bool f
 	m_editorCamera.farZ = m_viewport.MaxDepth;
 #endif
 
-	m_shaderManager.get()->LoadShader(L"default", L"../CloverRenderer/assets/shaders/color.vs.hlsl", L"../CloverRenderer/assets/shaders/color.ps.hlsl");
-	LoadShader(L"light", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/light.ps.hlsl");
-	LoadShader(L"composite", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/composite.ps.hlsl");
-	LoadShader(L"passthrough", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/post.ps.hlsl");
-	LoadShader(L"occlusion", L"../CloverRenderer/assets/shaders/occlusion.vs.hlsl", L"../CloverRenderer/assets/shaders/occlusion.ps.hlsl");
-	LoadShader(L"shadow_map_directional", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/shadow_map_directional.ps.hlsl");
-	LoadShader(L"shadow_map_point", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/shadow_map_point.ps.hlsl");
-	LoadShader(L"letterbox", L"../CloverRenderer/assets/shaders/post.vs.hlsl", L"../CloverRenderer/assets/shaders/letterbox.ps.hlsl");
+	ResourceManager* resManager = Engine.GetResourceManager();
+	LoadShader(L"default",
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/color.vs.hlsl")).c_str(),
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/color.ps.hlsl")).c_str());
+	LoadShader(L"light",
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl")).c_str(),
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/light.ps.hlsl")).c_str());
+	LoadShader(L"composite",
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl")).c_str(),
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/composite.ps.hlsl")).c_str());
+	LoadShader(L"passthrough", 
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl")).c_str(), 
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.ps.hlsl")).c_str());
+	LoadShader(L"occlusion", 
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/occlusion.vs.hlsl")).c_str(), 
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/occlusion.ps.hlsl")).c_str());
+	LoadShader(L"shadow_map_directional", 
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl")).c_str(), 
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/shadow_map_directional.ps.hlsl")).c_str());
+	LoadShader(L"shadow_map_point", 
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl")).c_str(), 
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/shadow_map_point.ps.hlsl")).c_str());
+	LoadShader(L"letterbox", 
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl")).c_str(), 
+		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/letterbox.ps.hlsl")).c_str());
+
+
 	m_shaderManager.get()->SetPostProcessShader(L"passthrough");
 
 	m_framebuffer = new Framebuffer();
@@ -665,14 +685,14 @@ void* DirectX2D::RenderScene()
 
 	float invZoom = 1.f / GetActiveCamera().zoom;
 
-	M invVPData = { XMMatrixTranspose(XMMatrixInverse(nullptr, GetViewMatrix() * GetProjectionMatrix())), 
-										  XMFLOAT2(m_viewport.Width, m_viewport.Height), 
+	M invVPData = { XMMatrixTranspose(XMMatrixInverse(nullptr, GetViewMatrix() * GetProjectionMatrix())),
+										  XMFLOAT2(m_viewport.Width, m_viewport.Height),
 										  static_cast<float>(LIGHT_SIZE) * invZoom,
 										  invZoom,
-										  static_cast<float>(LIGHT_SIZE)* invZoom,
+										  static_cast<float>(LIGHT_SIZE) * invZoom,
 										  GetActiveCamera().transform.position,
 										  0.0f
-										};
+	};
 	ConstantBuffer<M> invVPCB;
 	invVPCB.Init(m_device);
 	invVPCB.Update(m_deviceContext, invVPData);
