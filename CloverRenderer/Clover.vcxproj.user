@@ -12,11 +12,13 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Editor|x64'">
-    <LocalDebuggerEnvironment>CLVR_DEV_MODE=1</LocalDebuggerEnvironment>
+    <LocalDebuggerEnvironment>
+    </LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Game|x64'">
-    <LocalDebuggerEnvironment>CLVR_DEV_MODE=1</LocalDebuggerEnvironment>
+    <LocalDebuggerEnvironment>
+    </LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

@@ -21,23 +21,28 @@ namespace clvr
 		};
 
 	public:
-		Shader();
+		Shader(const wchar_t* vsFilename, const wchar_t* psFilename);
+		Shader(ID3D11Device* device, HWND hwnd, const wchar_t* vs, const wchar_t* ps);
 		Shader(const Shader&) = delete;
 		~Shader();
-		bool Initialize(ID3D11Device* device, HWND hwnd, const wchar_t* vs, const wchar_t* ps);
+		bool Initialize(ID3D11Device* device, HWND hwnd);
 		void Shutdown();
 		bool Bind(ID3D11DeviceContext* deviceContext);
 		bool NeedsReload() const;
 		bool Reload(ID3D11Device* device, HWND hwnd); 
 		
+		// TODO: Implement GetPath that uses the shader name to create a unique path string
+		std::string GetPath() {
+			return "";
+		}
 		// TODO: Implement GetPath that uses the shader filenames to create a unique path string
 		std::string GetPath(const wchar_t* vsFilename, const wchar_t* psFilename) {
 			return "";
 		}
 	
 	private:
-		bool InitializeShader(ID3D11Device*, HWND, const wchar_t*, const wchar_t*);
-		bool InitializeShaderInto(ID3D11Device* device, HWND hwnd, const wchar_t* vsFilename, const wchar_t* psFilename,
+		bool InitializeShader(ID3D11Device*, HWND);
+		bool InitializeShaderInto(ID3D11Device* device, HWND hwnd,
 			ID3D11VertexShader** outVS, ID3D11PixelShader** outPS, ID3D11InputLayout** outLayout);
 		void ShutdownShader();
 		void OutputShaderErrorMessage(ID3D10Blob*, HWND, const wchar_t*, bool silent = false);
