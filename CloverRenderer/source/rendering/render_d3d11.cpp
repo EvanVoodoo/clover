@@ -1018,7 +1018,8 @@ void DirectX2D::DrawUnbatchedSprite(const Sprite& sprite, const Transform& trans
 	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
 	m_mvpCb.BindVS(m_deviceContext, 0);
 
-	m_deviceContext->PSSetShaderResources(0, 1, &sprite.texture);
+	ID3D11ShaderResourceView* srv = sprite.texture->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 1, &srv);
 	m_deviceContext->PSSetSamplers(0, 1, &m_linearSampler);
 
 	// Build the quad exactly like SpriteBatcher::DrawSprite does —
@@ -1091,6 +1092,11 @@ bool DirectX2D::ReloadShaders() { return m_shaderManager.get() ? m_shaderManager
 int DirectX2D::AddTexture(const std::string filename)
 {
 	return m_textureAtlas->AddTexture(filename);
+}
+
+std::shared_ptr<Texture> DirectX2D::LoadTexture(std::string filename)
+{
+	return Engine.GetResourceManager()->Load<Texture>(m_device, ToWString(filename).c_str());;
 }
 
 bool DirectX2D::BuildAtlas()

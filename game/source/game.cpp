@@ -56,7 +56,6 @@ void Game::SetupScene()
 		rMngr->GetPath(Dir::SharedAssets, "textures/shrew1.jpg"),
 		rMngr->GetPath(Dir::SharedAssets, "textures/shrew2.jpg"),
 		rMngr->GetPath(Dir::SharedAssets, "textures/hamper.jpeg"),
-		rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png"),
 		rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg"),
 	};
 	for (auto t : textures)
@@ -67,12 +66,9 @@ void Game::SetupScene()
 		auto centerEntity = ecs->CreateEntity();
 		auto& t = ecs->CreateComponent<Transform>(centerEntity);
 		t.position = { 0.0f, -300.0f };
-		clvr::Sprite cs;
+		clvr::Sprite cs = Sprite(rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png"));
 		cs.position = t.position;
 		cs.size = { 200.0f, 200.0f };
-		cs.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		cs.LoadSpriteTexture(rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png").c_str());
-		cs.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png")).uvRect;
 		SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(1);
 		cs.layer = renderer.FindOrCreateSpriteLayer(1);
 		cs.isOccluder = false;
@@ -91,7 +87,6 @@ void Game::SetupScene()
 			clvr::Sprite s;
 			s.position = t.position;
 			s.size = { (float) (rand() % 200 + 100), (float) (rand() % 100 + 50) };
-			s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
 			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg")).uvRect;
 			s.layer = renderer.FindOrCreateSpriteLayer(0);
 			s.isOccluder = true;
@@ -120,7 +115,6 @@ void Game::SetupScene()
 			clvr::Sprite s;
 			s.position = t.position;
 			s.size = { 3000, 3000 };
-			s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
 			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/shrew1.jpg")).uvRect;
 			SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(3);
 			s.layer = layer;
@@ -135,7 +129,6 @@ void Game::SetupScene()
 			clvr::Sprite s;
 			s.position = t.position;
 			s.size = { 16000.0f, 64.0f };
-			s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
 			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg")).uvRect;
 			s.layer = renderer.FindOrCreateSpriteLayer(0);
 			s.isOccluder = true;

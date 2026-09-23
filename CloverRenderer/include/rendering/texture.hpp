@@ -11,7 +11,7 @@ namespace clvr
     {
     public:
         Texture(const wchar_t* filename);
-        Texture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename);
+        Texture(ID3D11Device* device, const wchar_t* filename);
 
         ~Texture();                                // ComPtr releases automatically
 
@@ -22,12 +22,12 @@ namespace clvr
 
 		// TODO: Implement GetPath that uses the texture filename to create a unique path string
 		static std::string GetPath(const wchar_t* filename);
-        static std::string GetPath(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename)
+        static std::string GetPath(ID3D11Device* device, const wchar_t* filename)
         {
-            GetPath(filename);
+            return GetPath(filename);
         }
 
-        bool Load(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename);
+        bool Load(ID3D11Device* device, const wchar_t* filename);
         void Shutdown();                                       // optional — ComPtr::Reset() does this too
 
         ID3D11ShaderResourceView* GetSRV() const { return m_srv.Get(); }

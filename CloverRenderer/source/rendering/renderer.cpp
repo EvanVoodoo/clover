@@ -263,6 +263,12 @@ void Renderer::Inspect(float dt)
 }
 
 int Renderer::AddTexture(const std::string filename) { return m_DX2D->AddTexture(filename); }
+
+std::shared_ptr<Texture> Renderer::LoadTexture(std::string filename)
+{
+	return m_DX2D->LoadTexture(filename);
+}
+
 bool Renderer::BuildAtlas() { return m_DX2D->BuildAtlas(); }
 AtlasRegion Renderer::GetAtlasRegion(const std::string f) { return m_DX2D->GetAtlasRegion(f); }
 

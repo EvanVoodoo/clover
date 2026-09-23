@@ -4,6 +4,9 @@
 #include <directxmath.h>
 #include <core/transform.hpp>
 #include <string>
+#include <wrl/client.h>
+#include "texture.hpp"
+#include <memory>
 
 #define MAX_LIGHTS 64
 
@@ -20,6 +23,10 @@ namespace clvr
 
 	struct Sprite
 	{
+		Sprite(const std::string& filename = "") {
+			if (!filename.empty())
+				LoadSpriteTexture(filename);
+		}
 		bool LoadSpriteTexture(const std::string& filename);
 
 		XMFLOAT2 position;
@@ -32,7 +39,7 @@ namespace clvr
 		bool isOccluder = true; // if true, this sprite will be used for occlusion rendering
 
 		bool useLinkedTexture = false;
-		ID3D11ShaderResourceView* texture = nullptr; // set once, e.g. via LoadTexture function
+		std::shared_ptr<Texture> texture = nullptr; // set once, e.g. via LoadTexture function
 	};
 
 	struct SpriteComponent

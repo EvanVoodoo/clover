@@ -50,6 +50,7 @@ namespace clvr
 		void UpdateLights();
 
 		int AddTexture(const std::string filename);
+		std::shared_ptr<Texture> LoadTexture(std::string filename);
 		bool BuildAtlas();
 		AtlasRegion GetAtlasRegion(const std::string filename); // if not already exposed
 

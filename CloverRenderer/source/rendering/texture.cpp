@@ -11,10 +11,10 @@ Texture::Texture(const wchar_t* filename)
 {
 }
 
-Texture::Texture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename)
+Texture::Texture(ID3D11Device* device, const wchar_t* filename)
     : Texture(filename)
 {
-    Load(device, deviceContext, filename);
+    Load(device, filename);
 }
 
 Texture::~Texture()
@@ -28,7 +28,7 @@ std::string Texture::GetPath(const wchar_t* filename) {
     return path;
 }
 
-bool Texture::Load(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename)
+bool Texture::Load(ID3D11Device* device, const wchar_t* filename)
 {
     ScratchImage image;
     HRESULT result = LoadFromWICFile(filename, WIC_FLAGS_NONE, nullptr, image);

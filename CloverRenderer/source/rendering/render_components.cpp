@@ -1,17 +1,15 @@
 #include "rendering/render_components.hpp"
 #include <core/engine.hpp>
-#include <rendering/texture.hpp>
+#include <rendering/renderer.hpp>
 
 using namespace clvr;
 
 using Dir = ResourceManager::Directory;
 
 bool Sprite::LoadSpriteTexture(const std::string& filename) {
-	ResourceManager* rMngr = Engine.GetResourceManager();
-
-	std::shared_ptr<Texture> tex = rMngr->Load<Texture>(Dir::SharedAssets, filename);
+	std::shared_ptr<Texture> tex = Engine.GetECS()->GetSystem<Renderer>().LoadTexture(filename);
 	if (tex) {
-		this->texture = tex->GetSRV();
+		this->texture = tex;
 		useLinkedTexture = true;
 	}
 	return useLinkedTexture;
