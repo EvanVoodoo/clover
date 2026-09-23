@@ -90,6 +90,11 @@ bool Shader::Reload(ID3D11Device* device, HWND hwnd)
 	return true;
 }
 
+std::string Shader::GetPath(const wchar_t* vsFilename, const wchar_t* psFilename) {
+	std::string path = "shader:" + std::filesystem::path(vsFilename).string() + "|" + std::filesystem::path(psFilename).string();
+	return path;
+}
+
 bool Shader::InitializeShader(ID3D11Device* device, HWND hwnd)
 {
 	if (!InitializeShaderInto(device, hwnd,

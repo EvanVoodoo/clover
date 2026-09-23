@@ -92,7 +92,7 @@ bool ShaderManager::LoadShader(const std::wstring& name, const wchar_t* vsFilena
 		OutputDebugStringA("ShaderManager::LoadShader: unknown exception during allocation\n");
 		return false;
 	}
-	Engine.GetResourceManager()->Load<Shader>(); // Load the shader resource
+	Engine.GetResourceManager()->Load<Shader>(vsFilename, psFilename); // Load the shader resource
 	if (!shader->Initialize(m_device, m_hwnd))
 	{
 		shader.reset();

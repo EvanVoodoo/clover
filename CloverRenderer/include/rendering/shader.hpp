@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include <directxmath.h>
 #include <filesystem>
+#include <string>
 #include "resources/resource.hpp"
 
 using namespace DirectX;
@@ -31,13 +32,9 @@ namespace clvr
 		bool NeedsReload() const;
 		bool Reload(ID3D11Device* device, HWND hwnd); 
 		
-		// TODO: Implement GetPath that uses the shader name to create a unique path string
-		std::string GetPath() {
-			return "";
-		}
-		// TODO: Implement GetPath that uses the shader filenames to create a unique path string
-		std::string GetPath(const wchar_t* vsFilename, const wchar_t* psFilename) {
-			return "";
+		static std::string GetPath(const wchar_t* vsFilename, const wchar_t* psFilename);
+		static std::string GetPath(ID3D11Device*, HWND, const wchar_t* vs, const wchar_t* ps) {
+			return GetPath(vs, ps); // delegate to the 2-arg version
 		}
 	
 	private:
