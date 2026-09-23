@@ -33,17 +33,16 @@ namespace clvr {
 		std::shared_ptr<T> Load(Args&&... args) {
 			std::shared_ptr<T> resource;
 
-			std::string path = T::GetPath(std::forward<Args>(args)...);
+			std::string path = T::GetPath(args...);
 			auto it = m_resources.find(path);
 			if (it != m_resources.end()) {
-				// If the resource is already loaded, return the existing shared_ptr
-				resource = it->second.lock();
+				// Downcast: stored as shared_ptr<Resource>, need shared_ptr<T>
+				resource = std::static_pointer_cast<T>(it->second.lock());
 			}
 
 			if (!resource) {
-				// If the resource is not loaded or has expired, load it
 				resource = std::make_shared<T>(std::forward<Args>(args)...);
-				m_resources[path] = resource;
+				m_resources[path] = resource; // shared_ptr<T> -> weak_ptr<Resource>, fine (upcast)
 			}
 
 			return resource;

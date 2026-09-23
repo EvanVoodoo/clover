@@ -1,4 +1,5 @@
 #include "rendering/shader_manager.hpp"
+#include <core/engine.hpp>
 
 using namespace clvr;
 
@@ -34,7 +35,7 @@ void ShaderManager::Shutdown()
 		if (pair.second)
 		{
 			pair.second->Shutdown();
-			delete pair.second;
+			pair.second.reset();
 			pair.second = nullptr;
 		}
 	}
@@ -77,9 +78,9 @@ bool ShaderManager::LoadShader(const std::wstring& name, const wchar_t* vsFilena
 	}
 
 
-	Shader* shader = nullptr;
+	std::shared_ptr<Shader> shader = nullptr;
 	try {
-		shader = new Shader();
+		shader = std::make_shared<Shader>(vsFilename, psFilename);
 	}
 	catch (const std::bad_alloc&)
 	{
@@ -91,9 +92,10 @@ bool ShaderManager::LoadShader(const std::wstring& name, const wchar_t* vsFilena
 		OutputDebugStringA("ShaderManager::LoadShader: unknown exception during allocation\n");
 		return false;
 	}
-	if (!shader->Initialize(m_device, m_hwnd, vsFilename, psFilename))
+	Engine.GetResourceManager()->Load<Shader>(vsFilename, psFilename); // Load the shader resource
+	if (!shader->Initialize(m_device, m_hwnd))
 	{
-		delete shader;
+		shader.reset();
 		return false;
 	}
 
@@ -105,13 +107,13 @@ bool ShaderManager::LoadShader(const std::wstring& name, const wchar_t* vsFilena
 		OutputDebugStringA("ShaderManager::LoadShader: exception inserting into m_shaders: ");
 		OutputDebugStringA(e.what());
 		OutputDebugStringA("\n");
-		delete shader;
+		shader.reset();
 		return false;
 	}
 	catch (...)
 	{
 		OutputDebugStringA("ShaderManager::LoadShader: unknown exception inserting into m_shaders\n");
-		delete shader;
+		shader.reset();
 		return false;
 	}
 
@@ -134,12 +136,12 @@ bool ShaderManager::SetActiveShader(const std::wstring& name)
 	return false; // Shader with this name not found
 }
 
-Shader* ShaderManager::GetActiveShader()
+std::shared_ptr<Shader> ShaderManager::GetActiveShader()
 {
 	return m_activeShader;
 }
 
-Shader* ShaderManager::GetShader(const std::wstring& name)
+std::shared_ptr<Shader> ShaderManager::GetShader(const std::wstring& name)
 {
 	auto it = m_shaders.find(name);
 	if (it != m_shaders.end())
@@ -169,7 +171,7 @@ void ShaderManager::SetPostProcessShader(const std::wstring& name)
 		m_postProcessShader = it->second;
 }
 
-Shader* ShaderManager::GetPostProcessShader()
+std::shared_ptr<Shader> ShaderManager::GetPostProcessShader()
 {
 	return m_postProcessShader;
 }

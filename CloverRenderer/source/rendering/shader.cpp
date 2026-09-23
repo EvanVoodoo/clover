@@ -4,12 +4,20 @@
 
 using namespace clvr;
 
-Shader::Shader()
+Shader::Shader(const wchar_t* vsFilename, const wchar_t* psFilename)
 	: Resource(ResourceType::Shader)
 {
 	m_vertexShader = nullptr;
 	m_pixelShader = nullptr;
 	m_layout = nullptr;
+	m_vsFilename = vsFilename;
+	m_psFilename = psFilename;
+}
+
+Shader::Shader(ID3D11Device* device, HWND hwnd, const wchar_t* vs, const wchar_t* ps) 
+	: Shader(vs, ps)
+{
+	Initialize(device, hwnd);
 }
 
 Shader::~Shader()
@@ -17,12 +25,9 @@ Shader::~Shader()
 	Shutdown();
 }
 
-bool Shader::Initialize(ID3D11Device* device, HWND hwnd, const wchar_t* vs, const wchar_t* ps)
+bool Shader::Initialize(ID3D11Device* device, HWND hwnd)
 {
-	m_vsFilename = vs;
-	m_psFilename = ps;
-
-	return InitializeShader(device, hwnd, vs, ps);
+	return InitializeShader(device, hwnd);
 }
 
 void Shader::Shutdown()
@@ -61,7 +66,7 @@ bool Shader::Reload(ID3D11Device* device, HWND hwnd)
 	ID3D11InputLayout* newLayout = nullptr;
 
 	// Try to compile into new resources without touching member variables
-	if (!InitializeShaderInto(device, hwnd, m_vsFilename.c_str(), m_psFilename.c_str(),
+	if (!InitializeShaderInto(device, hwnd,
 		&newVS, &newPS, &newLayout))
 	{
 		if (newVS)     newVS->Release();
@@ -85,18 +90,23 @@ bool Shader::Reload(ID3D11Device* device, HWND hwnd)
 	return true;
 }
 
-bool Shader::InitializeShader(ID3D11Device* device, HWND hwnd, const wchar_t* vsFilename, const wchar_t* psFilename)
+std::string Shader::GetPath(const wchar_t* vsFilename, const wchar_t* psFilename) {
+	std::string path = "shader:" + std::filesystem::path(vsFilename).string() + "|" + std::filesystem::path(psFilename).string();
+	return path;
+}
+
+bool Shader::InitializeShader(ID3D11Device* device, HWND hwnd)
 {
-	if (!InitializeShaderInto(device, hwnd, vsFilename, psFilename,
+	if (!InitializeShaderInto(device, hwnd,
 		&m_vertexShader, &m_pixelShader, &m_layout))
 		return false;
 
-	m_vsLastModifiedTime = GetFileTime(vsFilename);
-	m_psLastModifiedTime = GetFileTime(psFilename);
+	m_vsLastModifiedTime = GetFileTime(m_vsFilename.c_str());
+	m_psLastModifiedTime = GetFileTime(m_psFilename.c_str());
 	return true;
 }
 
-bool Shader::InitializeShaderInto(ID3D11Device* device, HWND hwnd, const wchar_t* vsFilename, const wchar_t* psFilename,
+bool Shader::InitializeShaderInto(ID3D11Device* device, HWND hwnd,
 	ID3D11VertexShader** outVS, ID3D11PixelShader** outPS, ID3D11InputLayout** outLayout)
 {
 	HRESULT result;
@@ -104,23 +114,23 @@ bool Shader::InitializeShaderInto(ID3D11Device* device, HWND hwnd, const wchar_t
 	ID3D10Blob* vertexShaderBuffer = nullptr;
 	ID3D10Blob* pixelShaderBuffer = nullptr;
 
-	result = D3DCompileFromFile(vsFilename, NULL, NULL, "ColorVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
+	result = D3DCompileFromFile(m_vsFilename.c_str(), NULL, NULL, "ColorVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
 		&vertexShaderBuffer, &errorMessage);
 	if (FAILED(result))
 	{
-		if (errorMessage) { OutputShaderErrorMessage(errorMessage, hwnd, vsFilename); errorMessage = nullptr; }
-		else MessageBox(hwnd, vsFilename, L"Missing Shader File", MB_OK);
+		if (errorMessage) { OutputShaderErrorMessage(errorMessage, hwnd, m_vsFilename.c_str()); errorMessage = nullptr; }
+		else MessageBox(hwnd, m_vsFilename.c_str(), L"Missing Shader File", MB_OK);
 		return false;
 	}
 
 	if (errorMessage) { errorMessage->Release(); errorMessage = nullptr; }
 
-	result = D3DCompileFromFile(psFilename, NULL, NULL, "ColorPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
+	result = D3DCompileFromFile(m_psFilename.c_str(), NULL, NULL, "ColorPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
 		&pixelShaderBuffer, &errorMessage);
 	if (FAILED(result))
 	{
-		if (errorMessage) { OutputShaderErrorMessage(errorMessage, hwnd, psFilename); errorMessage = nullptr; }
-		else MessageBox(hwnd, psFilename, L"Missing Shader File", MB_OK);
+		if (errorMessage) { OutputShaderErrorMessage(errorMessage, hwnd, m_psFilename.c_str()); errorMessage = nullptr; }
+		else MessageBox(hwnd, m_psFilename.c_str(), L"Missing Shader File", MB_OK);
 		vertexShaderBuffer->Release();
 		return false;
 	}
