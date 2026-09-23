@@ -253,9 +253,9 @@ void Renderer::Inspect(float dt)
 	ImGui::End();
 }
 
-int Renderer::AddTexture(const wchar_t* filename) { return m_DX2D->AddTexture(filename); }
+int Renderer::AddTexture(const std::string filename) { return m_DX2D->AddTexture(filename); }
 bool Renderer::BuildAtlas() { return m_DX2D->BuildAtlas(); }
-AtlasRegion Renderer::GetAtlasRegion(const wchar_t* f) { return m_DX2D->GetAtlasRegion(f); }
+AtlasRegion Renderer::GetAtlasRegion(const std::string f) { return m_DX2D->GetAtlasRegion(f); }
 
 SpriteLayer* Renderer::CreateSpriteLayer(const unsigned int id, float parallaxFactor, const std::string& layerName)
 {

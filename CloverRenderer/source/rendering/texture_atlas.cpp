@@ -7,6 +7,7 @@
 
 #define STB_RECT_PACK_IMPLEMENTATION
 #include "rendering/stb_rect_pack.h"
+#include <core/engine.hpp>
 
 using namespace clvr;
 
@@ -61,10 +62,10 @@ void TextureAtlas::Shutdown()
     }
 }
 
-int TextureAtlas::AddTexture(const wchar_t* filename)
+int TextureAtlas::AddTexture(const std::string filename)
 {
     Impl::PendingImage pendingImage;
-    HRESULT result = LoadFromWICFile(filename, WIC_FLAGS_NONE, nullptr, pendingImage.image);
+    HRESULT result = LoadFromWICFile(ToWString(filename).c_str(), WIC_FLAGS_NONE, nullptr, pendingImage.image);
     if (FAILED(result))
         return -1;
 
@@ -75,13 +76,13 @@ int TextureAtlas::AddTexture(const wchar_t* filename)
     int index = static_cast<int>(m_impl->pendingImages.size());
     m_impl->pendingImages.push_back(std::move(pendingImage));
     m_impl->regions.push_back(AtlasRegion{ XMFLOAT4(0, 0, 0, 0) });
-    m_impl->filenameToIndex[filename] = index;
+    m_impl->filenameToIndex[ToWString(filename).c_str()] = index;
     return index;
 }
 
-AtlasRegion TextureAtlas::GetRegion(const wchar_t* filename) const
+AtlasRegion TextureAtlas::GetRegion(const std::string filename) const
 {
-    auto it = m_impl->filenameToIndex.find(filename);
+    auto it = m_impl->filenameToIndex.find(ToWString(filename).c_str());
     if (it == m_impl->filenameToIndex.end())
         return AtlasRegion{ XMFLOAT4(0, 0, 0, 0) };
     return m_impl->regions[it->second];

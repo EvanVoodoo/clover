@@ -42,14 +42,14 @@ namespace clvr
 		void SetActiveShader(const std::wstring& name);
 		void SetPostProcessShader(const std::wstring& name);
 
-		bool LoadShader(const std::wstring& name, const wchar_t* vsFilename, const wchar_t* psFilename);
+		bool LoadShader(const std::string& name, const std::string& vsFilename, const std::string& psFilename);
 
 		bool ReloadShaders();
 
-		int AddTexture(const wchar_t* filename);
-		ID3D11ShaderResourceView* LoadTexture(const wchar_t* filename);
+		int AddTexture(const std::string filename);
+		ID3D11ShaderResourceView* LoadTexture(const std::string filename);
 
-		AtlasRegion GetAtlasRegion(const wchar_t* filename) { return m_textureAtlas->GetRegion(filename); }
+		AtlasRegion GetAtlasRegion(const std::string filename) { return m_textureAtlas->GetRegion(filename); }
 		bool BuildAtlas();
 
 		ID3D11Device* GetDevice();

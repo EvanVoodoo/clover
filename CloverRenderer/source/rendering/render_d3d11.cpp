@@ -343,30 +343,30 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, bool f
 #endif
 
 	ResourceManager* resManager = Engine.GetResourceManager();
-	LoadShader(L"default",
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/color.vs.hlsl")).c_str(),
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/color.ps.hlsl")).c_str());
-	LoadShader(L"light",
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl")).c_str(),
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/light.ps.hlsl")).c_str());
-	LoadShader(L"composite",
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl")).c_str(),
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/composite.ps.hlsl")).c_str());
-	LoadShader(L"passthrough", 
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl")).c_str(), 
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.ps.hlsl")).c_str());
-	LoadShader(L"occlusion", 
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/occlusion.vs.hlsl")).c_str(), 
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/occlusion.ps.hlsl")).c_str());
-	LoadShader(L"shadow_map_directional", 
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl")).c_str(), 
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/shadow_map_directional.ps.hlsl")).c_str());
-	LoadShader(L"shadow_map_point", 
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl")).c_str(), 
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/shadow_map_point.ps.hlsl")).c_str());
-	LoadShader(L"letterbox", 
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl")).c_str(), 
-		ToWString(resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/letterbox.ps.hlsl")).c_str());
+	LoadShader("default",
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/color.vs.hlsl"),
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/color.ps.hlsl"));
+	LoadShader("light",
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"),
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/light.ps.hlsl"));
+	LoadShader("composite",
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"),
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/composite.ps.hlsl"));
+	LoadShader("passthrough", 
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"), 
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.ps.hlsl"));
+	LoadShader("occlusion", 
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/occlusion.vs.hlsl"), 
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/occlusion.ps.hlsl"));
+	LoadShader("shadow_map_directional", 
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"), 
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/shadow_map_directional.ps.hlsl"));
+	LoadShader("shadow_map_point", 
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"), 
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/shadow_map_point.ps.hlsl"));
+	LoadShader("letterbox", 
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"), 
+		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/letterbox.ps.hlsl"));
 
 
 	m_shaderManager.get()->SetPostProcessShader(L"passthrough");
@@ -1002,26 +1002,26 @@ void DirectX2D::SetActiveShader(const std::wstring& name) {
 
 void DirectX2D::SetPostProcessShader(const std::wstring& name) { if (m_shaderManager.get()) m_shaderManager.get()->SetPostProcessShader(name); }
 
-bool DirectX2D::LoadShader(const std::wstring& name, const wchar_t* vsFilename, const wchar_t* psFilename)
+bool DirectX2D::LoadShader(const std::string& name, const std::string& vsFilename, const std::string& psFilename)
 {
 	/*if (m_shaderManager.get() == nullptr) {
 	OutputDebugStringA("DirectX2D::LoadShader: m_shaderManager is null\n");
 	return false;
 	}*/
-	return m_shaderManager.get()->LoadShader(name, vsFilename, psFilename);
+	return m_shaderManager.get()->LoadShader(wstring(name.begin(), name.end()), ToWString(vsFilename).c_str(), ToWString(psFilename).c_str());
 }
 
 bool DirectX2D::ReloadShaders() { return m_shaderManager.get() ? m_shaderManager.get()->ReloadAll() : false; }
 
-int DirectX2D::AddTexture(const wchar_t* filename)
+int DirectX2D::AddTexture(const std::string filename)
 {
 	return m_textureAtlas->AddTexture(filename);
 }
 
-ID3D11ShaderResourceView* DirectX2D::LoadTexture(const wchar_t* filename)
+ID3D11ShaderResourceView* DirectX2D::LoadTexture(const std::string filename)
 {
 	ScratchImage image;
-	HRESULT result = LoadFromWICFile(filename, WIC_FLAGS_NONE, nullptr, image);
+	HRESULT result = LoadFromWICFile(ToWString(filename).c_str(), WIC_FLAGS_NONE, nullptr, image);
 	if (FAILED(result))
 		return nullptr;
 

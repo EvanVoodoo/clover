@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include <directxmath.h>
 #include <memory>
+#include <string>
 
 using namespace DirectX;
 
@@ -28,8 +29,8 @@ namespace clvr
         bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int width, int height);
         void Shutdown();
 
-        int AddTexture(const wchar_t* filename);
-        AtlasRegion GetRegion(const wchar_t* filename) const;
+        int AddTexture(const std::string filename);
+        AtlasRegion GetRegion(const std::string filename) const;
         bool Build();
 
         ID3D11ShaderResourceView* GetSRV() const;

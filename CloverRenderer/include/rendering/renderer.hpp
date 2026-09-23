@@ -32,7 +32,7 @@ namespace clvr
 		void DrawSprite(const Sprite& sprite, const Transform& transform);
 		void SetActiveShader(const std::wstring& name) { m_DX2D->SetActiveShader(name); }
 		void SetPostProcessShader(const std::wstring& name) { m_DX2D->SetPostProcessShader(name); }
-		bool LoadShader(const std::wstring& name, const wchar_t* vsFilename, const wchar_t* psFilename)
+		bool LoadShader(const std::string& name, const std::string& vsFilename, const std::string& psFilename)
 		{
 			return m_DX2D->LoadShader(name, vsFilename, psFilename);
 		}
@@ -49,9 +49,9 @@ namespace clvr
 
 		void UpdateLights();
 
-		int AddTexture(const wchar_t* filename);
+		int AddTexture(const std::string filename);
 		bool BuildAtlas();
-		AtlasRegion GetAtlasRegion(const wchar_t* filename); // if not already exposed
+		AtlasRegion GetAtlasRegion(const std::string filename); // if not already exposed
 
 		SpriteLayer* CreateSpriteLayer(const unsigned int id, float parallaxFactor = 1.0f, const std::string& layerName = "");
 		SpriteLayer* FindSpriteLayer(unsigned int id);
