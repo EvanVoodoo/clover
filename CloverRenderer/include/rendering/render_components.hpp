@@ -20,6 +20,8 @@ namespace clvr
 
 	struct Sprite
 	{
+		bool LoadSpriteTexture(const std::string& filename);
+
 		XMFLOAT2 position;
 		XMFLOAT2 size;
 		XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -28,6 +30,9 @@ namespace clvr
 		SpriteLayer* layer;
 		float rotation;
 		bool isOccluder = true; // if true, this sprite will be used for occlusion rendering
+
+		bool useLinkedTexture = false;
+		ID3D11ShaderResourceView* texture = nullptr; // set once, e.g. via LoadTexture function
 	};
 
 	struct SpriteComponent

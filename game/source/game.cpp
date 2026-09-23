@@ -3,6 +3,7 @@
 #include "core/components.hpp" 
 #include "rendering/renderer.hpp"
 #include <string>
+#include <rendering/texture.hpp>
 
 using namespace clvr;
 using Dir = ResourceManager::Directory;
@@ -70,6 +71,7 @@ void Game::SetupScene()
 		cs.position = t.position;
 		cs.size = { 200.0f, 200.0f };
 		cs.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		cs.LoadSpriteTexture(rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png").c_str());
 		cs.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png")).uvRect;
 		SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(1);
 		cs.layer = renderer.FindOrCreateSpriteLayer(1);
