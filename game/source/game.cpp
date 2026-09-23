@@ -5,6 +5,7 @@
 #include <string>
 
 using namespace clvr;
+using Dir = ResourceManager::Directory;
 
 Game::Game() {
 	priority = 10;
@@ -23,20 +24,20 @@ void Game::SetupRenderer()
 	renderer.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	renderer.LoadShader("grayscale",
-						rMngr->GetPath(ResourceManager::Directory::SharedAssets, "shaders/color.vs.hlsl"),
-						rMngr->GetPath(ResourceManager::Directory::SharedAssets, "shaders/grayscale.ps.hlsl"));
+						rMngr->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+						rMngr->GetPath(Dir::SharedAssets, "shaders/grayscale.ps.hlsl"));
 	renderer.LoadShader("inverted",
-						rMngr->GetPath(ResourceManager::Directory::SharedAssets, "shaders/color.vs.hlsl"),
-						rMngr->GetPath(ResourceManager::Directory::SharedAssets, "shaders/inverted.ps.hlsl"));
+						rMngr->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+						rMngr->GetPath(Dir::SharedAssets, "shaders/inverted.ps.hlsl"));
 	renderer.LoadShader("chromatic",
-						rMngr->GetPath(ResourceManager::Directory::SharedAssets, "shaders/color.vs.hlsl"),
-						rMngr->GetPath(ResourceManager::Directory::SharedAssets, "shaders/chromatic.ps.hlsl"));
+						rMngr->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+						rMngr->GetPath(Dir::SharedAssets, "shaders/chromatic.ps.hlsl"));
 	renderer.LoadShader("wacky", 
-						rMngr->GetPath(ResourceManager::Directory::SharedAssets, "shaders/color.vs.hlsl"),
-						rMngr->GetPath(ResourceManager::Directory::SharedAssets, "shaders/wacky.ps.hlsl"));
+						rMngr->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+						rMngr->GetPath(Dir::SharedAssets, "shaders/wacky.ps.hlsl"));
 	renderer.LoadShader("crt", 
-						rMngr->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"),
-						rMngr->GetPath(ResourceManager::Directory::SharedAssets, "shaders/crt.ps.hlsl"));
+						rMngr->GetPath(Dir::SharedAssets, "shaders/post.vs.hlsl"),
+						rMngr->GetPath(Dir::SharedAssets, "shaders/crt.ps.hlsl"));
 	//renderer.SetPostProcessShader(L"crt");
 
 	renderer.CreateSpriteLayer(3, 0.2f, "Further Background Layer");
@@ -51,11 +52,11 @@ void Game::SetupScene()
 	auto& renderer = ecs->GetSystem<Renderer>();
 	ResourceManager* rMngr = Engine.GetResourceManager();
 	std::string textures[] = {
-		rMngr->GetPath(ResourceManager::Directory::SharedAssets, "textures/shrew1.jpg"),
-		rMngr->GetPath(ResourceManager::Directory::SharedAssets, "textures/shrew2.jpg"),
-		rMngr->GetPath(ResourceManager::Directory::SharedAssets, "textures/hamper.jpeg"),
-		rMngr->GetPath(ResourceManager::Directory::SharedAssets, "textures/saturn.png"),
-		rMngr->GetPath(ResourceManager::Directory::SharedAssets, "textures/white.jpg"),
+		rMngr->GetPath(Dir::SharedAssets, "textures/shrew1.jpg"),
+		rMngr->GetPath(Dir::SharedAssets, "textures/shrew2.jpg"),
+		rMngr->GetPath(Dir::SharedAssets, "textures/hamper.jpeg"),
+		rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png"),
+		rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg"),
 	};
 	for (auto t : textures)
 		renderer.AddTexture(t);
@@ -69,7 +70,7 @@ void Game::SetupScene()
 		cs.position = t.position;
 		cs.size = { 200.0f, 200.0f };
 		cs.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		cs.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(ResourceManager::Directory::SharedAssets, "textures/saturn.png")).uvRect;
+		cs.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png")).uvRect;
 		SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(1);
 		cs.layer = renderer.FindOrCreateSpriteLayer(1);
 		cs.isOccluder = false;
@@ -89,7 +90,7 @@ void Game::SetupScene()
 			s.position = t.position;
 			s.size = { (float) (rand() % 200 + 100), (float) (rand() % 100 + 50) };
 			s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(ResourceManager::Directory::SharedAssets, "textures/white.jpg")).uvRect;
+			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg")).uvRect;
 			s.layer = renderer.FindOrCreateSpriteLayer(0);
 			s.isOccluder = true;
 			ecs->CreateComponent<SpriteComponent>(entity, s);
@@ -118,7 +119,7 @@ void Game::SetupScene()
 			s.position = t.position;
 			s.size = { 3000, 3000 };
 			s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(ResourceManager::Directory::SharedAssets, "textures/shrew1.jpg")).uvRect;
+			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/shrew1.jpg")).uvRect;
 			SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(3);
 			s.layer = layer;
 			s.isOccluder = false;
@@ -133,7 +134,7 @@ void Game::SetupScene()
 			s.position = t.position;
 			s.size = { 16000.0f, 64.0f };
 			s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(ResourceManager::Directory::SharedAssets, "textures/white.jpg")).uvRect;
+			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg")).uvRect;
 			s.layer = renderer.FindOrCreateSpriteLayer(0);
 			s.isOccluder = true;
 			ecs->CreateComponent<SpriteComponent>(entity, s);

@@ -9,6 +9,7 @@
 #define DIRECTIONAL_LIGHT_SIZE 2048
 
 using namespace clvr;
+using Dir = ResourceManager::Directory;
 
 DirectX2D::DirectX2D()
 {
@@ -344,29 +345,29 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, bool f
 
 	ResourceManager* resManager = Engine.GetResourceManager();
 	LoadShader("default",
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/color.vs.hlsl"),
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/color.ps.hlsl"));
+		resManager->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+		resManager->GetPath(Dir::SharedAssets, "shaders/color.ps.hlsl"));
 	LoadShader("light",
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"),
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/light.ps.hlsl"));
+		resManager->GetPath(Dir::SharedAssets, "shaders/post.vs.hlsl"),
+		resManager->GetPath(Dir::SharedAssets, "shaders/light.ps.hlsl"));
 	LoadShader("composite",
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"),
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/composite.ps.hlsl"));
+		resManager->GetPath(Dir::SharedAssets, "shaders/post.vs.hlsl"),
+		resManager->GetPath(Dir::SharedAssets, "shaders/composite.ps.hlsl"));
 	LoadShader("passthrough", 
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"), 
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.ps.hlsl"));
+		resManager->GetPath(Dir::SharedAssets, "shaders/post.vs.hlsl"), 
+		resManager->GetPath(Dir::SharedAssets, "shaders/post.ps.hlsl"));
 	LoadShader("occlusion", 
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/occlusion.vs.hlsl"), 
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/occlusion.ps.hlsl"));
+		resManager->GetPath(Dir::SharedAssets, "shaders/occlusion.vs.hlsl"), 
+		resManager->GetPath(Dir::SharedAssets, "shaders/occlusion.ps.hlsl"));
 	LoadShader("shadow_map_directional", 
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"), 
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/shadow_map_directional.ps.hlsl"));
+		resManager->GetPath(Dir::SharedAssets, "shaders/post.vs.hlsl"), 
+		resManager->GetPath(Dir::SharedAssets, "shaders/shadow_map_directional.ps.hlsl"));
 	LoadShader("shadow_map_point", 
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"), 
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/shadow_map_point.ps.hlsl"));
+		resManager->GetPath(Dir::SharedAssets, "shaders/post.vs.hlsl"), 
+		resManager->GetPath(Dir::SharedAssets, "shaders/shadow_map_point.ps.hlsl"));
 	LoadShader("letterbox", 
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/post.vs.hlsl"), 
-		resManager->GetPath(ResourceManager::Directory::SharedAssets, "shaders/letterbox.ps.hlsl"));
+		resManager->GetPath(Dir::SharedAssets, "shaders/post.vs.hlsl"), 
+		resManager->GetPath(Dir::SharedAssets, "shaders/letterbox.ps.hlsl"));
 
 
 	m_shaderManager.get()->SetPostProcessShader(L"passthrough");
