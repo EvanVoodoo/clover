@@ -10,7 +10,9 @@ namespace clvr
 	class Texture : public Resource
     {
     public:
-        Texture();
+        Texture(const wchar_t* filename);
+        Texture(ID3D11Device* device, const wchar_t* filename);
+
         ~Texture();                                // ComPtr releases automatically
 
         Texture(const Texture&) = delete;                     // Texture owns a GPU resource — move-only
@@ -19,11 +21,13 @@ namespace clvr
         Texture& operator=(Texture&&) noexcept = default;
 
 		// TODO: Implement GetPath that uses the texture filename to create a unique path string
-		std::string GetPath(const wchar_t* filename) {
-            return "";
-		}
+		static std::string GetPath(const wchar_t* filename);
+        static std::string GetPath(ID3D11Device* device, const wchar_t* filename)
+        {
+            return GetPath(filename);
+        }
 
-        bool Load(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename);
+        bool Load(ID3D11Device* device, const wchar_t* filename);
         void Shutdown();                                       // optional — ComPtr::Reset() does this too
 
         ID3D11ShaderResourceView* GetSRV() const { return m_srv.Get(); }

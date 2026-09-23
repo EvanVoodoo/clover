@@ -96,21 +96,30 @@ bool Renderer::Render(float dt)
 
 	for (const auto& layer : m_spriteLayers)
 	{
-		std::vector<std::pair<const Sprite*, const Transform*>> toDraw;
-		toDraw.reserve(view.size_hint());
+		std::vector<std::pair<const Sprite*, const Transform*>> batched;
+		std::vector<std::pair<const Sprite*, const Transform*>> unbatched;
+		batched.reserve(view.size_hint());
 
 		for (auto [entity, sc, t] : view.each())
 		{
-			if (sc.sprite.layer->id == layer->id)
-				toDraw.emplace_back(&sc.sprite, &t);
+			if (sc.sprite.layer->id != layer->id)
+				continue;
+
+			if (sc.sprite.useLinkedTexture)
+				unbatched.emplace_back(&sc.sprite, &t);
+			else
+				batched.emplace_back(&sc.sprite, &t);
 		}
 
+		// Atlas-batched pass
 		m_DX2D->SetupLayer(*layer);
-
-		for (const auto& [sprite, transform] : toDraw)
-			DrawSprite(*sprite, *transform);
-
+		for (const auto& [sprite, transform] : batched)
+			m_DX2D->DrawSprite(*sprite, *transform);
 		m_DX2D->DrawLayer(*layer);
+
+		// Unbatched pass — same layer, so it needs the same parallax-adjusted view
+		for (const auto& [sprite, transform] : unbatched)
+			m_DX2D->DrawUnbatchedSprite(*sprite, *transform, *layer);
 	}
 
 #ifdef CLOVER_EDITOR
@@ -254,6 +263,12 @@ void Renderer::Inspect(float dt)
 }
 
 int Renderer::AddTexture(const std::string filename) { return m_DX2D->AddTexture(filename); }
+
+std::shared_ptr<Texture> Renderer::LoadTexture(std::string filename)
+{
+	return m_DX2D->LoadTexture(filename);
+}
+
 bool Renderer::BuildAtlas() { return m_DX2D->BuildAtlas(); }
 AtlasRegion Renderer::GetAtlasRegion(const std::string f) { return m_DX2D->GetAtlasRegion(f); }
 

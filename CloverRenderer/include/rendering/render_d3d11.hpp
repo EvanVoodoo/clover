@@ -13,6 +13,7 @@
 #include "sprite_batcher.hpp"
 #include "texture_atlas.hpp"
 #include "framebuffer.hpp"
+#include "texture.hpp"
 
 using namespace DirectX;
 
@@ -22,12 +23,12 @@ namespace clvr
 	{
 	public:
 		DirectX2D();
-		//DirectX2D(const DirectX2D&) = delete;
-		//DirectX2D& operator=(const DirectX2D&) = delete;
+		DirectX2D(const DirectX2D&) = delete;
+		DirectX2D& operator=(const DirectX2D&) = delete;
 		~DirectX2D();
 
 		bool Initialize(int, int, bool, bool);
-		bool InitializeFullscreenQuad();
+		bool InitializeQuadBuffers();
 		void Shutdown();
 
 		void BeginScene(float, float, float, float);
@@ -35,9 +36,11 @@ namespace clvr
 		void EndScene();
 		void OcclusionRender();
 
+		XMMATRIX GetLayerViewMatrix(const SpriteLayer& layer);
 		void SetupLayer(const SpriteLayer& layer);
 		void DrawLayer(const SpriteLayer& layer);
 		void DrawSprite(const Sprite& sprite, const Transform& transform);
+		void DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer);
 
 		void SetActiveShader(const std::wstring& name);
 		void SetPostProcessShader(const std::wstring& name);
@@ -47,7 +50,8 @@ namespace clvr
 		bool ReloadShaders();
 
 		int AddTexture(const std::string filename);
-		ID3D11ShaderResourceView* LoadTexture(const std::string filename);
+		// TODO: Use LoadTexture to load textures that are not part of the atlas, e.g. for UI elements or special effects, since access to Device and DeviceContext is needed for loading textures
+		std::shared_ptr<Texture> LoadTexture(std::string filename);
 
 		AtlasRegion GetAtlasRegion(const std::string filename) { return m_textureAtlas->GetRegion(filename); }
 		bool BuildAtlas();
@@ -99,6 +103,7 @@ namespace clvr
 
 		ID3D11Buffer* m_fullscreenQuadVB;
 		ID3D11Buffer* m_fullscreenQuadIB;
+		ID3D11Buffer* m_unbatchedQuadVB;
 
 		ID3D11RasterizerState* m_rasterState;
 

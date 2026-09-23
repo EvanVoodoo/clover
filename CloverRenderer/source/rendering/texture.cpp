@@ -1,13 +1,20 @@
 #include "rendering/texture.hpp"
 
 #include <DirectXTex.h>
+#include <filesystem>
 
 using namespace clvr;
 using namespace DirectX;
 
-Texture::Texture()
+Texture::Texture(const wchar_t* filename)
 	: Resource(ResourceType::Texture)
 {
+}
+
+Texture::Texture(ID3D11Device* device, const wchar_t* filename)
+    : Texture(filename)
+{
+    Load(device, filename);
 }
 
 Texture::~Texture()
@@ -15,7 +22,13 @@ Texture::~Texture()
     Shutdown();
 }
 
-bool Texture::Load(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const wchar_t* filename)
+std::string Texture::GetPath(const wchar_t* filename) {
+    // custom path based on filename
+    std::string path = "texture:" + std::filesystem::path(filename).string();
+    return path;
+}
+
+bool Texture::Load(ID3D11Device* device, const wchar_t* filename)
 {
     ScratchImage image;
     HRESULT result = LoadFromWICFile(filename, WIC_FLAGS_NONE, nullptr, image);

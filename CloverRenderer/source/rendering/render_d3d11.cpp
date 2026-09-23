@@ -441,7 +441,7 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, bool f
 		return false;
 	}
 
-	InitializeFullscreenQuad();
+	InitializeQuadBuffers();
 
 
 	m_spriteBatcher = new SpriteBatcher();
@@ -462,7 +462,7 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, bool f
 	return true;
 }
 
-bool DirectX2D::InitializeFullscreenQuad()
+bool DirectX2D::InitializeQuadBuffers()
 {
 	Vertex vertices[] =
 	{
@@ -494,6 +494,15 @@ bool DirectX2D::InitializeFullscreenQuad()
 	ibData.pSysMem = indices;
 
 	result = m_device->CreateBuffer(&ibDesc, &ibData, &m_fullscreenQuadIB);
+	if (FAILED(result)) return false;
+
+	D3D11_BUFFER_DESC unbatchedVBDesc = {};
+	unbatchedVBDesc.Usage = D3D11_USAGE_DYNAMIC;
+	unbatchedVBDesc.ByteWidth = sizeof(Vertex) * 4;
+	unbatchedVBDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	unbatchedVBDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	result = m_device->CreateBuffer(&unbatchedVBDesc, nullptr, &m_unbatchedQuadVB);
 	if (FAILED(result)) return false;
 
 	return true;
@@ -964,6 +973,16 @@ void DirectX2D::OcclusionRender()
 	ResetViewport();
 }
 
+XMMATRIX DirectX2D::GetLayerViewMatrix(const SpriteLayer& layer)
+{
+	Transform newTransform = GetActiveCamera().transform;
+	newTransform.position = {
+		newTransform.position.x * layer.parallaxFactor,
+		newTransform.position.y * layer.parallaxFactor
+	};
+	return XMMatrixInverse(nullptr, newTransform.GetWorld());
+}
+
 void DirectX2D::SetupLayer(const SpriteLayer& layer)
 {
 	m_shaderManager.get()->GetActiveShader()->Bind(m_deviceContext);
@@ -972,14 +991,7 @@ void DirectX2D::SetupLayer(const SpriteLayer& layer)
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
 	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
 
-	// Scale camera position by parallax factor before building the view matrix
-	Transform newTransform = GetActiveCamera().transform;
-	newTransform.position = {
-		newTransform.position.x * layer.parallaxFactor,
-		newTransform.position.y * layer.parallaxFactor
-	};
-
-	BufferType::MVPBufferType mvpData = { GetWorldMatrix(), XMMatrixInverse(nullptr, newTransform.GetWorld()), GetProjectionMatrix() };
+	BufferType::MVPBufferType mvpData = { GetWorldMatrix(), GetLayerViewMatrix(layer), GetProjectionMatrix() };
 	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
 	m_mvpCb.BindVS(m_deviceContext, 0);
 
@@ -993,6 +1005,69 @@ void DirectX2D::DrawLayer(const SpriteLayer& layer)
 }
 
 void DirectX2D::DrawSprite(const Sprite& sprite, const Transform& transform) { m_spriteBatcher->DrawSprite(sprite, transform); }
+
+void DirectX2D::DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer)
+{
+	if (!sprite.texture)
+		return; // nothing to bind — bail rather than draw garbage
+
+	m_shaderManager.get()->GetShader(L"default")->Bind(m_deviceContext);
+
+	// Same parallax-adjusted view as the batched path for this layer
+	BufferType::MVPBufferType mvpData = { GetWorldMatrix(), GetLayerViewMatrix(layer), GetProjectionMatrix() };
+	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
+	m_mvpCb.BindVS(m_deviceContext, 0);
+
+	ID3D11ShaderResourceView* srv = sprite.texture->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 1, &srv);
+	m_deviceContext->PSSetSamplers(0, 1, &m_linearSampler);
+
+	// Build the quad exactly like SpriteBatcher::DrawSprite does —
+	// corners transformed into world space, uvRect mapped to the same winding
+	float halfWidth = sprite.size.x * 0.5f;
+	float halfHeight = sprite.size.y * 0.5f;
+
+	float uvLeft = sprite.uvRect.x;
+	float uvTop = sprite.uvRect.y;
+	float uvRight = sprite.uvRect.x + sprite.uvRect.z;
+	float uvBottom = sprite.uvRect.y + sprite.uvRect.w;
+
+	XMFLOAT2 corners[4] = {
+		{ -halfWidth, -halfHeight },
+		{  halfWidth, -halfHeight },
+		{  halfWidth,  halfHeight },
+		{ -halfWidth,  halfHeight }
+	};
+
+	XMFLOAT2 uvs[4] = {
+		{ uvLeft,  uvBottom }, { uvRight, uvBottom },
+		{ uvRight, uvTop    }, { uvLeft,  uvTop    }
+	};
+
+	const XMMATRIX world = transform.GetWorld();
+
+	Vertex verts[4];
+	for (int i = 0; i < 4; ++i)
+	{
+		XMVECTOR local = XMVectorSet(corners[i].x, corners[i].y, 0.5f, 1.0f);
+		XMVECTOR worldPos = XMVector3Transform(local, world);
+		XMStoreFloat3(&verts[i].position, worldPos);
+		verts[i].uv = uvs[i];
+		verts[i].color = sprite.color;
+	}
+
+	D3D11_MAPPED_SUBRESOURCE mapped = {};
+	m_deviceContext->Map(m_unbatchedQuadVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+	memcpy(mapped.pData, verts, sizeof(verts));
+	m_deviceContext->Unmap(m_unbatchedQuadVB, 0);
+
+	unsigned int stride = sizeof(Vertex);
+	unsigned int offset = 0;
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_unbatchedQuadVB, &stride, &offset);
+	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0); // reused: same {0,1,2,2,3,0} pattern
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_deviceContext->DrawIndexed(6, 0, 0);
+}
 
 void DirectX2D::SetActiveShader(const std::wstring& name) {
 	if (m_shaderManager.get() != nullptr)
@@ -1019,19 +1094,9 @@ int DirectX2D::AddTexture(const std::string filename)
 	return m_textureAtlas->AddTexture(filename);
 }
 
-ID3D11ShaderResourceView* DirectX2D::LoadTexture(const std::string filename)
+std::shared_ptr<Texture> DirectX2D::LoadTexture(std::string filename)
 {
-	ScratchImage image;
-	HRESULT result = LoadFromWICFile(ToWString(filename).c_str(), WIC_FLAGS_NONE, nullptr, image);
-	if (FAILED(result))
-		return nullptr;
-
-	ID3D11ShaderResourceView* srv = nullptr;
-	result = CreateShaderResourceView(m_device, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &srv);
-	if (FAILED(result))
-		return nullptr;
-
-	return srv;
+	return Engine.GetResourceManager()->Load<Texture>(m_device, ToWString(filename).c_str());;
 }
 
 bool DirectX2D::BuildAtlas()

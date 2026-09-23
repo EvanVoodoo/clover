@@ -4,6 +4,9 @@
 #include <directxmath.h>
 #include <core/transform.hpp>
 #include <string>
+#include <wrl/client.h>
+#include "texture.hpp"
+#include <memory>
 
 #define MAX_LIGHTS 64
 
@@ -20,6 +23,12 @@ namespace clvr
 
 	struct Sprite
 	{
+		Sprite(const std::string& filename = "") {
+			if (!filename.empty())
+				LoadSpriteTexture(filename);
+		}
+		bool LoadSpriteTexture(const std::string& filename);
+
 		XMFLOAT2 position;
 		XMFLOAT2 size;
 		XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -28,6 +37,9 @@ namespace clvr
 		SpriteLayer* layer;
 		float rotation;
 		bool isOccluder = true; // if true, this sprite will be used for occlusion rendering
+
+		bool useLinkedTexture = false;
+		std::shared_ptr<Texture> texture = nullptr; // set once, e.g. via LoadTexture function
 	};
 
 	struct SpriteComponent
