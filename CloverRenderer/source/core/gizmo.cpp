@@ -80,13 +80,14 @@ namespace clvr {
 		}
 	}
 
-	void Gizmo::Initialize(const Texture& xAxisTexture, const Texture& yAxisTexture)
+	void Gizmo::Initialize(const std::shared_ptr<Texture> xAxisTexture, const std::shared_ptr<Texture> yAxisTexture)
 	{
 		// Setup x axis
 		Sprite xSprite;
 		// green color for x axis
 		xSprite.color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-		xSprite.size = { static_cast<float>(xAxisTexture.GetWidth()), static_cast<float>(xAxisTexture.GetHeight()) };
+		xSprite.size = { static_cast<float>(xAxisTexture->GetWidth()), static_cast<float>(xAxisTexture->GetHeight()) };
+		xSprite.LoadSpriteTexture(xAxisTexture);
 		m_xAxisParams->sprite = xSprite;
 
 		// Setup y axis
@@ -95,7 +96,7 @@ namespace clvr {
 			Sprite ySprite;
 			// red color for y axis
 			ySprite.color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-			ySprite.size = { static_cast<float>(yAxisTexture.GetWidth()), static_cast<float>(yAxisTexture.GetHeight()) };
+			ySprite.size = { static_cast<float>(yAxisTexture->GetWidth()), static_cast<float>(yAxisTexture->GetHeight()) };
 			m_yAxisParams->sprite = ySprite;
 		}
 

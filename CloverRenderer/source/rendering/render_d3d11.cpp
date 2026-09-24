@@ -975,6 +975,11 @@ void DirectX2D::OcclusionRender()
 
 XMMATRIX DirectX2D::GetLayerViewMatrix(const SpriteLayer& layer)
 {
+	// check if layer is null
+	if (layer.layerName.empty())
+	{
+		return GetViewMatrix();
+	}
 	Transform newTransform = GetActiveCamera().transform;
 	newTransform.position = {
 		newTransform.position.x * layer.parallaxFactor,

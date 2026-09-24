@@ -86,6 +86,8 @@ bool Renderer::Frame(float dt)
 
 void Renderer::DrawSprite(const Sprite& sprite, const Transform& transform) { m_DX2D->DrawSprite(sprite, transform); }
 
+void Renderer::DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer) { m_DX2D->DrawUnbatchedSprite(sprite, transform, layer); }
+
 bool Renderer::Render(float dt)
 {
 	m_DX2D->BeginScene(1.0f, 1.0f, 1.0f, 0.0f);
@@ -121,6 +123,8 @@ bool Renderer::Render(float dt)
 		for (const auto& [sprite, transform] : unbatched)
 			m_DX2D->DrawUnbatchedSprite(*sprite, *transform, *layer);
 	}
+
+	// Gizmos are drawn after the scene is rendered, so they appear on top of the scene. They are not part of any sprite layer, so they are drawn here after all layers have been processed.
 
 #ifdef CLOVER_EDITOR
 	ImGui::Begin("Game Scene", nullptr);

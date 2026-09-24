@@ -30,6 +30,7 @@ namespace clvr
 
 		bool Frame(float dt);
 		void DrawSprite(const Sprite& sprite, const Transform& transform);
+		void DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer);
 		void SetActiveShader(const std::wstring& name) { m_DX2D->SetActiveShader(name); }
 		void SetPostProcessShader(const std::wstring& name) { m_DX2D->SetPostProcessShader(name); }
 		bool LoadShader(const std::string& name, const std::string& vsFilename, const std::string& psFilename)

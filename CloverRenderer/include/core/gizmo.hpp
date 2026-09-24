@@ -35,7 +35,7 @@ namespace clvr {
 		inline bool IsHovered() const { return false; }
 
 	protected:
-		void Initialize(const Texture& xAxisTexture, const Texture& yAxisTexture);
+		void Initialize(const std::shared_ptr<Texture> xAxisTexture, const std::shared_ptr<Texture> yAxisTexture);
 		void ExamineMousePosition();
 
 		float GetDeltaX();

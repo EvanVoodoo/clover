@@ -28,6 +28,7 @@ namespace clvr
 				LoadSpriteTexture(filename);
 		}
 		bool LoadSpriteTexture(const std::string& filename);
+		bool LoadSpriteTexture(const std::shared_ptr<Texture> texture);
 
 		XMFLOAT2 position;
 		XMFLOAT2 size;

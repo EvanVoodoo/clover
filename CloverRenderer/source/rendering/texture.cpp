@@ -2,12 +2,18 @@
 
 #include <DirectXTex.h>
 #include <filesystem>
+#include <core/engine.hpp>
 
 using namespace clvr;
 using namespace DirectX;
 
 Texture::Texture(const wchar_t* filename)
 	: Resource(ResourceType::Texture)
+{
+}
+
+Texture::Texture(std::string filename)
+    : Texture(ToWString(filename).c_str())
 {
 }
 

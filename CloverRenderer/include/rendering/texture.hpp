@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include "resources/resource.hpp"
+#include <core/engine.hpp>
 
 namespace clvr
 {
@@ -11,6 +12,7 @@ namespace clvr
     {
     public:
         Texture(const wchar_t* filename);
+        Texture(std::string filename);
         Texture(ID3D11Device* device, const wchar_t* filename);
 
         ~Texture();                                // ComPtr releases automatically
@@ -22,6 +24,10 @@ namespace clvr
 
 		// TODO: Implement GetPath that uses the texture filename to create a unique path string
 		static std::string GetPath(const wchar_t* filename);
+        static std::string GetPath(std::string filename)
+        {
+			return GetPath(ToWString(filename).c_str());
+        }
         static std::string GetPath(ID3D11Device* device, const wchar_t* filename)
         {
             return GetPath(filename);
