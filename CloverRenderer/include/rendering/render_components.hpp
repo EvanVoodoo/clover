@@ -7,6 +7,7 @@
 #include <wrl/client.h>
 #include "texture.hpp"
 #include <memory>
+#include <core/ecs.hpp>
 
 #define MAX_LIGHTS 64
 
@@ -23,9 +24,12 @@ namespace clvr
 
 	struct Sprite
 	{
-		Sprite(const std::string& filename = "") {
-			if (!filename.empty())
+		Sprite(const std::string& filename = "", bool loadTexture = false) {
+			if (loadTexture) {
 				LoadSpriteTexture(filename);
+				textureName = texture->GetFilename();
+			}
+			else textureName = filename;
 		}
 		bool LoadSpriteTexture(const std::string& filename);
 		bool LoadSpriteTexture(const std::shared_ptr<Texture> texture);
@@ -35,17 +39,19 @@ namespace clvr
 		XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		XMFLOAT4 uvRect = { 0.0f, 0.0f, 1.0f, 1.0f }; // x, y = top-left in UV space; z, w = width, height in UV space
 		XMFLOAT2 pivot;
-		SpriteLayer* layer;
+		SpriteLayer* layer = nullptr;
 		float rotation;
 		bool isOccluder = true; // if true, this sprite will be used for occlusion rendering
 
 		bool useLinkedTexture = false;
 		std::shared_ptr<Texture> texture = nullptr; // set once, e.g. via LoadTexture function
+		std::string textureName = "";
 	};
 
 	struct SpriteComponent
 	{
 		Sprite sprite;   // reuse your existing Sprite struct as the payload
+		void Inspect();
 	};
 
 	struct Vertex
@@ -61,6 +67,8 @@ namespace clvr
 		float intensity;
 		XMFLOAT3 color;
 		float type; // 0 = directional, 1 = point, 2 = spotlight
+
+		void Inspect();
 	};
 
 	namespace BufferType
@@ -158,3 +166,6 @@ namespace clvr
 		ID3D11Buffer* m_buffer = nullptr;
 	};
 }
+
+REGISTER_COMPONENT(clvr::SpriteComponent)
+REGISTER_COMPONENT(clvr::Light)

@@ -53,7 +53,8 @@ namespace clvr
 		int AddTexture(const std::string filename);
 		std::shared_ptr<Texture> LoadTexture(std::string filename);
 		bool BuildAtlas();
-		AtlasRegion GetAtlasRegion(const std::string filename); // if not already exposed
+		AtlasRegion GetAtlasRegion(const std::string filename);
+		TextureAtlas* GetTextureAtlas();
 
 		SpriteLayer* CreateSpriteLayer(const unsigned int id, float parallaxFactor = 1.0f, const std::string& layerName = "");
 		SpriteLayer* FindSpriteLayer(unsigned int id);
@@ -62,10 +63,13 @@ namespace clvr
 
 	private:
 		bool Render(float dt);
+		void EditorWindowControls(float dt);
 
 	private:
 		DirectX2D* m_DX2D;
 		bool m_fullscreenMemory = false;
 		std::vector<SpriteLayer*> m_spriteLayers; // store sprite layers for sorting
+
+		bool m_gameWindowFocused = false;
 	};
 }

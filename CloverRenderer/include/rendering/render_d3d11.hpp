@@ -53,8 +53,9 @@ namespace clvr
 		// TODO: Use LoadTexture to load textures that are not part of the atlas, e.g. for UI elements or special effects, since access to Device and DeviceContext is needed for loading textures
 		std::shared_ptr<Texture> LoadTexture(std::string filename);
 
-		AtlasRegion GetAtlasRegion(const std::string filename) { return m_textureAtlas->GetRegion(filename); }
 		bool BuildAtlas();
+		AtlasRegion GetAtlasRegion(const std::string filename) { return m_textureAtlas->GetRegion(filename); }
+		TextureAtlas* GetTextureAtlas() { return m_textureAtlas; }
 
 		ID3D11Device* GetDevice();
 		ID3D11DeviceContext* GetDeviceContext();

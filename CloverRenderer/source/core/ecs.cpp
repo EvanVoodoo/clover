@@ -33,7 +33,7 @@ void EntityComponentSystem::InspectSystems(float dt)
 	for (auto& s : m_systems) s->Inspect(dt);
 }
 
-void EntityComponentSystem::RemovedDeleted()
+void EntityComponentSystem::RemoveDeleted()
 {
     auto& deleteStorage = m_registry.storage<Delete>();
     while (!deleteStorage.empty())

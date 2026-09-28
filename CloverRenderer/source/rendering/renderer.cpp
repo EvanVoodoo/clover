@@ -76,10 +76,13 @@ bool Renderer::Frame(float dt)
 
 	// Render the graphics scene.
 	result = Render(dt);
+	
 	if (!result)
 	{
 		return false;
 	}
+
+	EditorWindowControls(dt);
 
 	return true;
 }
@@ -128,6 +131,7 @@ bool Renderer::Render(float dt)
 
 #ifdef CLOVER_EDITOR
 	ImGui::Begin("Game Scene", nullptr);
+	m_gameWindowFocused = ImGui::IsWindowFocused();
 
 	ImVec2 viewportPos = ImGui::GetCursorScreenPos();
 	ImVec2 viewportSize = ImGui::GetContentRegionAvail();
@@ -165,8 +169,14 @@ void Renderer::UpdateLights()
 			assert(false && "More light entities than LightBufferType can hold");
 			break;
 		}
-
-		lightData.lights[count] = light;
+		// work around the fact that directional lights don't have a position, but point lights do, so we use the position of the transform for point lights
+		// creating temp Light variable to modify the direction for point lights, without modifying the original Light component in the ECS
+		Light l = light;
+		if (l.type != 0.0f)   // Directional lights need a direction, while point lights use position
+		{
+			l.direction = XMFLOAT3(transform.position.x, transform.position.y, 0.5f);   // For point lights, use position instead of direction
+		}
+		lightData.lights[count] = l;
 		++count;
 	}
 	lightData.lightCount = count;
@@ -274,7 +284,13 @@ std::shared_ptr<Texture> Renderer::LoadTexture(std::string filename)
 }
 
 bool Renderer::BuildAtlas() { return m_DX2D->BuildAtlas(); }
+
 AtlasRegion Renderer::GetAtlasRegion(const std::string f) { return m_DX2D->GetAtlasRegion(f); }
+
+TextureAtlas* clvr::Renderer::GetTextureAtlas()
+{
+	return m_DX2D->GetTextureAtlas();
+}
 
 SpriteLayer* Renderer::CreateSpriteLayer(const unsigned int id, float parallaxFactor, const std::string& layerName)
 {
@@ -310,4 +326,90 @@ SpriteLayer* Renderer::FindOrCreateSpriteLayer(unsigned int id)
 		return *it;
 
 	return CreateSpriteLayer(id, 1.0f);
+}
+
+void Renderer::EditorWindowControls(float dt)
+{
+	if (!m_gameWindowFocused) return;
+
+	if (Engine.GetEditorMode() == EditorMode::Playing) return;
+
+	auto ecs = Engine.GetECS();
+	auto input = Engine.GetInput();
+
+	if (input->IsKeyDown('1'))
+		SetActiveShader(L"default");
+	else if (input->IsKeyDown('2'))
+		SetActiveShader(L"grayscale");
+	else if (input->IsKeyDown('3'))
+		SetActiveShader(L"inverted");
+	else if (input->IsKeyDown('4'))
+		SetActiveShader(L"chromatic");
+	else if (input->IsKeyDown('5'))
+		SetActiveShader(L"wacky");
+
+	if (input->IsKeyDown('R'))
+	{
+		ReloadShaders();
+	}
+
+	// move camera with arrow keys
+	Camera& camera = GetActiveCamera();
+	float cameraSpeedMult = 1.0f;
+
+	if (input->IsKeyDown(VK_SHIFT))
+		cameraSpeedMult *= 10.0f;
+	if (input->IsKeyDown(VK_CONTROL))
+		cameraSpeedMult *= 0.1f;
+	float cameraSpeed = camera.speed * cameraSpeedMult * dt;
+
+	if (input->IsKeyDown('Q'))
+		camera.transform.rotation += (cameraSpeed * 0.1f * 2 * 3.1415927f) / 180.f;
+	if (input->IsKeyDown('E'))
+		camera.transform.rotation -= (cameraSpeed * 0.1f * 2 * 3.1415927f) / 180.f;
+
+	// zoom in/out with W/S keys by adjusting the camera's projection matrix
+	if (input->IsKeyDown('W'))
+	{
+		camera.zoom = camera.zoom * 1.01f;
+		//if (camera.zoom > 5.0f)
+		//camera.zoom = 5.0f;
+	}
+	if (input->IsKeyDown('S'))
+	{
+		camera.zoom = camera.zoom * 0.99f;
+		//camera.zoom -= cameraSpeed * 0.01f;
+		if (camera.zoom < 0.01f)
+			camera.zoom = 0.01f;
+	}
+
+	// camera moves according to its rotation
+	if (input->IsKeyDown(VK_UP))
+	{
+		camera.transform.position.x -= sinf(camera.transform.rotation) * cameraSpeed;
+		camera.transform.position.y += cosf(camera.transform.rotation) * cameraSpeed;
+	}
+	if (input->IsKeyDown(VK_DOWN))
+	{
+		camera.transform.position.x += sinf(camera.transform.rotation) * cameraSpeed;
+		camera.transform.position.y -= cosf(camera.transform.rotation) * cameraSpeed;
+	}
+	if (input->IsKeyDown(VK_LEFT))
+	{
+		camera.transform.position.x -= cosf(camera.transform.rotation) * cameraSpeed;
+		camera.transform.position.y -= sinf(camera.transform.rotation) * cameraSpeed;
+	}
+	if (input->IsKeyDown(VK_RIGHT))
+	{
+		camera.transform.position.x += cosf(camera.transform.rotation) * cameraSpeed;
+		camera.transform.position.y += sinf(camera.transform.rotation) * cameraSpeed;
+	}
+
+	if (input->IsKeyDown('C'))
+	{
+		camera.transform = Transform();
+		camera.zoom = 1.0f;
+		camera.nearZ = 0.0f;
+		camera.farZ = 1.0f;
+	}
 }

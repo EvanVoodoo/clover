@@ -66,7 +66,7 @@ void Game::SetupScene()
 		auto centerEntity = ecs->CreateEntity();
 		auto& t = ecs->CreateComponent<Transform>(centerEntity);
 		t.position = { 0.0f, -300.0f };
-		clvr::Sprite cs = Sprite(rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png"));
+		clvr::Sprite cs = Sprite(rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png"), true);
 		cs.position = t.position;
 		cs.size = { 200.0f, 200.0f };
 		SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(1);
@@ -88,6 +88,7 @@ void Game::SetupScene()
 			s.position = t.position;
 			s.size = { (float) (rand() % 200 + 100), (float) (rand() % 100 + 50) };
 			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg")).uvRect;
+			s.textureName = "textures/white.jpg";
 			s.layer = renderer.FindOrCreateSpriteLayer(0);
 			s.isOccluder = true;
 			ecs->CreateComponent<SpriteComponent>(entity, s);
@@ -116,6 +117,7 @@ void Game::SetupScene()
 			s.position = t.position;
 			s.size = { 3000, 3000 };
 			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/shrew1.jpg")).uvRect;
+			s.textureName = "textures/shrew1.jpg";
 			SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(3);
 			s.layer = layer;
 			s.isOccluder = false;
@@ -130,6 +132,7 @@ void Game::SetupScene()
 			s.position = t.position;
 			s.size = { 16000.0f, 64.0f };
 			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg")).uvRect;
+			s.textureName = "textures/white.jpg";
 			s.layer = renderer.FindOrCreateSpriteLayer(0);
 			s.isOccluder = true;
 			ecs->CreateComponent<SpriteComponent>(entity, s);
@@ -194,135 +197,6 @@ void Game::SetupScene()
 
 void Game::Update(float dt) {
 	m_time += dt;
-
-	auto ecs = Engine.GetECS();
-
-	//const float minI = 10.0f;
-	//const float maxI = 50000.0f;
-	//const float wanderRadius = 150.0f;
-	//{
-	//    int index = 0;
-	//    auto lightView = ecs->GetRegistry().view<Light, Transform, MovingLight>();
-	//    const int count = static_cast<int>(lightView.size_hint());
-	//    for (auto [entity, light, transform] : lightView.each())
-	//    {
-	//        if (light.type != 1)
-	//            continue;
-
-	//        // same deterministic base position as SetupScene()
-	//        float seedX = sinf((float) index * 12.9898f) * 43758.5453f;
-	//        float seedY = sinf((float) index * 78.233f) * 43758.5453f;
-	//        float baseX = fmodf(seedX, 1.0f) * 1600.0f;
-	//        float baseY = fmodf(seedY, 1.0f) * 800.0f;
-
-	//        // wander around that base position, phase-offset per light
-	//        float t = (float) index * index * 2.17f / count;
-	//        float phase = m_time + t * 2.0f * 3.1415927f;
-	//        float wanderX = cosf(phase * 0.7f) * wanderRadius;
-	//        float wanderY = sinf(phase * 0.9f) * wanderRadius;
-
-	//        light.direction = { baseX + wanderX, baseY + wanderY, 0.0f };
-	//        transform.position = { light.direction.x, light.direction.y }; // update the Transform position to match the light's direction
-
-	//        float pulsePhase = m_time + t * 2.0f * 3.1415927f;
-	//        light.intensity = minI + 0.5f * (sinf(pulsePhase) + 1.0f) * (maxI - minI);
-
-	//        ++index;
-	//    }
-	//}
-
-	auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
-	auto input = Engine.GetInput();
-
-	if (input->IsKeyDown('1'))
-		renderer.SetActiveShader(L"default");
-	else if (input->IsKeyDown('2'))
-		renderer.SetActiveShader(L"grayscale");
-	else if (input->IsKeyDown('3'))
-		renderer.SetActiveShader(L"inverted");
-	else if (input->IsKeyDown('4'))
-		renderer.SetActiveShader(L"chromatic");
-	else if (input->IsKeyDown('5'))
-		renderer.SetActiveShader(L"wacky");
-
-	if (input->IsKeyDown('R'))
-	{
-		renderer.ReloadShaders();
-	}
-
-	// move camera with arrow keys
-	Camera& camera = renderer.GetActiveCamera();
-	float cameraSpeedMult = 1.0f;
-
-	{
-		auto spriteView = ecs->GetRegistry().view<SpriteComponent, Transform, MovingSprite>();
-
-		for (auto [entity, sc, t] : spriteView.each())
-		{
-			t.scale = { 1.0f + 0.5f * sinf(m_time), 1.0f + 0.5f * cosf(m_time) };
-			t.rotation += (sinf(m_time) * dt * 2.0f);
-			// slowly move the sprite in an ellipsis
-			t.position.x += (cosf(m_time) * dt * 300.0f);
-			t.position.y += (sinf(m_time) * dt * 300.0f);
-			//camera.transform = t; // follow the moving sprite with the camera
-		}
-	}
-
-	if (input->IsKeyDown(VK_SHIFT))
-		cameraSpeedMult *= 10.0f;
-	if (input->IsKeyDown(VK_CONTROL))
-		cameraSpeedMult *= 0.1f;
-	float cameraSpeed = camera.speed * cameraSpeedMult * dt;
-
-	if (input->IsKeyDown('Q'))
-		camera.transform.rotation += (cameraSpeed * 0.1f * 2 * 3.1415927f) / 180.f;
-	if (input->IsKeyDown('E'))
-		camera.transform.rotation -= (cameraSpeed * 0.1f * 2 * 3.1415927f) / 180.f;
-
-	// zoom in/out with W/S keys by adjusting the camera's projection matrix
-	if (input->IsKeyDown('W'))
-	{
-		camera.zoom = camera.zoom * 1.01f;
-		//if (camera.zoom > 5.0f)
-			//camera.zoom = 5.0f;
-	}
-	if (input->IsKeyDown('S'))
-	{
-		camera.zoom = camera.zoom * 0.99f;
-		//camera.zoom -= cameraSpeed * 0.01f;
-		if (camera.zoom < 0.01f)
-			camera.zoom = 0.01f;
-	}
-
-	// camera moves according to its rotation
-	if (input->IsKeyDown(VK_UP))
-	{
-		camera.transform.position.x -= sinf(camera.transform.rotation) * cameraSpeed;
-		camera.transform.position.y += cosf(camera.transform.rotation) * cameraSpeed;
-	}
-	if (input->IsKeyDown(VK_DOWN))
-	{
-		camera.transform.position.x += sinf(camera.transform.rotation) * cameraSpeed;
-		camera.transform.position.y -= cosf(camera.transform.rotation) * cameraSpeed;
-	}
-	if (input->IsKeyDown(VK_LEFT))
-	{
-		camera.transform.position.x -= cosf(camera.transform.rotation) * cameraSpeed;
-		camera.transform.position.y -= sinf(camera.transform.rotation) * cameraSpeed;
-	}
-	if (input->IsKeyDown(VK_RIGHT))
-	{
-		camera.transform.position.x += cosf(camera.transform.rotation) * cameraSpeed;
-		camera.transform.position.y += sinf(camera.transform.rotation) * cameraSpeed;
-	}
-
-	if (input->IsKeyDown('C'))
-	{
-		camera.transform = Transform();
-		camera.zoom = 1.0f;
-		camera.nearZ = 0.0f;
-		camera.farZ = 1.0f;
-	}
 }
 
 void Game::Render() {}

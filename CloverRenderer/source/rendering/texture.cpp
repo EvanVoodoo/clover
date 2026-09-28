@@ -10,11 +10,13 @@ using namespace DirectX;
 Texture::Texture(const wchar_t* filename)
 	: Resource(ResourceType::Texture)
 {
+	m_filename = std::filesystem::path(filename).filename().string();
 }
 
 Texture::Texture(std::string filename)
     : Texture(ToWString(filename).c_str())
 {
+	m_filename = filename;
 }
 
 Texture::Texture(ID3D11Device* device, const wchar_t* filename)

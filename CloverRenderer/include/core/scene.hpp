@@ -5,7 +5,7 @@
 namespace clvr {
 	class SceneManager : public System {
 	public:
-		SceneManager() = default;
+		SceneManager();
 		~SceneManager() = default;
 
 		void Update(float);

@@ -494,6 +494,7 @@
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\core\transform.cpp" />
     <ClCompile Include="source\core\ecs.cpp" />
     <ClCompile Include="source\core\gizmo.cpp" />
     <ClCompile Include="source\core\imgui_layer.cpp" />

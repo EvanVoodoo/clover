@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "entt/entity/registry.hpp"
+#include "entt/meta/factory.hpp"
 
 namespace clvr
 {
@@ -32,9 +33,11 @@ namespace clvr
 		void UpdateSystems(float);
 		void RenderSystems();
 		void InspectSystems(float);
-		void RemovedDeleted();
+		void RemoveDeleted();
 		template <typename T, typename... Args>
 		decltype(auto) CreateComponent(Entity entity, Args&&... args);
+		template <typename T>
+		static void RegisterComponent();
 		template <typename T, typename... Args>
 		T& CreateSystem(Args&&... args);
 		template <typename T>
@@ -55,6 +58,21 @@ namespace clvr
 	decltype(auto) EntityComponentSystem::CreateComponent(Entity entity, Args&&... args)
 	{
 		return m_registry.emplace<T>(entity, args...);  // TODO: std::move this
+	}
+
+	template<typename T>
+	T& GetComponent(entt::registry& registry, entt::entity entity)
+	{
+		return registry.get<T>(entity);
+	}
+
+	template<typename T>
+	void EntityComponentSystem::RegisterComponent()
+	{
+		using namespace entt::literals;
+		entt::meta_factory<T>{}
+			.template func<&GetComponent<T>, entt::as_ref_t>("get"_hs)
+			.template func<&T::Inspect>("inspect"_hs);
 	}
 
 	template <typename T, typename... Args>
@@ -91,3 +109,12 @@ namespace clvr
 		return systems;
 	}
 }
+
+#define REGISTER_COMPONENT(Type)                                    \
+    namespace {                                                     \
+        const bool CONCAT(_component_registered_, __COUNTER__) =    \
+            (clvr::EntityComponentSystem::RegisterComponent<Type>(), true); \
+    }
+
+#define CONCAT_IMPL(a, b) a##b
+#define CONCAT(a, b) CONCAT_IMPL(a, b)

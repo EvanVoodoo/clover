@@ -2,6 +2,7 @@
 
 #include <directxmath.h>
 #include <string>
+#include "ecs.hpp"
 
 using namespace DirectX;
 
@@ -21,5 +22,9 @@ namespace clvr
 			XMMATRIX worldMatrix = scaleMatrix * rotationMatrix * translationMatrix;
 			return worldMatrix;
 		}
+
+		void Inspect();
 	};
 }
+
+REGISTER_COMPONENT(clvr::Transform)
