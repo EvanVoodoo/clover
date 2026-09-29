@@ -1,6 +1,5 @@
 #include "core/engine.hpp"
 #include <chrono>
-#include <core/scene.hpp>
 
 namespace clvr {
 	bool IsMouseMoving() {
@@ -86,9 +85,6 @@ bool EngineClass::Initialize(HINSTANCE hInstance, int nCmdShow)
 #ifdef CLOVER_EDITOR
     m_imgui = new ImGuiLayer();
 #endif
-
-    GetECS()->CreateSystem<SceneManager>();
-
     return true;
 }
 
@@ -164,6 +160,7 @@ void EngineClass::Run()
 #endif // CLOVER_EDITOR
 
 			GetECS()->UpdateSystems(deltaTime);
+			GetECS()->RenderSystems();
 
             result = Frame(deltaTime);
             if (!result)

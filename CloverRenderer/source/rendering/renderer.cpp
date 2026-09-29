@@ -3,6 +3,7 @@
 #include "rendering/render_d3d11.hpp"
 #include "rendering/render_components.hpp"
 #include <core/engine.hpp>
+#include <core/scene.hpp>
 
 using namespace clvr;
 
@@ -70,44 +71,11 @@ void Renderer::Shutdown()
 
 void Renderer::Update(float dt)
 {
-    Frame(dt);
-}
-
-bool Renderer::Frame(float dt)
-{
-	bool result;
-
 	// Render the graphics scene.
-	result = Render(dt);
-	
-	if (!result)
-	{
-		return false;
-	}
-
 	EditorWindowControls(dt);
-
-	return true;
 }
 
-void Renderer::DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform) { m_DX2D->DrawSprite(sprite, transform, layer, cameraTransform); }
-
-void Renderer::DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer) { m_DX2D->DrawUnbatchedSprite(sprite, transform, layer); }
-
-void Renderer::SetActiveShader(const std::wstring& name) { m_DX2D->SetActiveShader(name); }
-
-void Renderer::SetPostProcessShader(const std::wstring& name) { m_DX2D->SetPostProcessShader(name); }
-
-bool Renderer::LoadShader(const std::string& name, const std::string& vsFilename, const std::string& psFilename)
-{
-	return m_DX2D->LoadShader(name, vsFilename, psFilename);
-}
-
-bool Renderer::ReloadShaders() { return m_DX2D->ReloadShaders(); }
-
-Camera& Renderer::GetActiveCamera() { return m_DX2D->GetActiveCamera(); }
-
-bool Renderer::Render(float dt)
+void clvr::Renderer::Render()
 {
 	m_DX2D->BeginScene(1.0f, 1.0f, 1.0f, 0.0f);
 
@@ -143,8 +111,6 @@ bool Renderer::Render(float dt)
 		m_DX2D->DrawLayer(*layer);
 	}
 
-	// Gizmos are drawn after the scene is rendered, so they appear on top of the scene. They are not part of any sprite layer, so they are drawn here after all layers have been processed.
-
 #ifdef CLOVER_EDITOR
 	ImGui::Begin("Game Scene", nullptr);
 	m_gameWindowFocused = ImGui::IsWindowFocused();
@@ -155,6 +121,7 @@ bool Renderer::Render(float dt)
 	ImGui::Image(m_DX2D->RenderScene(), viewportSize);
 
 	// TODO: Draw gizmos here, after the scene is rendered but before ImGui::End() so they appear on top of the scene
+	Engine.GetECS()->GetSystem<SceneManager>().Draw();
 
 	// Rebind the back buffer so the ImGui backend's own draw calls
 	// (ImGui_ImplDX11_RenderDrawData) land in the swapchain, not m_finalFramebuffer.
@@ -167,9 +134,24 @@ bool Renderer::Render(float dt)
 #endif
 
 	m_DX2D->EndScene();
-
-	return true;
 }
+
+void Renderer::DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform) { m_DX2D->DrawSprite(sprite, transform, layer, cameraTransform); }
+
+void Renderer::DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer) { m_DX2D->DrawUnbatchedSprite(sprite, transform, layer); }
+
+void Renderer::SetActiveShader(const std::wstring& name) { m_DX2D->SetActiveShader(name); }
+
+void Renderer::SetPostProcessShader(const std::wstring& name) { m_DX2D->SetPostProcessShader(name); }
+
+bool Renderer::LoadShader(const std::string& name, const std::string& vsFilename, const std::string& psFilename)
+{
+	return m_DX2D->LoadShader(name, vsFilename, psFilename);
+}
+
+bool Renderer::ReloadShaders() { return m_DX2D->ReloadShaders(); }
+
+Camera& Renderer::GetActiveCamera() { return m_DX2D->GetActiveCamera(); }
 
 inline bool Renderer::SetFullscreen(bool fullscreen) {
 	bool result = m_DX2D->SetFullscreen(fullscreen);
@@ -300,6 +282,8 @@ void Renderer::Inspect(float dt)
 
 	ImGui::End();
 }
+
+void* Renderer::GetNativeDeviceHandle() { return static_cast<void*>(m_DX2D->GetDevice()); }
 
 int Renderer::AddTexture(const std::string filename) { return m_DX2D->AddTexture(filename); }
 

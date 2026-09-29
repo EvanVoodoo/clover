@@ -30,14 +30,17 @@ namespace clvr
 				textureName = texture->GetFilename();
 			}
 			else textureName = filename;
+
+			color = { 1.0f, 1.0f, 1.0f, 1.0f };
+			uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
 		}
 		bool LoadSpriteTexture(const std::string& filename);
 		bool LoadSpriteTexture(const std::shared_ptr<Texture> texture);
 
 		XMFLOAT2 position;
 		XMFLOAT2 size;
-		XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		XMFLOAT4 uvRect = { 0.0f, 0.0f, 1.0f, 1.0f }; // x, y = top-left in UV space; z, w = width, height in UV space
+		XMFLOAT4 color;
+		XMFLOAT4 uvRect; // x, y = top-left in UV space; z, w = width, height in UV space
 		XMFLOAT2 pivot;
 		SpriteLayer* layer = nullptr;
 		float rotation;

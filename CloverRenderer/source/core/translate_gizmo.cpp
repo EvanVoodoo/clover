@@ -1,15 +1,28 @@
 #include "core/translate_gizmo.hpp"
 #include "core/engine.hpp"
 #include <rendering/renderer.hpp>
+#include "rendering/texture.hpp"
 
 namespace clvr {
 	TranslateGizmo::TranslateGizmo()
 		: Gizmo()
 	{
+		auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
+		auto texture = Engine.GetResourceManager()->Load<Texture>(static_cast<ID3D11Device*>(renderer.GetNativeDeviceHandle()), Engine.GetResourceManager()->GetPath(ResourceManager::Directory::SharedAssets, "textures/DragArrow.png"));
 		Initialize(
-			Engine.GetResourceManager()->Load<Texture>(Engine.GetResourceManager()->GetPath(ResourceManager::Directory::SharedAssets, "textures/DragArrow.png")),
-			Engine.GetResourceManager()->Load<Texture>(Engine.GetResourceManager()->GetPath(ResourceManager::Directory::SharedAssets, "textures/DragArrow.png"))
+			texture,
+			texture
 		);
+
+		m_xAxisParams->color = { 0.0f, 1.0f, 0.0f, 1.0f }; // green
+		m_yAxisParams->color = { 1.0f, 0.0f, 0.0f, 1.0f }; // red
+		
+		m_xAxisParams->hoverColor = { 1.0f, 1.0f, 0.0f, 1.0f }; // yellow
+		m_yAxisParams->hoverColor = { 1.0f, 1.0f, 0.0f, 1.0f }; // yellow
+
+		// still need to link offset with gizmo position
+		m_xAxisParams->offset = { m_xAxisParams->sprite.size.x / 2.0f, 0.0f };
+		m_yAxisParams->offset = { 0.0f, m_yAxisParams->sprite.size.x / 2.0f };
 	}
 	TranslateGizmo::TranslateGizmo(const GizmoAxisParams& xAxisParams, const GizmoAxisParams& yAxisParams, bool oneAxis)
 	{
@@ -42,9 +55,9 @@ namespace clvr {
 			return;
 
 		auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
-		renderer.DrawUnbatchedSprite(m_xAxisParams->sprite, m_xAxisParams->transform, *renderer.FindSpriteLayer(-99));
+		renderer.DrawUnbatchedSprite(m_xAxisParams->sprite, m_xAxisParams->transform, *renderer.FindOrCreateSpriteLayer(-1));
 
 		if (!m_oneAxis)
-			renderer.DrawUnbatchedSprite(m_yAxisParams->sprite, m_yAxisParams->transform, *renderer.FindSpriteLayer(-99));
+			renderer.DrawUnbatchedSprite(m_yAxisParams->sprite, m_yAxisParams->transform, *renderer.FindOrCreateSpriteLayer(-1));
 	}
 }

@@ -25,6 +25,11 @@ Texture::Texture(ID3D11Device* device, const wchar_t* filename)
     Load(device, filename);
 }
 
+Texture::Texture(ID3D11Device* device, std::string filename)
+	: Texture(device, ToWString(filename).c_str())
+{
+}
+
 Texture::~Texture()
 {
     Shutdown();

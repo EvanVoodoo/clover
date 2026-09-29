@@ -2,24 +2,61 @@
 #include "core/engine.hpp"
 #include "game.hpp"
 #include "rendering/renderer.hpp"
+#include <core/scene.hpp>
 
 using namespace clvr;
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-    _In_opt_ HINSTANCE hPrevInstance,
-    _In_ LPWSTR    lpCmdLine,
-    _In_ int       nCmdShow)
+using Dir = ResourceManager::Directory;
+
+void SetupRenderer()
 {
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
+	auto ecs = Engine.GetECS();
+	auto& renderer = ecs->GetSystem<Renderer>();
+	ResourceManager* rMngr = Engine.GetResourceManager();
 
-    if (!Engine.Initialize(hInstance, nCmdShow))
-        return 0;
-    
-    Engine.GetECS()->CreateSystem<Renderer>();
-    Engine.GetECS()->CreateSystem<Game>();
+	renderer.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    Engine.Run();
-    Engine.Shutdown();
-    return 0;
+	renderer.LoadShader("grayscale",
+		rMngr->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+		rMngr->GetPath(Dir::SharedAssets, "shaders/grayscale.ps.hlsl"));
+	renderer.LoadShader("inverted",
+		rMngr->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+		rMngr->GetPath(Dir::SharedAssets, "shaders/inverted.ps.hlsl"));
+	renderer.LoadShader("chromatic",
+		rMngr->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+		rMngr->GetPath(Dir::SharedAssets, "shaders/chromatic.ps.hlsl"));
+	renderer.LoadShader("wacky",
+		rMngr->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+		rMngr->GetPath(Dir::SharedAssets, "shaders/wacky.ps.hlsl"));
+	renderer.LoadShader("crt",
+		rMngr->GetPath(Dir::SharedAssets, "shaders/post.vs.hlsl"),
+		rMngr->GetPath(Dir::SharedAssets, "shaders/crt.ps.hlsl"));
+	//renderer.SetPostProcessShader(L"crt");
+
+	renderer.CreateSpriteLayer(3, 0.2f, "Further Background Layer");
+	renderer.CreateSpriteLayer(2, 0.5f, "Background Layer");
+	renderer.CreateSpriteLayer(1, 1.0f, "Sprite Layer");
+	renderer.CreateSpriteLayer(0, 1.0f, "Default Layer");
+}
+
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPWSTR    lpCmdLine,
+	_In_ int       nCmdShow)
+{
+	UNREFERENCED_PARAMETER(hPrevInstance);
+	UNREFERENCED_PARAMETER(lpCmdLine);
+
+	if (!Engine.Initialize(hInstance, nCmdShow))
+		return 0;
+
+	Engine.GetECS()->CreateSystem<Renderer>();
+	SetupRenderer();
+
+	Engine.GetECS()->CreateSystem<SceneManager>();
+	Engine.GetECS()->CreateSystem<Game>();
+
+	Engine.Run();
+	Engine.Shutdown();
+	return 0;
 }
