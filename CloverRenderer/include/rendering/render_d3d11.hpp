@@ -39,7 +39,7 @@ namespace clvr
 		XMMATRIX GetLayerViewMatrix(const SpriteLayer& layer);
 		void SetupLayer(const SpriteLayer& layer);
 		void DrawLayer(const SpriteLayer& layer);
-		void DrawSprite(const Sprite& sprite, const Transform& transform);
+		void DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform);
 		void DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer);
 
 		void SetActiveShader(const std::wstring& name);

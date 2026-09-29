@@ -27,6 +27,25 @@ void SpriteComponent::Inspect()
 		ImGui::DragFloat2("Size", &sprite.size.x, 0.5f);
 		ImGui::ColorEdit4("Color", &sprite.color.x);
 		ImGui::Checkbox("Is Occluder", &sprite.isOccluder);
+		// Combo for selecting a sprite layer from the available layers in the renderer
+		auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
+		const char* layerNames[100];
+		int layerCount = 0;
+		for (const auto layer : renderer.GetSpriteLayers()) {
+			layerNames[layerCount++] = layer->layerName.c_str();
+		}
+		if (layerCount == 0) {
+			ImGui::Text("No layers available");
+		} 
+		else {
+			// Create a combo box with the available layer names
+			// the currentLayer variable is used to keep track of the selected layer index
+			int currentLayer = static_cast<int>(std::find(renderer.GetSpriteLayers().begin(), renderer.GetSpriteLayers().end(), sprite.layer) - renderer.GetSpriteLayers().begin());
+			if (ImGui::Combo("Layer", &currentLayer, layerNames, static_cast<int>(renderer.GetSpriteLayers().size()))) {
+				sprite.layer = renderer.GetSpriteLayers()[currentLayer];
+			}
+		}
+
 		if (sprite.layer)
 			ImGui::Text("Layer: %s", sprite.layer->layerName.c_str());
 		else

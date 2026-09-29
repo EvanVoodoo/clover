@@ -1,4 +1,7 @@
 #include "rendering/renderer.hpp"
+
+#include "rendering/render_d3d11.hpp"
+#include "rendering/render_components.hpp"
 #include <core/engine.hpp>
 
 using namespace clvr;
@@ -87,9 +90,22 @@ bool Renderer::Frame(float dt)
 	return true;
 }
 
-void Renderer::DrawSprite(const Sprite& sprite, const Transform& transform) { m_DX2D->DrawSprite(sprite, transform); }
+void Renderer::DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform) { m_DX2D->DrawSprite(sprite, transform, layer, cameraTransform); }
 
 void Renderer::DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer) { m_DX2D->DrawUnbatchedSprite(sprite, transform, layer); }
+
+void Renderer::SetActiveShader(const std::wstring& name) { m_DX2D->SetActiveShader(name); }
+
+void Renderer::SetPostProcessShader(const std::wstring& name) { m_DX2D->SetPostProcessShader(name); }
+
+bool Renderer::LoadShader(const std::string& name, const std::string& vsFilename, const std::string& psFilename)
+{
+	return m_DX2D->LoadShader(name, vsFilename, psFilename);
+}
+
+bool Renderer::ReloadShaders() { return m_DX2D->ReloadShaders(); }
+
+Camera& Renderer::GetActiveCamera() { return m_DX2D->GetActiveCamera(); }
 
 bool Renderer::Render(float dt)
 {
@@ -116,15 +132,15 @@ bool Renderer::Render(float dt)
 				batched.emplace_back(&sc.sprite, &t);
 		}
 
-		// Atlas-batched pass
-		m_DX2D->SetupLayer(*layer);
-		for (const auto& [sprite, transform] : batched)
-			m_DX2D->DrawSprite(*sprite, *transform);
-		m_DX2D->DrawLayer(*layer);
-
 		// Unbatched pass — same layer, so it needs the same parallax-adjusted view
 		for (const auto& [sprite, transform] : unbatched)
 			m_DX2D->DrawUnbatchedSprite(*sprite, *transform, *layer);
+
+		// Atlas-batched pass
+		m_DX2D->SetupLayer(*layer);
+		for (const auto& [sprite, transform] : batched)
+			m_DX2D->DrawSprite(*sprite, *transform, *layer, GetActiveCamera().transform);
+		m_DX2D->DrawLayer(*layer);
 	}
 
 	// Gizmos are drawn after the scene is rendered, so they appear on top of the scene. They are not part of any sprite layer, so they are drawn here after all layers have been processed.
@@ -154,6 +170,15 @@ bool Renderer::Render(float dt)
 
 	return true;
 }
+
+inline bool Renderer::SetFullscreen(bool fullscreen) {
+	bool result = m_DX2D->SetFullscreen(fullscreen);
+	if (result)
+		m_fullscreenMemory = fullscreen;
+	return result;
+}
+
+inline bool Renderer::IsFullscreen() const { return m_DX2D->IsFullscreen(); }
 
 void Renderer::UpdateLights()
 {

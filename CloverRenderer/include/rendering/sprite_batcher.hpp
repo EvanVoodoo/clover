@@ -19,10 +19,13 @@ namespace clvr
         bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
         void Shutdown();
 
-        void Begin();
-        void DrawSprite(const Sprite& sprite, const Transform& transform);
-        void End();
-        void DrawToRT();
+        void BeginScene();
+        void BeginLayer();
+        void DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform);
+        void EndLayer();
+        void EndScene();
+        void EndOccluders();
+        void DrawLayerToRT();
         void DrawOccludersToRT();
 
     private:

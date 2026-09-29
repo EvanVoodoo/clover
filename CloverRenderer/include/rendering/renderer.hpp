@@ -3,7 +3,13 @@
 // Based on the tutorial from http://www.rastertek.com/dx11tut03.html
 
 #include "core/ecs.hpp"
-#include "rendering/render_d3d11.hpp"	
+#include <memory>
+#include <string>
+#include <vector>
+#include <core/transform.hpp>
+#include "render_components.hpp"
+#include "texture.hpp"
+#include "texture_atlas.hpp"
 
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = false;
@@ -12,6 +18,7 @@ const float SCREEN_NEAR = 0.3f;
 
 namespace clvr
 {
+	class DirectX2D;
 
 	class Renderer : public System
 	{
@@ -29,24 +36,16 @@ namespace clvr
 		void Inspect(float);
 
 		bool Frame(float dt);
-		void DrawSprite(const Sprite& sprite, const Transform& transform);
+		void DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform);
 		void DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer);
-		void SetActiveShader(const std::wstring& name) { m_DX2D->SetActiveShader(name); }
-		void SetPostProcessShader(const std::wstring& name) { m_DX2D->SetPostProcessShader(name); }
-		bool LoadShader(const std::string& name, const std::string& vsFilename, const std::string& psFilename)
-		{
-			return m_DX2D->LoadShader(name, vsFilename, psFilename);
-		}
-		bool ReloadShaders() { return m_DX2D->ReloadShaders(); }
-		Camera& GetActiveCamera() { return m_DX2D->GetActiveCamera(); }
+		void SetActiveShader(const std::wstring& name);
+		void SetPostProcessShader(const std::wstring& name);
+		bool LoadShader(const std::string& name, const std::string& vsFilename, const std::string& psFilename);
+		bool ReloadShaders();
+		Camera& GetActiveCamera();
 
-		bool SetFullscreen(bool fullscreen) { 
-			bool result = m_DX2D->SetFullscreen(fullscreen);
-			if (result)
-				m_fullscreenMemory = fullscreen;
-			return result;
-		}
-		bool IsFullscreen() const { return m_DX2D->IsFullscreen(); }
+		bool SetFullscreen(bool fullscreen);
+		bool IsFullscreen() const;
 
 		void UpdateLights();
 

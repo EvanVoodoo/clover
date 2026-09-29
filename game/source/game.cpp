@@ -3,7 +3,6 @@
 #include "core/components.hpp" 
 #include "rendering/renderer.hpp"
 #include <string>
-#include <rendering/texture.hpp>
 
 using namespace clvr;
 using Dir = ResourceManager::Directory;

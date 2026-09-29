@@ -1,4 +1,14 @@
 #include "rendering/sprite_batcher.hpp"
+#include <dxgiformat.h>
+#include <string.h>
+#include <d3d11.h>
+#include <d3dcommon.h>
+#include <DirectXMath.h>
+#include <DirectXMathConvert.inl>
+#include <DirectXMathVector.inl>
+#include <Windows.h>
+#include <core/transform.hpp>
+#include <rendering/render_components.hpp>
 
 using namespace clvr;
 
@@ -147,7 +157,7 @@ void SpriteBatcher::Shutdown()
 	}
 }
 
-void SpriteBatcher::Begin()
+void SpriteBatcher::BeginScene()
 {
 	m_vertexBufferPtr = m_vertexBufferBase;
 	m_indexCount = 0;
@@ -156,7 +166,13 @@ void SpriteBatcher::Begin()
 	m_occluderIndexCount = 0;
 }
 
-void SpriteBatcher::DrawSprite(const Sprite& sprite, const Transform& transform)
+void SpriteBatcher::BeginLayer()
+{
+	m_vertexBufferPtr = m_vertexBufferBase;
+	m_indexCount = 0;
+}
+
+void SpriteBatcher::DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform)
 {
 	if (m_indexCount >= MAX_INDICES)
 		return;
@@ -199,12 +215,28 @@ void SpriteBatcher::DrawSprite(const Sprite& sprite, const Transform& transform)
 	// Mirror occluder-flagged sprites into the separate occluder batch
 	if (sprite.isOccluder && m_occluderIndexCount < MAX_INDICES)
 	{
+		const XMFLOAT2 cameraPos = cameraTransform.position; // <-- replace with your actual camera accessor
+
+		// Constant offset — identical for every corner, so it translates
+		// the occluder without touching its size.
+		const XMFLOAT2 parallaxOffset =
+		{
+			cameraPos.x * (1.0f - layer.parallaxFactor),
+			cameraPos.y * (1.0f - layer.parallaxFactor)
+		};
+
 		for (int i = 0; i < 4; ++i)
 		{
 			XMVECTOR local = XMVectorSet(corners[i].x, corners[i].y, 0.5f, 1.0f);
 			XMVECTOR worldPos = XMVector3Transform(local, world);
-			XMStoreFloat3(&m_occluderVertexBufferPtr->position, worldPos);
 
+			XMFLOAT3 pos;
+			XMStoreFloat3(&pos, worldPos);
+
+			pos.x += parallaxOffset.x;
+			pos.y += parallaxOffset.y;
+
+			m_occluderVertexBufferPtr->position = pos;
 			m_occluderVertexBufferPtr->uv = uvs[i];
 			m_occluderVertexBufferPtr->color = sprite.color;
 			m_occluderVertexBufferPtr++;
@@ -214,7 +246,7 @@ void SpriteBatcher::DrawSprite(const Sprite& sprite, const Transform& transform)
 	}
 }
 
-void SpriteBatcher::End()
+void SpriteBatcher::EndLayer()
 {
 	if (m_indexCount == 0)
 		return;
@@ -224,7 +256,16 @@ void SpriteBatcher::End()
 	m_deviceContext->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	memcpy(mappedResource.pData, m_vertexBufferBase, sizeof(Vertex) * (m_indexCount / 6) * 4);
 	m_deviceContext->Unmap(m_vertexBuffer, 0);
+}
 
+void SpriteBatcher::EndScene()
+{
+	EndLayer();
+	EndOccluders();
+}
+
+void SpriteBatcher::EndOccluders()
+{
 	if (m_occluderIndexCount == 0)
 		return;
 
@@ -235,7 +276,7 @@ void SpriteBatcher::End()
 	m_deviceContext->Unmap(m_occluderVertexBuffer, 0);
 }
 
-void SpriteBatcher::DrawToRT()
+void SpriteBatcher::DrawLayerToRT()
 {
 	unsigned int stride = sizeof(Vertex);
 	unsigned int offset = 0;

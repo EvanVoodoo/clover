@@ -650,7 +650,7 @@ void DirectX2D::BeginScene(float red, float green, float blue, float alpha)
 	m_framebuffer->Bind(m_deviceContext);
 	m_deviceContext->ClearRenderTargetView(m_framebuffer->GetRTV(), color);
 
-	// Draw layer handles the rest
+	m_spriteBatcher->BeginScene();
 }
 
 void* DirectX2D::RenderScene()
@@ -807,6 +807,8 @@ void* DirectX2D::RenderScene()
 }
 
 void DirectX2D::EndScene() {
+	m_spriteBatcher->EndScene();
+
 	// Present the back buffer to the screen since rendering is complete.
 	if (m_vsyncEnabled)
 	{
@@ -1000,16 +1002,16 @@ void DirectX2D::SetupLayer(const SpriteLayer& layer)
 	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
 	m_mvpCb.BindVS(m_deviceContext, 0);
 
-	m_spriteBatcher->Begin();
+	m_spriteBatcher->BeginLayer();
 }
 
 void DirectX2D::DrawLayer(const SpriteLayer& layer)
 {
-	m_spriteBatcher->End();
-	m_spriteBatcher->DrawToRT();
+	m_spriteBatcher->EndLayer();
+	m_spriteBatcher->DrawLayerToRT();
 }
 
-void DirectX2D::DrawSprite(const Sprite& sprite, const Transform& transform) { m_spriteBatcher->DrawSprite(sprite, transform); }
+void DirectX2D::DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform) { m_spriteBatcher->DrawSprite(sprite, transform, layer, cameraTransform); }
 
 void DirectX2D::DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer)
 {
