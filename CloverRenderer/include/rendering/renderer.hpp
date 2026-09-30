@@ -20,7 +20,15 @@ namespace clvr
 {
 	class DirectX2D;
 
-	class Renderer : public System
+	// abstract interface for the renderer, to allow for different rendering backends in the future
+	class IRenderer
+	{
+	public:
+		virtual void* GetNativeDeviceHandle() = 0; // opaque on purpose
+		virtual ~IRenderer() = default;
+	};
+
+	class Renderer : public System, public IRenderer
 	{
 	public:
 		Renderer();
@@ -32,10 +40,11 @@ namespace clvr
 		void Shutdown();
 
 		void Update(float dt);
-		void Render() {}
-		void Inspect(float);
+		void Render();
+		void Inspect(float dt);
 
-		bool Frame(float dt);
+		void* GetNativeDeviceHandle() override;
+
 		void DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform);
 		void DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer);
 		void SetActiveShader(const std::wstring& name);
@@ -61,7 +70,6 @@ namespace clvr
 		std::vector<SpriteLayer*>& GetSpriteLayers() { return m_spriteLayers; }
 
 	private:
-		bool Render(float dt);
 		void EditorWindowControls(float dt);
 
 	private:

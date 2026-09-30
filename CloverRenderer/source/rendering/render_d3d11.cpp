@@ -891,6 +891,8 @@ void DirectX2D::OcclusionRender()
 	unsigned int stride = sizeof(Vertex);
 	unsigned int offset = 0;
 
+	ID3D11ShaderResourceView* srv = m_textureAtlas->GetSRV();
+	m_deviceContext->PSSetShaderResources(0, 1, &srv);
 	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
 
 	for (int i = 0; i < m_lights.lightCount; i++) {

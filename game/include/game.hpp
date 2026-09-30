@@ -22,7 +22,6 @@ public:
 	void Inspect(float);
 
 private:
-	void SetupRenderer();
 	void SetupScene();
 
 	float m_time = 0.0f;

@@ -14,6 +14,7 @@ namespace clvr
         Texture(const wchar_t* filename);
         Texture(std::string filename);
         Texture(ID3D11Device* device, const wchar_t* filename);
+        Texture(ID3D11Device* device, std::string filename);
 
         ~Texture();                                // ComPtr releases automatically
 
@@ -32,6 +33,10 @@ namespace clvr
         {
             return GetPath(filename);
         }
+		static std::string GetPath(ID3D11Device* device, std::string filename)
+		{
+			return GetPath(filename);
+		}
 
         bool Load(ID3D11Device* device, const wchar_t* filename);
         void Shutdown();                                       // optional — ComPtr::Reset() does this too

@@ -83,21 +83,18 @@ namespace clvr {
 	void Gizmo::Initialize(const std::shared_ptr<Texture> xAxisTexture, const std::shared_ptr<Texture> yAxisTexture)
 	{
 		// Setup x axis
-		Sprite xSprite;
 		// green color for x axis
-		xSprite.color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-		xSprite.size = { static_cast<float>(xAxisTexture->GetWidth()), static_cast<float>(xAxisTexture->GetHeight()) };
-		xSprite.LoadSpriteTexture(xAxisTexture);
-		m_xAxisParams->sprite = xSprite;
+		m_xAxisParams->sprite.LoadSpriteTexture(xAxisTexture);
+		m_xAxisParams->sprite.size = { static_cast<float>(xAxisTexture->GetWidth()), static_cast<float>(xAxisTexture->GetHeight()) };
+		m_xAxisParams->transform.rotation = 0.0f; // No rotation for x axis
 
 		// Setup y axis
 		if (!m_oneAxis)
 		{
-			Sprite ySprite;
 			// red color for y axis
-			ySprite.color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-			ySprite.size = { static_cast<float>(yAxisTexture->GetWidth()), static_cast<float>(yAxisTexture->GetHeight()) };
-			m_yAxisParams->sprite = ySprite;
+			m_yAxisParams->sprite.LoadSpriteTexture(yAxisTexture);
+			m_yAxisParams->sprite.size = { static_cast<float>(yAxisTexture->GetWidth()), static_cast<float>(yAxisTexture->GetHeight()) };
+			m_yAxisParams->transform.rotation = XM_PIDIV2; // Rotate 90 degrees for y axis
 		}
 
 		Hide();
