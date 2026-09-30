@@ -53,6 +53,8 @@ namespace clvr
 
 	struct SpriteComponent
 	{
+		SpriteComponent();
+		SpriteComponent(Sprite s);
 		Sprite sprite;   // reuse your existing Sprite struct as the payload
 		void Inspect();
 	};
@@ -170,5 +172,5 @@ namespace clvr
 	};
 }
 
-REGISTER_COMPONENT(clvr::SpriteComponent)
-REGISTER_COMPONENT(clvr::Light)
+REGISTER_COMPONENT(clvr::SpriteComponent, "Sprite")
+REGISTER_COMPONENT(clvr::Light, "Light")

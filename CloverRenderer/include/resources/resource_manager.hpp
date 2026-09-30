@@ -42,7 +42,7 @@ namespace clvr {
 
 			if (!resource) {
 				resource = std::make_shared<T>(std::forward<Args>(args)...);
-				m_resources[path] = resource; // shared_ptr<T> -> weak_ptr<Resource>, fine (upcast)
+				m_resources[path] = resource; // shared_ptr<T> -> weak_ptr<Resource>
 			}
 
 			return resource;

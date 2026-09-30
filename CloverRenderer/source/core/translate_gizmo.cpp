@@ -40,6 +40,12 @@ namespace clvr {
 		Show();
 
 		Entity selectedEntity = m_selectedEntity;
+
+		if (Engine.GetECS()->GetRegistry().all_of<Transform>(selectedEntity) == false)
+		{
+			Hide();
+			return;
+		}
 		auto& selectedTransform = Engine.GetECS()->GetRegistry().get<Transform>(selectedEntity);
 		selectedTransform.position.x += GetDeltaX(); // add scaling factor based on camera zoom
 		selectedTransform.position.y += GetDeltaY(); // add scaling factor based on camera zoom

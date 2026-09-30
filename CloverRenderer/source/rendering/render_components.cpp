@@ -20,6 +20,20 @@ bool Sprite::LoadSpriteTexture(const std::shared_ptr<Texture> texture)
 	return useLinkedTexture;
 }
 
+SpriteComponent::SpriteComponent()
+{
+	sprite.layer = Engine.GetECS()->GetSystem<Renderer>().FindOrCreateSpriteLayer(0);
+	sprite.textureName = "textures/white.jpg";
+	sprite.uvRect = Engine.GetECS()->GetSystem<Renderer>().GetAtlasRegion(Engine.GetResourceManager()->GetPath(Dir::SharedAssets, sprite.textureName)).uvRect;
+	sprite.isOccluder = false;
+	sprite.size = { 100.0f, 100.0f };
+}
+
+SpriteComponent::SpriteComponent(Sprite s)
+{
+	sprite = s;
+}
+
 void SpriteComponent::Inspect()
 {
 	if (ImGui::TreeNode("Sprite"))

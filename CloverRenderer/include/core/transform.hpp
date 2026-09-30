@@ -27,4 +27,4 @@ namespace clvr
 	};
 }
 
-REGISTER_COMPONENT(clvr::Transform)
+REGISTER_COMPONENT(clvr::Transform, "Transform")

@@ -156,10 +156,45 @@ void EngineClass::Run()
 
             ImGui::DockSpaceOverViewport();
 
+            if (ImGui::BeginMainMenuBar()) {
+                if (ImGui::BeginMenu("File")) {
+                    if (ImGui::MenuItem("New", "Ctrl+N")) {
+                        // Create new file
+                    }
+                    if (ImGui::MenuItem("Open", "Ctrl+O")) {
+                        // Open file dialog
+                    }
+            
+                    ImGui::Separator();
+            
+                    if (ImGui::MenuItem("Save", "Ctrl+S")) {
+                        // Save file
+                    }
+
+                    ImGui::Separator();
+            
+                    if (ImGui::MenuItem("Quit", "Alt+F4")) {
+                        // Quit application
+                    }
+            
+                    ImGui::EndMenu();
+                }
+        
+                if (ImGui::BeginMenu("Edit")) {
+                    if (ImGui::MenuItem("Undo", "Ctrl+Z")) { }
+                    if (ImGui::MenuItem("Redo", "Ctrl+Y")) {}
+            
+                    ImGui::EndMenu();
+                }
+        
+                ImGui::EndMainMenuBar();
+            }
+
 			GetECS()->InspectSystems(deltaTime);
 #endif // CLOVER_EDITOR
 
 			GetECS()->UpdateSystems(deltaTime);
+			GetECS()->RemoveDeleted();
 			GetECS()->RenderSystems();
 
             result = Frame(deltaTime);

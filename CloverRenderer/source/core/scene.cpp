@@ -27,18 +27,37 @@ void SceneManager::Render()
 
 void SceneManager::Draw()
 {
+    return; // gizmos disabled for now
 	if (m_translateGizmo)
 		m_translateGizmo->Draw(Engine.GetECS()->GetSystem<Renderer>().GetActiveCamera());
 }
 
 void SceneManager::Inspect(float dt)
 {
-	auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
+    using namespace entt::literals;
 
-    ImGui::Begin("Entities");
+    auto* ecs = Engine.GetECS();
+	auto& renderer = ecs->GetSystem<Renderer>();
 
-	auto& registry = Engine.GetECS()->GetRegistry();
-    auto view = Engine.GetECS()->GetRegistry().view<Transform>();
+    ImGui::Begin("Outliner");
+
+    // Right-click on empty space in the panel = "create entity" with no parent
+    if (ImGui::BeginPopupContextWindow("HierarchyContextMenu",
+                                       ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
+        if (ImGui::MenuItem("Create Scene Entity")) {
+            Entity entity = Engine.GetECS()->CreateEntity();
+            ecs->CreateComponent<Transform>(entity);
+        }
+        if (ImGui::MenuItem("Create Light Entity")) {
+            Entity entity = ecs->CreateEntity();
+            ecs->CreateComponent<Transform>(entity);
+			ecs->CreateComponent<Light>(entity);
+        }
+        ImGui::EndPopup();
+    }
+
+	auto& registry = ecs->GetRegistry();
+    auto view = ecs->GetRegistry().view<Transform>();
     for (auto entity : view)
     {
         auto& transform = view.get<Transform>(entity);
@@ -46,15 +65,64 @@ void SceneManager::Inspect(float dt)
             ? "Entity " + std::to_string(entt::to_integral(entity))
             : transform.name;
 
+        ImGui::PushID(static_cast<int>(entt::to_integral(entity)));
+
         if (ImGui::Selectable(label.c_str(), m_selectedEntity == entity)) {
             UpdateSelectedEntity(entity);
         }
+
+        if (ImGui::BeginPopupContextItem("EntityContextMenu")) {
+            UpdateSelectedEntity(entity); // right-click selects this row too
+
+			ImGui::Text("Entity: %s", label.c_str());
+
+			ImGui::Separator();
+
+            if (ImGui::BeginMenu("Add Component")) {
+				bool noComponentsToAdd = true;
+                for (auto&& [id, type] : entt::resolve()) {
+                    auto nameFunc = type.func("name"_hs);
+                    auto hasFunc = type.func("has"_hs);
+                    auto createFunc = type.func("create"_hs);
+
+                    if (!nameFunc || !hasFunc || !createFunc)
+                        continue; // skip meta types that aren't components (if you ever reflect anything else)
+
+                    const char* name = nameFunc.invoke(entt::meta_handle{}).cast<const char*>();
+
+                    bool has = hasFunc.invoke(entt::meta_handle{}, entt::forward_as_meta(registry),
+                                              entt::forward_as_meta(entity)).cast<bool>();
+                    
+                    noComponentsToAdd = has && noComponentsToAdd;
+
+                    if (!has && ImGui::MenuItem(name)) {
+                        createFunc.invoke(entt::meta_handle{}, entt::forward_as_meta(registry), entt::forward_as_meta(entity));
+                    }
+                }
+				if (noComponentsToAdd) {
+					ImGui::Text("No components available to add.");
+				}
+                ImGui::EndMenu();
+            }
+
+			ImGui::Separator();
+
+            if (ImGui::MenuItem("Delete")) {
+                ecs->DeleteEntity(entity);
+				m_selectedEntity = entt::null;
+				m_translateGizmo->SetSelectedEntity(entt::null);
+            }
+            ImGui::EndPopup();
+        }
+
+        ImGui::PopID();
     }
+
     ImGui::End();
 
+    ImGui::Begin("Inspector");
     if (registry.valid(m_selectedEntity))
     {
-        ImGui::Begin("Inspector");
         for (auto&& [id, storage] : registry.storage())
         {
             if (!storage.contains(m_selectedEntity))
@@ -67,9 +135,29 @@ void SceneManager::Inspect(float dt)
             using namespace entt::literals;
             entt::meta_any comp = meta_type.invoke("get"_hs, {}, entt::forward_as_meta(registry), m_selectedEntity);
             meta_type.invoke("inspect"_hs, comp);
+
+			ImGui::PushID(static_cast<int>(entt::to_integral(id)));
+
+            // Right-click context menu for deleting the Transform component
+            if (ImGui::BeginPopupContextItem("ComponentContextMenu"))
+            {
+				if (ImGui::MenuItem("Delete Component"))
+				{
+                    auto removeFunc = meta_type.func("remove"_hs);
+                    if (removeFunc)
+                        removeFunc.invoke(entt::meta_handle{}, entt::forward_as_meta(registry), entt::forward_as_meta(m_selectedEntity));
+				}
+                ImGui::EndPopup();
+            }
+
+			ImGui::PopID();
         }
-        ImGui::End();
     }
+    else
+    {
+		ImGui::Text("No entity selected.");
+    }
+    ImGui::End();
 }
 
 void SceneManager::UpdateSelectedEntity(entt::entity entity)

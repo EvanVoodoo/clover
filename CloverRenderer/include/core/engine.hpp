@@ -34,6 +34,7 @@ namespace clvr
 		void Run();
 
 		EntityComponentSystem* GetECS() { return m_ecs; }
+		EntityComponentSystem& GetECSRef() { return *GetECS(); }
 		Window* GetWindow() { return m_window; }
 		Input* GetInput() { return m_input; }
 		ResourceManager* GetResourceManager() { return m_resourceManager; }
