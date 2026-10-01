@@ -41,23 +41,35 @@ void SceneManager::Inspect(float dt)
 
     ImGui::Begin("Outliner");
 
-    // Right-click on empty space in the panel = "create entity" with no parent
-    if (ImGui::BeginPopupContextWindow("HierarchyContextMenu",
-                                       ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
+    if (ImGui::Button("Add Entity")) { ImGui::OpenPopup("CreateEntityPopup"); }
+
+    if (ImGui::BeginPopup("CreateEntityPopup")) {
         if (ImGui::MenuItem("Create Scene Entity")) {
-            Entity entity = Engine.GetECS()->CreateEntity();
+            Entity entity = ecs->CreateEntity();
             ecs->CreateComponent<Transform>(entity);
         }
         if (ImGui::MenuItem("Create Light Entity")) {
             Entity entity = ecs->CreateEntity();
             ecs->CreateComponent<Transform>(entity);
-			ecs->CreateComponent<Light>(entity);
+            ecs->CreateComponent<Light>(entity);
         }
         ImGui::EndPopup();
     }
 
-	auto& registry = ecs->GetRegistry();
+    ImGui::SameLine();
+    if (m_selectedEntity != entt::null && ImGui::Button("Delete Entity"))
+    { 
+        DeleteSelectedEntity();
+    }
+
+    ImGui::SameLine();
+    ImGui::SeparatorText("Entities");
+
+    ImGui::BeginChild("EntityList", ImVec2(0, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
+
+    auto& registry = ecs->GetRegistry();
     auto view = ecs->GetRegistry().view<Transform>();
+
     for (auto entity : view)
     {
         auto& transform = view.get<Transform>(entity);
@@ -67,6 +79,7 @@ void SceneManager::Inspect(float dt)
 
         ImGui::PushID(static_cast<int>(entt::to_integral(entity)));
 
+        
         if (ImGui::Selectable(label.c_str(), m_selectedEntity == entity)) {
             UpdateSelectedEntity(entity);
         }
@@ -91,7 +104,7 @@ void SceneManager::Inspect(float dt)
                     const char* name = nameFunc.invoke(entt::meta_handle{}).cast<const char*>();
 
                     bool has = hasFunc.invoke(entt::meta_handle{}, entt::forward_as_meta(registry),
-                                              entt::forward_as_meta(entity)).cast<bool>();
+                                                entt::forward_as_meta(entity)).cast<bool>();
                     
                     noComponentsToAdd = has && noComponentsToAdd;
 
@@ -108,15 +121,15 @@ void SceneManager::Inspect(float dt)
 			ImGui::Separator();
 
             if (ImGui::MenuItem("Delete")) {
-                ecs->DeleteEntity(entity);
-				m_selectedEntity = entt::null;
-				m_translateGizmo->SetSelectedEntity(entt::null);
+                DeleteSelectedEntity();
             }
             ImGui::EndPopup();
         }
 
         ImGui::PopID();
     }
+
+    ImGui::EndChild();
 
     ImGui::End();
 
@@ -158,6 +171,16 @@ void SceneManager::Inspect(float dt)
 		ImGui::Text("No entity selected.");
     }
     ImGui::End();
+}
+
+void clvr::SceneManager::DeleteSelectedEntity()
+{
+    if (m_selectedEntity == entt::null)
+        return;
+
+    Engine.GetECS()->DeleteEntity(m_selectedEntity);
+    m_selectedEntity = entt::null;
+    m_translateGizmo->SetSelectedEntity(entt::null);
 }
 
 void SceneManager::UpdateSelectedEntity(entt::entity entity)

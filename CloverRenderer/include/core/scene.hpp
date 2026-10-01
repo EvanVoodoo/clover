@@ -14,6 +14,7 @@ namespace clvr {
 		void Draw();
 		void Inspect(float);
 
+		void DeleteSelectedEntity();
 		void UpdateSelectedEntity(entt::entity entity);
 
 	private:
