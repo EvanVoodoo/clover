@@ -39,7 +39,6 @@ void Game::SetupScene()
 		cs.layer = renderer.FindOrCreateSpriteLayer(1);
 		cs.isOccluder = false;
 		ecs->CreateComponent<SpriteComponent>(centerEntity, cs);
-		//ecs->CreateComponent<MovingSprite>(centerEntity);
 	}
 
 	{

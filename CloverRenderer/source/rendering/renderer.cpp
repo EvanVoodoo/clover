@@ -120,6 +120,64 @@ void clvr::Renderer::Render()
 	m_DX2D->UpdateSceneWindowSize(viewportSize.x, viewportSize.y);
 	ImGui::Image(m_DX2D->RenderScene(), viewportSize);
 
+	// ID buffer rendering for picking
+	m_DX2D->BeginIDPass();
+	for (const auto& layer : m_spriteLayers)
+	{
+		for (auto [entity, sc, t] : view.each())
+		{
+			if (sc.sprite.layer->id != layer->id)
+				continue;
+			m_DX2D->DrawSpriteID(sc.sprite, t, *layer, static_cast<uint32_t>(entity));
+		}
+	}
+	m_DX2D->EndIDPass();
+
+	// Handle mouse picking
+	if (m_gameWindowFocused && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+	{
+		// TODO: Scaling not 100% accurate, double check the math here.
+		// mouse pos should be relative to the game scene viewport, not the whole window
+		ImVec2 mousePos = ImGui::GetMousePos();
+		int mouseX = static_cast<int>(mousePos.x - viewportPos.x);
+		int mouseY = static_cast<int>(mousePos.y - viewportPos.y);
+		
+		// convert mouse coordinates to 0-1 range
+		XMFLOAT2 mouseNorm = XMFLOAT2(static_cast<float>(mouseX) / viewportSize.x, static_cast<float>(mouseY) / viewportSize.y);
+		
+		// convert clicked mouse coordinates to pixel coordinates in the ID buffer using aspect ratio and viewport size
+		float screenRatio = viewportSize.x / viewportSize.y;
+		float targetRatio = m_DX2D->GetAspectRatio();
+
+		bool isLetterbox = screenRatio < targetRatio;
+
+		XMFLOAT2 scale = isLetterbox ? XMFLOAT2(1.0f, targetRatio / screenRatio) : XMFLOAT2(screenRatio / targetRatio, 1.0f);
+
+		XMFLOAT2 scaledMouseNorm = XMFLOAT2((mouseNorm.x - 0.5f) * scale.x + 0.5f, (mouseNorm.y - 0.5f) * scale.y + 0.5f);
+
+		if (mouseX >= 0 && mouseY >= 0 && mouseX < static_cast<int>(viewportSize.x) && mouseY < static_cast<int>(viewportSize.y))
+		{
+			Engine.GetECS()->GetSystem<SceneManager>().UpdateSelectedEntity(entt::null); // Deselect any previously selected entity
+			auto pickedEntity = m_DX2D->PickEntityAtNormalizedCoords(scaledMouseNorm.x, scaledMouseNorm.y);
+			uint32_t entityID = -1;
+			if (pickedEntity.has_value())
+			{
+				entityID = pickedEntity.value();
+			}
+			if (entityID != 0)
+			{
+				Entity selectedEntity = static_cast<Entity>(entityID);
+				auto& sceneManager = Engine.GetECS()->GetSystem<SceneManager>();
+				sceneManager.UpdateSelectedEntity(selectedEntity);
+				sceneManager.SetScrollEntity(selectedEntity);
+			}
+			else
+			{
+				Engine.GetECS()->GetSystem<SceneManager>().UpdateSelectedEntity(entt::null); // Deselect if clicked on empty space
+			}
+		}
+	}
+
 	// TODO: Draw gizmos here, after the scene is rendered but before ImGui::End() so they appear on top of the scene
 	Engine.GetECS()->GetSystem<SceneManager>().Draw();
 

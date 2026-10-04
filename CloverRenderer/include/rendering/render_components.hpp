@@ -92,8 +92,15 @@ namespace clvr
 			int lightCount;
 			XMFLOAT3 _pad;
 		};
+		struct IDBufferType
+		{
+			XMMATRIX mvp;
+			UINT entityID;
+			XMFLOAT3 _pad; // pad to 16-byte boundary — cbuffers require 16-byte alignment
+		};
 		static_assert(sizeof(MVPBufferType) % 16 == 0, "MatrixBufferType must be 16-byte aligned");
 		static_assert(sizeof(LightBufferType) % 16 == 0, "LightBufferType must be 16-byte aligned");
+		static_assert(sizeof(IDBufferType) % 16 == 0, "IDBufferType must be 16-byte aligned");
 	}
 
 	struct Camera

@@ -36,6 +36,13 @@ namespace clvr
 		void EndScene();
 		void OcclusionRender();
 
+		void BeginIDPass();
+		void DrawSpriteID(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, uint32_t entityID);
+		void EndIDPass();
+
+		std::optional<uint32_t> PickEntityAtPixel(int x, int y);
+		std::optional<uint32_t> PickEntityAtNormalizedCoords(float normX, float normY);
+
 		XMMATRIX GetLayerViewMatrix(const SpriteLayer& layer);
 		void SetupLayer(const SpriteLayer& layer);
 		void DrawLayer(const SpriteLayer& layer);
@@ -50,7 +57,6 @@ namespace clvr
 		bool ReloadShaders();
 
 		int AddTexture(const std::string filename);
-		// TODO: Use LoadTexture to load textures that are not part of the atlas, e.g. for UI elements or special effects, since access to Device and DeviceContext is needed for loading textures
 		std::shared_ptr<Texture> LoadTexture(std::string filename);
 
 		bool BuildAtlas();
@@ -66,6 +72,8 @@ namespace clvr
 		Camera& GetActiveCamera();
 
 		void GetVideoCardInfo(char*, int&);
+
+		float GetAspectRatio() const { return m_aspectRatio; }
 
 		void SetBackBufferRenderTarget();
 		void ResetViewport();
@@ -99,12 +107,15 @@ namespace clvr
 		Framebuffer* m_postFramebuffer;
 		Framebuffer* m_letterboxFramebuffer;
 		Framebuffer* m_finalFramebuffer;
+		Framebuffer* m_idFramebuffer;
 		Framebuffer* m_occlusionFramebuffers[MAX_LIGHTS];
 		Framebuffer* m_shadowMapSingleFb;
 
 		ID3D11Buffer* m_fullscreenQuadVB;
 		ID3D11Buffer* m_fullscreenQuadIB;
 		ID3D11Buffer* m_unbatchedQuadVB;
+
+		ID3D11Texture2D* m_idStagingTexture;
 
 		ID3D11RasterizerState* m_rasterState;
 

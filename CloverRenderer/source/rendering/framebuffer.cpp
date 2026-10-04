@@ -89,3 +89,8 @@ ID3D11ShaderResourceView* Framebuffer::GetSRV() const
 {
 	return m_srv;
 }
+
+ID3D11Texture2D* Framebuffer::GetTexture() const
+{
+	return m_texture;
+}

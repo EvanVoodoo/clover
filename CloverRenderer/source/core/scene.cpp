@@ -5,6 +5,7 @@
 #include <rendering/renderer.hpp>
 #include "entt/meta/meta.hpp"
 #include "entt/core/hashed_string.hpp"
+#include <imgui_internal.h>
 
 using namespace clvr;
 
@@ -15,14 +16,16 @@ SceneManager::SceneManager()
 
 void SceneManager::Update(float dt)
 {
+    return; // gizmos disabled for now 
 	if (m_translateGizmo)
 		m_translateGizmo->Update(Engine.GetECS()->GetSystem<Renderer>().GetActiveCamera());
 }
 
 void SceneManager::Render()
 {
-	/*if (m_translateGizmo)
-		m_translateGizmo->Draw(Engine.GetECS()->GetSystem<Renderer>().GetActiveCamera());*/
+    return; // gizmos disabled for now
+	if (m_translateGizmo)
+		m_translateGizmo->Draw(Engine.GetECS()->GetSystem<Renderer>().GetActiveCamera());
 }
 
 void SceneManager::Draw()
@@ -44,14 +47,9 @@ void SceneManager::Inspect(float dt)
     if (ImGui::Button("Add Entity")) { ImGui::OpenPopup("CreateEntityPopup"); }
 
     if (ImGui::BeginPopup("CreateEntityPopup")) {
-        if (ImGui::MenuItem("Create Scene Entity")) {
+        if (ImGui::MenuItem("Create New Entity")) {
             Entity entity = ecs->CreateEntity();
             ecs->CreateComponent<Transform>(entity);
-        }
-        if (ImGui::MenuItem("Create Light Entity")) {
-            Entity entity = ecs->CreateEntity();
-            ecs->CreateComponent<Transform>(entity);
-            ecs->CreateComponent<Light>(entity);
         }
         ImGui::EndPopup();
     }
@@ -79,9 +77,13 @@ void SceneManager::Inspect(float dt)
 
         ImGui::PushID(static_cast<int>(entt::to_integral(entity)));
 
-        
         if (ImGui::Selectable(label.c_str(), m_selectedEntity == entity)) {
             UpdateSelectedEntity(entity);
+        }
+
+        if (m_scrollEntity != entt::null && m_scrollEntity == entity) {
+			ImGui::SetScrollHereY();
+			m_scrollEntity = entt::null; // reset scroll entity after scrolling
         }
 
         if (ImGui::BeginPopupContextItem("EntityContextMenu")) {
@@ -186,6 +188,7 @@ void clvr::SceneManager::DeleteSelectedEntity()
 void SceneManager::UpdateSelectedEntity(entt::entity entity)
 {
     m_selectedEntity = entity;
+
     if (m_translateGizmo)
 		m_translateGizmo->SetSelectedEntity(entity);
 }

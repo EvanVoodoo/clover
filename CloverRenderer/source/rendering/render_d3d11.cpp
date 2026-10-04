@@ -32,8 +32,10 @@ DirectX2D::DirectX2D()
 	m_postFramebuffer = nullptr;
 	m_letterboxFramebuffer = nullptr;
 	m_finalFramebuffer = nullptr;
+	m_idFramebuffer = nullptr;
 	m_fullscreenQuadIB = nullptr;
 	m_fullscreenQuadVB = nullptr;
+	m_idStagingTexture = nullptr;
 }
 
 DirectX2D::~DirectX2D()
@@ -368,6 +370,9 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, bool f
 	LoadShader("letterbox", 
 		resManager->GetPath(Dir::SharedAssets, "shaders/post.vs.hlsl"), 
 		resManager->GetPath(Dir::SharedAssets, "shaders/letterbox.ps.hlsl"));
+	LoadShader("id_pick", 
+		resManager->GetPath(Dir::SharedAssets, "shaders/id_pick.vs.hlsl"), 
+		resManager->GetPath(Dir::SharedAssets, "shaders/id_pick.ps.hlsl"));
 
 
 	m_shaderManager.get()->SetPostProcessShader(L"passthrough");
@@ -441,8 +446,33 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, bool f
 		return false;
 	}
 
-	InitializeQuadBuffers();
+	m_idFramebuffer = new Framebuffer();
+	result = m_idFramebuffer->Initialize(m_device, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(Engine.GetWindow()->GetHWND(), L"Could not initialize ID framebuffer", L"Error", MB_OK);
+		return false;
+	}
 
+	D3D11_TEXTURE2D_DESC stagingDesc = {};
+	stagingDesc.Width = 1;              // only ever reading a single pixel at a time
+	stagingDesc.Height = 1;
+	stagingDesc.MipLevels = 1;
+	stagingDesc.ArraySize = 1;
+	stagingDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // matches m_idFramebuffer's format
+	stagingDesc.SampleDesc.Count = 1;
+	stagingDesc.Usage = D3D11_USAGE_STAGING;
+	stagingDesc.BindFlags = 0;                        // staging resources can't bind to the pipeline at all
+	stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+	result = m_device->CreateTexture2D(&stagingDesc, nullptr, &m_idStagingTexture);
+	if (FAILED(result))
+	{
+		MessageBox(Engine.GetWindow()->GetHWND(), L"Could not initialize ID staging texture", L"Error", MB_OK);
+		return false;
+	}
+
+	InitializeQuadBuffers();
 
 	m_spriteBatcher = new SpriteBatcher();
 	result = m_spriteBatcher->Initialize(m_device, m_deviceContext);
@@ -544,6 +574,15 @@ void DirectX2D::Shutdown()
 
 	if (m_fullscreenQuadVB) { m_fullscreenQuadVB->Release(); m_fullscreenQuadVB = nullptr; }
 	if (m_fullscreenQuadIB) { m_fullscreenQuadIB->Release(); m_fullscreenQuadIB = nullptr; }
+
+	if (m_idStagingTexture) { m_idStagingTexture->Release(); m_idStagingTexture = nullptr; }
+
+	if (m_idFramebuffer)
+	{
+		m_idFramebuffer->Shutdown();
+		delete m_idFramebuffer;
+		m_idFramebuffer = nullptr;
+	}
 
 	if (m_finalFramebuffer)
 	{
@@ -977,6 +1016,101 @@ void DirectX2D::OcclusionRender()
 	ResetViewport();
 }
 
+void DirectX2D::BeginIDPass()
+{
+	m_idFramebuffer->Bind(m_deviceContext);
+
+	float idClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	m_deviceContext->ClearRenderTargetView(m_idFramebuffer->GetRTV(), idClearColor);
+
+	m_shaderManager.get()->GetShader(L"id_pick")->Bind(m_deviceContext);
+}
+
+void DirectX2D::DrawSpriteID(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, uint32_t entityID)
+{
+	// Build the same quad as DrawUnbatchedSprite — world-space corners, no UVs/color needed here
+	float halfWidth = sprite.size.x * 0.5f;
+	float halfHeight = sprite.size.y * 0.5f;
+
+	XMFLOAT2 corners[4] = {
+		{ -halfWidth, -halfHeight },
+		{  halfWidth, -halfHeight },
+		{  halfWidth,  halfHeight },
+		{ -halfWidth,  halfHeight }
+	};
+
+	const XMMATRIX world = transform.GetWorld();
+
+	Vertex verts[4];
+	for (int i = 0; i < 4; ++i)
+	{
+		XMVECTOR local = XMVectorSet(corners[i].x, corners[i].y, 0.5f, 1.0f);
+		XMVECTOR worldPos = XMVector3Transform(local, world);
+		XMStoreFloat3(&verts[i].position, worldPos);
+		verts[i].uv = XMFLOAT2(0, 0);       // unused
+		verts[i].color = XMFLOAT4(1, 1, 1, 1); // unused
+	}
+
+	D3D11_MAPPED_SUBRESOURCE mapped = {};
+	m_deviceContext->Map(m_unbatchedQuadVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+	memcpy(mapped.pData, verts, sizeof(verts));
+	m_deviceContext->Unmap(m_unbatchedQuadVB, 0);
+
+	BufferType::IDBufferType idData;
+	idData.mvp = XMMatrixTranspose(GetWorldMatrix() * GetLayerViewMatrix(layer) * GetProjectionMatrix());
+	idData.entityID = entityID;
+
+	ConstantBuffer<BufferType::IDBufferType> idCb; // consider caching this as a member instead of
+	idCb.Init(m_device);                           // constructing+Init'ing one per draw call (perf)
+	idCb.Update(m_deviceContext, idData);
+	idCb.BindVS(m_deviceContext, 0);
+	idCb.BindPS(m_deviceContext, 0);
+
+	unsigned int stride = sizeof(Vertex);
+	unsigned int offset = 0;
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_unbatchedQuadVB, &stride, &offset);
+	m_deviceContext->IASetIndexBuffer(m_fullscreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_deviceContext->DrawIndexed(6, 0, 0);
+}
+
+void DirectX2D::EndIDPass()
+{
+	ResetViewport(); // id pass should've rendered at full screen res — restore the normal viewport/RT state
+	SetBackBufferRenderTarget(); // or m_framebuffer->Bind(...) depending on what should be active after this
+}
+
+struct IDPixel { uint8_t r, g, b, a; };
+
+std::optional<uint32_t> DirectX2D::PickEntityAtPixel(int x, int y)
+{
+	if (x < 0 || x >= static_cast<int>(m_currentWindowSize.x) || y < 0 || y >= static_cast<int>(m_currentWindowSize.y))
+		return std::nullopt; // out of bounds
+
+	D3D11_BOX box = { (UINT)x, (UINT)y, 0, (UINT)x + 1, (UINT)y + 1, 1 };
+	m_deviceContext->CopySubresourceRegion(m_idStagingTexture, 0, 0, 0, 0, m_idFramebuffer->GetTexture(), 0, &box);
+
+	D3D11_MAPPED_SUBRESOURCE mapped;
+	if (FAILED(m_deviceContext->Map(m_idStagingTexture, 0, D3D11_MAP_READ, 0, &mapped)))
+		return std::nullopt;
+
+	IDPixel pixel = *reinterpret_cast<IDPixel*>(mapped.pData);
+	m_deviceContext->Unmap(m_idStagingTexture, 0);
+
+	if (pixel.a == 0)
+		return std::nullopt; // nothing drawn here — background
+
+	uint32_t id = (pixel.r << 16) | (pixel.g << 8) | (pixel.b << 0);
+	return id;
+}
+
+std::optional<uint32_t> DirectX2D::PickEntityAtNormalizedCoords(float normX, float normY)
+{
+	int pixelX = static_cast<int>(normX * m_currentWindowSize.x);
+	int pixelY = static_cast<int>(normY * m_currentWindowSize.y);
+	return PickEntityAtPixel(pixelX, pixelY);
+}
+
 XMMATRIX DirectX2D::GetLayerViewMatrix(const SpriteLayer& layer)
 {
 	// check if layer is null
@@ -1225,6 +1359,7 @@ void DirectX2D::ResizeBuffers(int width, int height)
 	m_postFramebuffer->Resize(m_device, width, height);
 	m_letterboxFramebuffer->Resize(m_device, width, height);
 	m_finalFramebuffer->Resize(m_device, width, height);
+	m_idFramebuffer->Resize(m_device, width, height);
 
 	// NOTE: m_shadowMapSingleFb and m_occlusionFramebuffers[] are intentionally
 	// NOT resized here — they're sized off LIGHT_SIZE/DIRECTIONAL_LIGHT_SIZE,

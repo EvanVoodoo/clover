@@ -17,6 +17,7 @@ namespace clvr
 
         ID3D11RenderTargetView* GetRTV() const;
         ID3D11ShaderResourceView* GetSRV() const;
+        ID3D11Texture2D* GetTexture() const;
 
     private:
         ID3D11Texture2D* m_texture;
