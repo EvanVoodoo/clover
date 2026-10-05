@@ -5,8 +5,8 @@
 
 #pragma comment(lib, "DirectXTex.lib")
 
-#define LIGHT_SIZE 2048
-#define DIRECTIONAL_LIGHT_SIZE 2048
+#define LIGHT_SIZE 4096
+#define DIRECTIONAL_LIGHT_SIZE 4096
 
 using namespace clvr;
 using Dir = ResourceManager::Directory;

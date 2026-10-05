@@ -142,8 +142,9 @@ void clvr::Renderer::Render()
 	Sprite pickProxy;
 	pickProxy.size = { 64.0f, 64.0f };
 
-	for (auto [entity, t] : registry.view<Transform>(entt::exclude<SpriteComponent>).each())
+	for (auto [entity, t] : registry.view<Transform>(entt::exclude<SpriteComponent>).each()) {
 		m_DX2D->DrawSpriteID(pickProxy, t, pickLayer, static_cast<uint32_t>(entity));
+	}
 
 	m_DX2D->EndIDPass();
 

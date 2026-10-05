@@ -1,4 +1,4 @@
-#define MAX_LIGHTS 64
+#define MAX_LIGHTS 16
 #define PI 3.14159265
 
 struct Light

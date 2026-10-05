@@ -43,11 +43,11 @@ void Game::SetupScene()
 
 	{
 		// create wall of occluder sprites randomly around the scene
-		for (int i = 0; i < 32; ++i)
+		for (int i = 0; i < 320; ++i)
 		{
 			auto entity = ecs->CreateEntity();
 			auto& t = ecs->CreateComponent<Transform>(entity);
-			t.position = { (float) (rand() % 3200 - 1600), (float) (rand() % 1600 - 800) };
+			t.position = { (float) (rand() % 32000 - 16000), (float) (rand() % 16000 - 8000) };
 			t.rotation = (float) (rand() % 360) * 3.1415927f / 180.0f;
 			clvr::Sprite s;
 			s.position = t.position;

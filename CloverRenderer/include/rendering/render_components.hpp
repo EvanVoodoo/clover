@@ -9,7 +9,7 @@
 #include <memory>
 #include <core/ecs.hpp>
 
-#define MAX_LIGHTS 64
+#define MAX_LIGHTS 16
 
 using namespace DirectX;
 
