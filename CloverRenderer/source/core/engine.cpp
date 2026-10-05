@@ -187,6 +187,24 @@ void EngineClass::Run()
                     ImGui::EndMenu();
                 }
         
+                const float labelW = ImGui::CalcTextSize("X").x + ImGui::GetStyle().FramePadding.x;
+                ImGui::SetCursorPosX(ImGui::GetWindowWidth() - labelW - ImGui::GetStyle().WindowPadding.x);
+
+                ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.85f, 0.15f, 0.15f, 1.0f)); // hover
+                ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.65f, 0.10f, 0.10f, 1.0f)); // pressed
+                ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.65f, 0.10f, 0.10f, 1.0f)); // while the menu is open
+
+                const bool open = ImGui::BeginMenu("X");
+
+                ImGui::PopStyleColor(3); // pop before the popup contents so "Quit" isn't red too
+
+                if (open)
+                {
+                    if (ImGui::MenuItem("Quit", "Alt+F4"))
+                        running = false;
+                    ImGui::EndMenu();
+                }
+
                 ImGui::EndMainMenuBar();
             }
 
@@ -208,11 +226,5 @@ void EngineClass::Run()
 
 bool EngineClass::Frame(float dt)
 {
-    // Check if the user pressed escape and wants to exit the application.
-    if (m_input->IsKeyDown(VK_ESCAPE))
-    {
-        return false;
-    }
-
     return true;
 }

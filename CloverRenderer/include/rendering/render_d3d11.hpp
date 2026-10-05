@@ -90,6 +90,8 @@ namespace clvr
 		bool SetFullscreen(bool fullscreen);
 		bool IsFullscreen() const { return m_isFullscreen; }
 
+		bool debugBool = false;
+
 	private:
 		bool m_vsyncEnabled;
 		int m_videoCardMemory;

@@ -780,7 +780,10 @@ void* DirectX2D::RenderScene()
 	m_letterboxFramebuffer->Bind(m_deviceContext);
 	m_deviceContext->ClearRenderTargetView(m_letterboxFramebuffer->GetRTV(), color);
 
-	srv = m_postFramebuffer->GetSRV();
+	if (debugBool)
+		srv = m_idFramebuffer->GetSRV();
+	else
+		srv = m_postFramebuffer->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
 	m_deviceContext->PSSetSamplers(0, 1, &m_pointSampler);
 

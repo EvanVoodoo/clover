@@ -11,7 +11,7 @@
 #include "texture.hpp"
 #include "texture_atlas.hpp"
 
-const bool FULL_SCREEN = false;
+const bool FULL_SCREEN = true;
 const bool VSYNC_ENABLED = false;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.3f;
@@ -75,6 +75,7 @@ namespace clvr
 	private:
 		DirectX2D* m_DX2D;
 		bool m_fullscreenMemory = false;
+		XMFLOAT2 m_scaledMouseNorm = { 0.0f, 0.0f };
 		std::vector<SpriteLayer*> m_spriteLayers; // store sprite layers for sorting
 
 		bool m_gameWindowFocused = false;

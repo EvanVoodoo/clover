@@ -112,16 +112,20 @@ void clvr::Renderer::Render()
 	}
 
 #ifdef CLOVER_EDITOR
-	ImGui::Begin("Game Scene", nullptr);
+	ImGui::Begin("Game Viewport", nullptr);
 	m_gameWindowFocused = ImGui::IsWindowFocused();
+	const bool viewportHovered = ImGui::IsWindowHovered();
 
 	ImVec2 viewportPos = ImGui::GetCursorScreenPos();
 	ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 	m_DX2D->UpdateSceneWindowSize(viewportSize.x, viewportSize.y);
 	ImGui::Image(m_DX2D->RenderScene(), viewportSize);
+	const ImVec2 imgMin = ImGui::GetItemRectMin();
+	const ImVec2 imgSize = ImGui::GetItemRectSize();
 
 	// ID buffer rendering for picking
 	m_DX2D->BeginIDPass();
+	// Draw all sprites to the ID buffer.
 	for (const auto& layer : m_spriteLayers)
 	{
 		for (auto [entity, sc, t] : view.each())
@@ -131,10 +135,20 @@ void clvr::Renderer::Render()
 			m_DX2D->DrawSpriteID(sc.sprite, t, *layer, static_cast<uint32_t>(entity));
 		}
 	}
+	// Entities without a sprite still get a pickable 64x64 quad in the ID buffer.
+	auto& registry = Engine.GetECS()->GetRegistry();
+	SpriteLayer& pickLayer = *FindOrCreateSpriteLayer(0);
+
+	Sprite pickProxy;
+	pickProxy.size = { 64.0f, 64.0f };
+
+	for (auto [entity, t] : registry.view<Transform>(entt::exclude<SpriteComponent>).each())
+		m_DX2D->DrawSpriteID(pickProxy, t, pickLayer, static_cast<uint32_t>(entity));
+
 	m_DX2D->EndIDPass();
 
 	// Handle mouse picking
-	if (m_gameWindowFocused && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+	if (viewportHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 	{
 		// TODO: Scaling not 100% accurate, double check the math here.
 		// mouse pos should be relative to the game scene viewport, not the whole window
@@ -143,22 +157,23 @@ void clvr::Renderer::Render()
 		int mouseY = static_cast<int>(mousePos.y - viewportPos.y);
 		
 		// convert mouse coordinates to 0-1 range
-		XMFLOAT2 mouseNorm = XMFLOAT2(static_cast<float>(mouseX) / viewportSize.x, static_cast<float>(mouseY) / viewportSize.y);
-		
+		XMFLOAT2 mouseNorm = { (mousePos.x - imgMin.x) / imgSize.x,
+					   (mousePos.y - imgMin.y) / imgSize.y };
+
 		// convert clicked mouse coordinates to pixel coordinates in the ID buffer using aspect ratio and viewport size
-		float screenRatio = viewportSize.x / viewportSize.y;
+		float screenRatio = imgSize.x / imgSize.y;
 		float targetRatio = m_DX2D->GetAspectRatio();
 
 		bool isLetterbox = screenRatio < targetRatio;
 
 		XMFLOAT2 scale = isLetterbox ? XMFLOAT2(1.0f, targetRatio / screenRatio) : XMFLOAT2(screenRatio / targetRatio, 1.0f);
 
-		XMFLOAT2 scaledMouseNorm = XMFLOAT2((mouseNorm.x - 0.5f) * scale.x + 0.5f, (mouseNorm.y - 0.5f) * scale.y + 0.5f);
+		m_scaledMouseNorm = XMFLOAT2((mouseNorm.x - 0.5f) * scale.x + 0.5f, (mouseNorm.y - 0.5f) * scale.y + 0.5f);
 
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < static_cast<int>(viewportSize.x) && mouseY < static_cast<int>(viewportSize.y))
 		{
 			Engine.GetECS()->GetSystem<SceneManager>().UpdateSelectedEntity(entt::null); // Deselect any previously selected entity
-			auto pickedEntity = m_DX2D->PickEntityAtNormalizedCoords(scaledMouseNorm.x, scaledMouseNorm.y);
+			auto pickedEntity = m_DX2D->PickEntityAtNormalizedCoords(m_scaledMouseNorm.x, m_scaledMouseNorm.y);
 			uint32_t entityID = -1;
 			if (pickedEntity.has_value())
 			{
@@ -257,6 +272,18 @@ void Renderer::Inspect(float dt)
 	if (ImGui::Checkbox("Fullscreen", &fullscreen))
 	{
 		SetFullscreen(fullscreen);
+	}
+
+	ImGui::Separator();
+
+	if (ImGui::CollapsingHeader("Debug Settings")) {
+		bool showIdBuffer = m_DX2D->debugBool;
+		if (ImGui::Checkbox("Show ID Buffer", &showIdBuffer))
+		{
+			m_DX2D->debugBool = showIdBuffer;
+		}
+
+		ImGui::Text("Mouse Position: x - %.3f, y - %.3f", m_scaledMouseNorm.x, m_scaledMouseNorm.y);
 	}
 
 	ImGui::End();
