@@ -11,12 +11,14 @@ Texture::Texture(const wchar_t* filename)
 	: Resource(ResourceType::Texture)
 {
 	m_filename = std::filesystem::path(filename).filename().string();
+    m_path = std::filesystem::path(filename).string();
 }
 
 Texture::Texture(std::string filename)
     : Texture(ToWString(filename).c_str())
 {
-	m_filename = filename;
+	m_filename = std::filesystem::path(filename).filename().string();
+	m_path = filename;
 }
 
 Texture::Texture(ID3D11Device* device, const wchar_t* filename)

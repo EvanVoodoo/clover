@@ -4,10 +4,12 @@
 #include <string>
 #include "entt/entity/registry.hpp"
 #include "entt/meta/factory.hpp"
+#include "serialization.hpp"
 
 namespace clvr
 {
 	using Entity = entt::entity;
+	using json = nlohmann::json;
 
 	class System
 	{
@@ -16,6 +18,8 @@ namespace clvr
 		virtual void Update(float) {}
 		virtual void Render() {}
 		virtual void Inspect(float) {}
+		virtual json Save() { return json(); }
+		virtual void Load(const json&) {}
 		int priority = 0;
 		std::string title = {};
 

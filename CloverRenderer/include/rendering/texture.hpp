@@ -24,6 +24,7 @@ namespace clvr
         Texture& operator=(Texture&&) noexcept = default;
 
 		// TODO: Implement GetPath that uses the texture filename to create a unique path string
+        const std::string& GetPath() const { return m_path; }
 		static std::string GetPath(const wchar_t* filename);
         static std::string GetPath(std::string filename)
         {

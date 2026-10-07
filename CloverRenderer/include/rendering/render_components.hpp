@@ -4,10 +4,10 @@
 #include <directxmath.h>
 #include <core/transform.hpp>
 #include <string>
-#include <wrl/client.h>
 #include "texture.hpp"
 #include <memory>
 #include <core/ecs.hpp>
+#include "core/serialization.hpp"
 
 #define MAX_LIGHTS 16
 
@@ -49,7 +49,44 @@ namespace clvr
 		bool useLinkedTexture = false;
 		std::shared_ptr<Texture> texture = nullptr; // set once, e.g. via LoadTexture function
 		std::string textureName = "";
+		std::string texturePath = "";
+
+		int layerId = -1; // used ONLY for loading from file to store the layer ID
 	};
+
+	inline void to_json(nlohmann::json& j, const Sprite& s) {
+		j = nlohmann::json{
+			{"position", s.position},
+			{"size", s.size},
+			{"color", s.color},
+			{"uvRect", s.uvRect},
+			{"pivot", s.pivot},
+			{"layerId", s.layer ? s.layer->id : -1},
+			{"rotation", s.rotation},
+			{"isOccluder", s.isOccluder},
+			{"textureName", s.textureName},
+			{"useLinkedTexture", s.useLinkedTexture}
+		};
+		if (s.useLinkedTexture && s.texture) {
+			j["texturePath"] = s.texture->GetPath();
+		}
+	}
+	inline void from_json(const nlohmann::json& j, Sprite& s) {
+		j.at("position").get_to(s.position);
+		j.at("size").get_to(s.size);
+		j.at("color").get_to(s.color);
+		j.at("uvRect").get_to(s.uvRect);
+		j.at("pivot").get_to(s.pivot);
+		s.layerId = j.value("layerId", -1);
+		s.layer = nullptr; // will be set later by the renderer based on layerId
+		s.rotation = j.value("rotation", 0.0f);
+		s.isOccluder = j.value("isOccluder", true);
+		s.textureName = j.value("textureName", "");
+		s.useLinkedTexture = j.value("useLinkedTexture", false);
+		if (s.useLinkedTexture) {
+			s.texturePath = j.value("texturePath", "");
+		}
+	}
 
 	struct SpriteComponent
 	{
@@ -58,6 +95,7 @@ namespace clvr
 		Sprite sprite;   // reuse your existing Sprite struct as the payload
 		void Inspect();
 	};
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpriteComponent, sprite)
 
 	struct Vertex
 	{
@@ -75,6 +113,8 @@ namespace clvr
 
 		void Inspect();
 	};
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Light, type, color, intensity, direction)
 
 	namespace BufferType
 	{
@@ -179,5 +219,5 @@ namespace clvr
 	};
 }
 
-REGISTER_COMPONENT(clvr::SpriteComponent, "Sprite")
-REGISTER_COMPONENT(clvr::Light, "Light")
+SAVEABLE_COMPONENT(clvr::SpriteComponent, "Sprite")
+SAVEABLE_COMPONENT(clvr::Light, "Light")

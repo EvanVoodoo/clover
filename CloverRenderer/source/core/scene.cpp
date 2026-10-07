@@ -6,6 +6,7 @@
 #include "entt/meta/meta.hpp"
 #include "entt/core/hashed_string.hpp"
 #include <imgui_internal.h>
+#include <fstream>
 
 using namespace clvr;
 
@@ -191,4 +192,72 @@ void SceneManager::UpdateSelectedEntity(entt::entity entity)
 
     if (m_translateGizmo)
 		m_translateGizmo->SetSelectedEntity(entity);
+}
+
+json SceneManager::SaveScene() {
+    auto ecs = Engine.GetECS();
+    json scene;
+    scene["version"] = 1.0;
+
+    auto systems = Engine.GetECS()->GetSystems<System>();
+    for (auto* s : systems) {
+        scene["systems"][s->title] = s->Save();
+    }
+
+    for (auto e : ecs->GetRegistry().view<Transform>()) {
+        json ent;
+        for (auto& ser : GetSerializers()) {
+			ser.save(ecs->GetRegistry(), e, ent, ser.name);
+        }
+        scene["entities"].push_back(ent);
+    }
+    return scene;
+}
+
+void SceneManager::LoadScene(const json& scene) {
+	auto ecs = Engine.GetECS();
+	ecs->GetRegistry().clear(); // Clear existing entities and components
+
+    for (const auto& ent : scene["entities"]) {
+        auto entity = ecs->CreateEntity();
+        for (auto& ser : GetSerializers()) {
+            ser.load(ecs->GetRegistry(), entity, ent, ser.name);
+        }
+    }
+
+	for (auto* s : ecs->GetSystems<System>()) {
+		if (scene["systems"].contains(s->title)) {
+			s->Load(scene["systems"][s->title]);
+		}
+	}
+}
+
+bool SceneManager::SaveSceneToFile(const std::filesystem::path& path) {
+	json scene = SaveScene();
+    std::filesystem::create_directories(path.parent_path());   // make assets/scenes/ if missing
+
+    // Write to a temp file first, then rename, so a crash mid-write can't corrupt the old save
+    std::filesystem::path tmp = path;
+    tmp += ".tmp";
+
+    {
+        std::ofstream file(tmp);
+        if (!file) return false;
+        file << scene.dump(2);            // 2-space indent keeps it readable and diff-friendly
+        if (!file) return false;
+    }                                     // closed (flushed) here
+
+    std::filesystem::rename(tmp, path);   // replaces the existing file on Windows with std::filesystem
+    return true;
+}
+
+bool SceneManager::LoadSceneFromFile(const std::filesystem::path& path) {
+    std::ifstream file(path);
+    if (!file) return false;
+
+	json scene = json::parse(file, nullptr, false);   // don't throw on parse errors
+	if (scene.is_discarded()) return false;
+
+	LoadScene(scene);
+	return true;
 }

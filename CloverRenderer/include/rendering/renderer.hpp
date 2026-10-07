@@ -11,7 +11,7 @@
 #include "texture.hpp"
 #include "texture_atlas.hpp"
 
-const bool FULL_SCREEN = true;
+const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = false;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.3f;
@@ -42,6 +42,8 @@ namespace clvr
 		void Update(float dt);
 		void Render();
 		void Inspect(float dt);
+		json Save();
+		void Load(const json& j);
 
 		void* GetNativeDeviceHandle() override;
 

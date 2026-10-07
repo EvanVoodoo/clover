@@ -1,5 +1,6 @@
 #include "core/engine.hpp"
 #include <chrono>
+#include <core/scene.hpp>
 
 namespace clvr {
 	bool IsMouseMoving() {
@@ -167,8 +168,12 @@ void EngineClass::Run()
             
                     ImGui::Separator();
             
-                    if (ImGui::MenuItem("Save", "Ctrl+S")) {
-                        // Save file
+                    if (ImGui::MenuItem("Save Scene", "Ctrl+S")) {
+						json scene = GetECS()->GetSystem<SceneManager>().SaveScene();
+						GetECS()->GetSystem<SceneManager>().SaveSceneToFile(GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "example.json"));
+                    }
+					if (ImGui::MenuItem("Load Scene", "Ctrl+L")) {
+						GetECS()->GetSystem<SceneManager>().LoadSceneFromFile(GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "example.json"));
                     }
 
                     ImGui::Separator();

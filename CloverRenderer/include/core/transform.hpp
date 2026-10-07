@@ -2,7 +2,7 @@
 
 #include <directxmath.h>
 #include <string>
-#include "ecs.hpp"
+#include "core/serialization.hpp"
 
 using namespace DirectX;
 
@@ -25,6 +25,8 @@ namespace clvr
 
 		void Inspect();
 	};
+
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Transform, name, position, scale, rotation)
 }
 
-REGISTER_COMPONENT(clvr::Transform, "Transform")
+SAVEABLE_COMPONENT(clvr::Transform, "Transform")

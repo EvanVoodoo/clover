@@ -2,6 +2,9 @@
 
 #include "ecs.hpp"
 #include "translate_gizmo.hpp"
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 namespace clvr {
 	class SceneManager : public System {
@@ -21,6 +24,11 @@ namespace clvr {
 		Entity GetScrollEntity() const { return m_scrollEntity; }
 
 		void SetScrollEntity(Entity entity) { m_scrollEntity = entity; }
+
+		json SaveScene();
+		void LoadScene(const json& scene);
+		bool SaveSceneToFile(const std::filesystem::path& path);
+		bool LoadSceneFromFile(const std::filesystem::path& path);
 
 	private:
 		Entity m_selectedEntity = entt::null;

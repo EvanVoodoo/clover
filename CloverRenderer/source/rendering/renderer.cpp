@@ -369,6 +369,54 @@ void Renderer::Inspect(float dt)
 	ImGui::End();
 }
 
+json Renderer::Save()
+{
+	json j;
+	j["spriteLayers"] = json::array();
+	for (const auto& layer : m_spriteLayers)
+	{
+		json layerJson;
+		layerJson["id"] = layer->id;
+		layerJson["parallaxFactor"] = layer->parallaxFactor;
+		layerJson["layerName"] = layer->layerName;
+		j["spriteLayers"].push_back(layerJson);
+	}
+	return j;
+}
+
+void Renderer::Load(const json& j)
+{
+	m_spriteLayers.clear();
+	if (j.contains("spriteLayers"))
+	{
+		for (const auto& layerJson : j["spriteLayers"])
+		{
+			unsigned int id = layerJson["id"];
+			float parallaxFactor = layerJson["parallaxFactor"];
+			std::string layerName = layerJson["layerName"];
+			CreateSpriteLayer(id, parallaxFactor, layerName);
+		}
+	}
+
+	// Give entities their sprite layers after loading, since the layers are now created
+	auto& registry = Engine.GetECS()->GetRegistry();
+	auto view = registry.view<SpriteComponent>();
+	for (auto entity : view)
+	{
+		auto& sc = view.get<SpriteComponent>(entity);
+		SpriteLayer* layer = FindSpriteLayer(sc.sprite.layerId);
+		if (layer)
+			sc.sprite.layer = layer;
+		else
+			sc.sprite.layer = FindOrCreateSpriteLayer(0); // default to layer 0 if not found
+
+		if (sc.sprite.useLinkedTexture && !sc.sprite.texture)
+		{
+			sc.sprite.texture = LoadTexture(sc.sprite.texturePath);
+		}
+	}
+}
+
 void* Renderer::GetNativeDeviceHandle() { return static_cast<void*>(m_DX2D->GetDevice()); }
 
 int Renderer::AddTexture(const std::string filename) { return m_DX2D->AddTexture(filename); }
