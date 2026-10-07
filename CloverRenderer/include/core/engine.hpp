@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/window.hpp"
-#include "core/input.hpp"
+#include "input/input.hpp"
 #include "core/ecs.hpp"
 #include "imgui_layer.hpp"
 #include "resources/resource_manager.hpp"

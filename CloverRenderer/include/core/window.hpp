@@ -1,7 +1,7 @@
 #pragma once
 
 #include <windows.h>
-#include "input.hpp"
+#include "input/input.hpp"
 #include <functional>
 
 namespace clvr

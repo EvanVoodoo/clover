@@ -42,7 +42,7 @@
     <ClInclude Include="include\rendering\renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\core\input.hpp">
+    <ClInclude Include="include\input\input.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\rendering\shader.hpp">
@@ -366,6 +366,12 @@
     <ClInclude Include="include\core\common.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\input\input_handler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\input\input_command.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Clover.cpp">
@@ -383,7 +389,7 @@
     <ClCompile Include="source\rendering\renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\core\input.cpp">
+    <ClCompile Include="source\input\input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\rendering\shader.cpp">
@@ -444,6 +450,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\core\transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\input\input_handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\input\input_command.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

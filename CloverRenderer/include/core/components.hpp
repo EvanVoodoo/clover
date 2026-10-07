@@ -1,7 +1,8 @@
 #pragma once
-#include <rendering/render_components.hpp>
 
 namespace clvr
 {
-    
+	struct PlayerComponent {
+		float speed = 100.0f; // units per second
+	};
 }

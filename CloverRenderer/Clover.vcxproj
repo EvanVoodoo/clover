@@ -388,7 +388,7 @@
     <ClInclude Include="include\Clover.h" />
     <ClInclude Include="include\core\gizmo.hpp" />
     <ClInclude Include="include\core\imgui_layer.hpp" />
-    <ClInclude Include="include\core\input.hpp" />
+    <ClInclude Include="include\input\input.hpp" />
     <ClInclude Include="include\core\scene.hpp" />
     <ClInclude Include="include\core\serialization.hpp" />
     <ClInclude Include="include\core\transform.hpp" />
@@ -480,6 +480,8 @@
     <ClInclude Include="include\imgui\imstb_rectpack.h" />
     <ClInclude Include="include\imgui\imstb_textedit.h" />
     <ClInclude Include="include\imgui\imstb_truetype.h" />
+    <ClInclude Include="include\input\input_command.hpp" />
+    <ClInclude Include="include\input\input_handler.hpp" />
     <ClInclude Include="include\nlohmann\json.hpp" />
     <ClInclude Include="include\nlohmann\json_fwd.hpp" />
     <ClInclude Include="include\rendering\framebuffer.hpp" />
@@ -498,6 +500,8 @@
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\input\input_command.cpp" />
+    <ClCompile Include="source\input\input_handler.cpp" />
     <ClCompile Include="source\core\transform.cpp" />
     <ClCompile Include="source\core\ecs.cpp" />
     <ClCompile Include="source\core\gizmo.cpp" />
@@ -515,7 +519,7 @@
     <ClCompile Include="source\rendering\texture.cpp" />
     <ClCompile Include="source\rendering\texture_atlas.cpp" />
     <ClCompile Include="source\core\engine.cpp" />
-    <ClCompile Include="source\core\input.cpp" />
+    <ClCompile Include="source\input\input.cpp" />
     <ClCompile Include="source\core\window.cpp" />
     <ClCompile Include="source\rendering\renderer.cpp" />
     <ClCompile Include="source\rendering\render_components.cpp" />
