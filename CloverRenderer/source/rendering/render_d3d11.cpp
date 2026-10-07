@@ -1278,7 +1278,7 @@ XMMATRIX DirectX2D::GetViewMatrix()
 Camera& DirectX2D::GetActiveCamera()
 {
 #ifdef CLOVER_EDITOR
-	return (Engine.GetEditorMode() == EditorMode::Editing) ? m_editorCamera : m_gameCamera;
+	return (Engine.GetEngineMode() == EngineMode::Editing) ? m_editorCamera : m_gameCamera;
 #else
 	return m_gameCamera; // standalone builds never have an editor camera at all
 #endif

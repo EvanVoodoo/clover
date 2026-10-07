@@ -159,39 +159,37 @@ void EngineClass::Run()
 
             if (ImGui::BeginMainMenuBar()) {
                 if (ImGui::BeginMenu("File")) {
-                    if (ImGui::MenuItem("New", "Ctrl+N")) {
-                        // Create new file
-                    }
-                    if (ImGui::MenuItem("Open", "Ctrl+O")) {
-                        // Open file dialog
-                    }
-            
-                    ImGui::Separator();
-            
-                    if (ImGui::MenuItem("Save Scene", "Ctrl+S")) {
-						json scene = GetECS()->GetSystem<SceneManager>().SaveScene();
-						GetECS()->GetSystem<SceneManager>().SaveSceneToFile(GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "example.json"));
-                    }
-					if (ImGui::MenuItem("Load Scene", "Ctrl+L")) {
-						GetECS()->GetSystem<SceneManager>().LoadSceneFromFile(GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "example.json"));
-                    }
+                    const bool canEditScene = GetEngineMode() == EngineMode::Editing;
 
-                    ImGui::Separator();
-            
-                    if (ImGui::MenuItem("Quit", "Alt+F4")) {
-                        // Quit application
+                    // signature: MenuItem(label, shortcut, selected, enabled)
+                    if (ImGui::MenuItem("Save Scene", "Ctrl+S", false, canEditScene)) {
+                        GetECS()->GetSystem<SceneManager>().SaveSceneToFile(
+                            GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "example.json"));
                     }
-            
+                    if (ImGui::MenuItem("Load Scene", "Ctrl+L", false, canEditScene)) {
+                        GetECS()->GetSystem<SceneManager>().LoadSceneFromFile(
+                            GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "example.json"));
+                    }
                     ImGui::EndMenu();
                 }
         
-                if (ImGui::BeginMenu("Edit")) {
-                    if (ImGui::MenuItem("Undo", "Ctrl+Z")) { }
-                    if (ImGui::MenuItem("Redo", "Ctrl+Y")) {}
-            
-                    ImGui::EndMenu();
-                }
-        
+				if (GetEngineMode() == EngineMode::Editing) {
+					if (ImGui::BeginMenu("Play")) {
+						if (ImGui::MenuItem("Play", "F5")) {
+							GetECS()->GetSystem<SceneManager>().Play();
+						}
+						ImGui::EndMenu();
+					}
+				}
+				else if (GetEngineMode() == EngineMode::Playing) {
+					if (ImGui::BeginMenu("Stop")) {
+						if (ImGui::MenuItem("Stop", "F5")) {
+							GetECS()->GetSystem<SceneManager>().Stop();
+						}
+						ImGui::EndMenu();
+					}
+				}
+
                 const float labelW = ImGui::CalcTextSize("X").x + ImGui::GetStyle().FramePadding.x;
                 ImGui::SetCursorPosX(ImGui::GetWindowWidth() - labelW - ImGui::GetStyle().WindowPadding.x);
 
@@ -227,6 +225,11 @@ void EngineClass::Run()
             }
         }
     }
+}
+
+void EngineClass::SetEngineMode(EngineMode mode) { 
+    m_editorMode = mode; 
+	GetECS()->SetActiveRegistry(mode);
 }
 
 bool EngineClass::Frame(float dt)

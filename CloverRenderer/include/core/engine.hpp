@@ -5,6 +5,7 @@
 #include "core/ecs.hpp"
 #include "imgui_layer.hpp"
 #include "resources/resource_manager.hpp"
+#include "core/common.hpp"
 
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1080;
@@ -22,10 +23,6 @@ namespace clvr
 	const std::wstring ToWString(const std::string& str);
 	bool IsDevEnvironment();
 
-#ifdef CLOVER_EDITOR
-	enum class EditorMode { Editing, Playing };
-#endif
-
 	class EngineClass
 	{
 	public:
@@ -42,10 +39,8 @@ namespace clvr
 
 		bool running = false;
 
-#ifdef CLOVER_EDITOR
-		EditorMode GetEditorMode() const { return m_editorMode; }
-		void SetEditorMode(EditorMode mode) { m_editorMode = mode; }
-#endif
+		EngineMode GetEngineMode() const { return m_editorMode; }
+		void SetEngineMode(EngineMode mode);
 
 	private:
 		bool Frame(float dt);
@@ -55,9 +50,7 @@ namespace clvr
 		Window* m_window = nullptr;
 		ImGuiLayer* m_imgui = nullptr;
 		ResourceManager* m_resourceManager = nullptr;
-#ifdef CLOVER_EDITOR
-		EditorMode m_editorMode = EditorMode::Editing;
-#endif
+		EngineMode m_editorMode = EngineMode::Editing;
 	};
 
 	extern EngineClass Engine;

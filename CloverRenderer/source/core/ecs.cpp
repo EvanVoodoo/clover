@@ -9,12 +9,22 @@ EntityComponentSystem::EntityComponentSystem() = default;
 
 EntityComponentSystem::~EntityComponentSystem() = default;
 
+void EntityComponentSystem::SetActiveRegistry(EngineMode mode)
+{
+	if (mode == EngineMode::Editing)
+		m_active = &m_editRegistry;
+	else if (mode == EngineMode::Playing)
+		m_active = &m_playRegistry;
+	else
+		assert(false && "Invalid EditorMode");
+}
+
 void EntityComponentSystem::DeleteEntity(Entity e)
 {
-    assert(m_registry.valid(e));
+    assert(m_active->valid(e));
 
     // mark this entity for deletion
-    m_registry.emplace_or_replace<Delete>(e);
+    m_active->emplace_or_replace<Delete>(e);
 }
 
 void EntityComponentSystem::UpdateSystems(float dt)
@@ -35,11 +45,12 @@ void EntityComponentSystem::InspectSystems(float dt)
 
 void EntityComponentSystem::RemoveDeleted()
 {
-    auto& deleteStorage = m_registry.storage<Delete>();
+    auto& deleteStorage = m_active->storage<Delete>();
     while (!deleteStorage.empty())
     {
         // Destroying entities may enqueue more Deletes, hence the loop
-        const auto del = m_registry.view<Delete>();
-        m_registry.destroy(del.begin(), del.end());
+        const auto del = m_active->view<Delete>();
+        m_active->destroy(del.begin(), del.end());
     }
 }
+

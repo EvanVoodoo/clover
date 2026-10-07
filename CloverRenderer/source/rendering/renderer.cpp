@@ -475,7 +475,7 @@ void Renderer::EditorWindowControls(float dt)
 {
 	if (!m_gameWindowFocused) return;
 
-	if (Engine.GetEditorMode() == EditorMode::Playing) return;
+	if (Engine.GetEngineMode() == EngineMode::Playing) return;
 
 	auto ecs = Engine.GetECS();
 	auto input = Engine.GetInput();

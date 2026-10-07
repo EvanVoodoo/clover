@@ -4,7 +4,8 @@
 #include <string>
 #include "entt/entity/registry.hpp"
 #include "entt/meta/factory.hpp"
-#include "serialization.hpp"
+#include "core/common.hpp"
+#include "nlohmann/json.hpp"
 
 namespace clvr
 {
@@ -31,8 +32,9 @@ namespace clvr
 		EntityComponentSystem();
 		~EntityComponentSystem();
 
-		entt::registry& GetRegistry() { return m_registry; }
-		Entity CreateEntity() { return m_registry.create(); }
+		entt::registry& GetRegistry() { return *m_active; }
+		void SetActiveRegistry(EngineMode mode);
+		Entity CreateEntity() { return m_active->create(); }
 		void DeleteEntity(Entity);
 		void UpdateSystems(float);
 		void RenderSystems();
@@ -41,7 +43,7 @@ namespace clvr
 		template <typename T, typename... Args>
 		decltype(auto) CreateComponent(Entity entity, Args&&... args);
 		template <typename T>
-		void RemoveComponent(Entity entity) { m_registry.remove<T>(entity); }
+		void RemoveComponent(Entity entity) { m_active->remove<T>(entity); }
 		template <typename T>
 		static void RegisterComponent(const char* name = nullptr);
 		template <typename T, typename... Args>
@@ -52,7 +54,9 @@ namespace clvr
 		std::vector<T*> GetSystems();
 
 	private:
-		entt::registry m_registry;
+		entt::registry m_editRegistry;
+		entt::registry m_playRegistry;
+		entt::registry* m_active = &m_editRegistry;
 
 		struct Delete
 		{
@@ -63,7 +67,7 @@ namespace clvr
 	template <typename T, typename... Args>
 	decltype(auto) EntityComponentSystem::CreateComponent(Entity entity, Args&&... args)
 	{
-		return m_registry.emplace<T>(entity, args...);  // TODO: std::move this
+		return m_active->emplace<T>(entity, args...);  // TODO: std::move this
 	}
 
 	template<typename T>

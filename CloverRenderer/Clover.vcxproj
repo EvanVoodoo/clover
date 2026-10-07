@@ -381,6 +381,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_rect_pack.h" />
+    <ClInclude Include="include\core\common.hpp" />
     <ClInclude Include="include\core\components.hpp" />
     <ClInclude Include="include\core\ecs.hpp" />
     <ClInclude Include="include\core\engine.hpp" />

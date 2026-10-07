@@ -176,7 +176,21 @@ void SceneManager::Inspect(float dt)
     ImGui::End();
 }
 
-void clvr::SceneManager::DeleteSelectedEntity()
+void SceneManager::Play()
+{
+	const json snapshot = SaveScene();
+	Engine.SetEngineMode(EngineMode::Playing);
+    Engine.GetECS()->GetRegistry().clear();
+	LoadScene(snapshot);
+}
+
+void SceneManager::Stop()
+{
+    Engine.GetECS()->GetRegistry().clear();
+	Engine.SetEngineMode(EngineMode::Editing);
+}
+
+void SceneManager::DeleteSelectedEntity()
 {
     if (m_selectedEntity == entt::null)
         return;
