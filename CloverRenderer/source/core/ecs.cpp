@@ -1,4 +1,5 @@
 #include "core/ecs.hpp"
+#include <core/engine.hpp>
 
 using namespace clvr;
 using namespace std;
@@ -29,18 +30,25 @@ void EntityComponentSystem::DeleteEntity(Entity e)
 
 void EntityComponentSystem::UpdateSystems(float dt)
 {
-    dt = std::min(dt, kMaxDeltaTime);
-    for (auto& s : m_systems) s->Update(dt);
+    dt = std::fminf(dt, kMaxDeltaTime);
+
+    for (auto& s : m_systems) 
+        if (ShouldRun(s->GetRunMode(), Engine.GetEngineMode()))
+            s->Update(dt);
 }
 
 void EntityComponentSystem::RenderSystems()
 {
-    for (auto& s : m_systems) s->Render();
+    for (auto& s : m_systems) 
+        if (ShouldRun(s->GetRunMode(), Engine.GetEngineMode()))
+            s->Render();
 }
 
 void EntityComponentSystem::InspectSystems(float dt)
 {
-	for (auto& s : m_systems) s->Inspect(dt);
+	for (auto& s : m_systems) 
+        if (ShouldRun(s->GetRunMode(), Engine.GetEngineMode()))
+            s->Inspect(dt);
 }
 
 void EntityComponentSystem::RemoveDeleted()
@@ -54,3 +62,8 @@ void EntityComponentSystem::RemoveDeleted()
     }
 }
 
+bool clvr::ShouldRun(RunMode rm, EngineMode mode) {
+    return rm == RunMode::Always ||
+        (rm == RunMode::Editing && mode == EngineMode::Editing) ||
+        (rm == RunMode::Playing && mode == EngineMode::Playing);
+}

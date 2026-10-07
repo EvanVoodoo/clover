@@ -12,6 +12,10 @@ namespace clvr
 	using Entity = entt::entity;
 	using json = nlohmann::json;
 
+	enum class RunMode : uint8_t { Editing, Playing, Always };
+
+	inline bool ShouldRun(RunMode rm, EngineMode mode);
+
 	class System
 	{
 	public:
@@ -19,11 +23,11 @@ namespace clvr
 		virtual void Update(float) {}
 		virtual void Render() {}
 		virtual void Inspect(float) {}
+		virtual RunMode GetRunMode() const { return RunMode::Always; }
 		virtual json Save() { return json(); }
 		virtual void Load(const json&) {}
 		int priority = 0;
 		std::string title = {};
-
 	};
 	
 	class EntityComponentSystem

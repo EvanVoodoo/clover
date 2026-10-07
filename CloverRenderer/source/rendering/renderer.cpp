@@ -120,46 +120,67 @@ void clvr::Renderer::Render()
 	ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 	m_DX2D->UpdateSceneWindowSize(viewportSize.x, viewportSize.y);
 	ImGui::Image(m_DX2D->RenderScene(), viewportSize);
-	const ImVec2 imgMin = ImGui::GetItemRectMin();
-	const ImVec2 imgSize = ImGui::GetItemRectSize();
-
-	// ID buffer rendering for picking
-	m_DX2D->BeginIDPass();
-	// Draw all sprites to the ID buffer.
-	for (const auto& layer : m_spriteLayers)
-	{
-		for (auto [entity, sc, t] : view.each())
-		{
-			if (sc.sprite.layer->id != layer->id)
-				continue;
-			m_DX2D->DrawSpriteID(sc.sprite, t, *layer, static_cast<uint32_t>(entity));
-		}
-	}
-	// Entities without a sprite still get a pickable 64x64 quad in the ID buffer.
-	auto& registry = Engine.GetECS()->GetRegistry();
-	SpriteLayer& pickLayer = *FindOrCreateSpriteLayer(0);
-
-	Sprite pickProxy;
-	pickProxy.size = { 64.0f, 64.0f };
-
-	for (auto [entity, t] : registry.view<Transform>(entt::exclude<SpriteComponent>).each()) {
-		m_DX2D->DrawSpriteID(pickProxy, t, pickLayer, static_cast<uint32_t>(entity));
-	}
-
-	m_DX2D->EndIDPass();
-
+	
 	// Handle mouse picking
+	if (Engine.GetEngineMode() == EngineMode::Editing)
+		SceneEntityPicker(viewportHovered, view, viewportPos, viewportSize);
+
+	// TODO: Draw gizmos here, after the scene is rendered but before ImGui::End() so they appear on top of the scene
+	Engine.GetECS()->GetSystem<SceneManager>().Draw();
+
+	// Rebind the back buffer so the ImGui backend's own draw calls
+	// (ImGui_ImplDX11_RenderDrawData) land in the swapchain, not m_finalFramebuffer.
+	m_DX2D->SetBackBufferRenderTarget();
+	ImGui::End();
+
+	Engine.GetImGuiLayer()->EndFrame();
+#else
+	m_DX2D->RenderScene();
+#endif
+
+	m_DX2D->EndScene();
+}
+
+void Renderer::SceneEntityPicker(const bool viewportHovered, entt::basic_view<entt::get_t<entt::constness_as_t<entt::storage_type_t<clvr::SpriteComponent, entt::entity, std::allocator<clvr::SpriteComponent>>, clvr::SpriteComponent>, entt::constness_as_t<entt::storage_type_t<clvr::Transform, entt::entity, std::allocator<clvr::Transform>>, clvr::Transform>>, entt::exclude_t<>, void>& view, ImVec2& viewportPos, ImVec2& viewportSize)
+{
 	if (viewportHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 	{
+		const ImVec2 imgMin = ImGui::GetItemRectMin();
+		const ImVec2 imgSize = ImGui::GetItemRectSize();
+
+		m_DX2D->BeginIDPass();
+		// Draw all sprites to the ID buffer.
+		for (const auto& layer : m_spriteLayers)
+		{
+			for (auto [entity, sc, t] : view.each())
+			{
+				if (sc.sprite.layer->id != layer->id)
+					continue;
+				m_DX2D->DrawSpriteID(sc.sprite, t, *layer, static_cast<uint32_t>(entity));
+			}
+		}
+		// Entities without a sprite still get a pickable 64x64 quad in the ID buffer.
+		auto& registry = Engine.GetECS()->GetRegistry();
+		SpriteLayer& pickLayer = *FindOrCreateSpriteLayer(0);
+
+		Sprite pickProxy;
+		pickProxy.size = { 64.0f, 64.0f };
+
+		for (auto [entity, t] : registry.view<Transform>(entt::exclude<SpriteComponent>).each()) {
+			m_DX2D->DrawSpriteID(pickProxy, t, pickLayer, static_cast<uint32_t>(entity));
+		}
+
+		m_DX2D->EndIDPass();
+
 		// TODO: Scaling not 100% accurate, double check the math here.
 		// mouse pos should be relative to the game scene viewport, not the whole window
 		ImVec2 mousePos = ImGui::GetMousePos();
 		int mouseX = static_cast<int>(mousePos.x - viewportPos.x);
 		int mouseY = static_cast<int>(mousePos.y - viewportPos.y);
-		
+
 		// convert mouse coordinates to 0-1 range
 		XMFLOAT2 mouseNorm = { (mousePos.x - imgMin.x) / imgSize.x,
-					   (mousePos.y - imgMin.y) / imgSize.y };
+			(mousePos.y - imgMin.y) / imgSize.y };
 
 		// convert clicked mouse coordinates to pixel coordinates in the ID buffer using aspect ratio and viewport size
 		float screenRatio = imgSize.x / imgSize.y;
@@ -193,21 +214,6 @@ void clvr::Renderer::Render()
 			}
 		}
 	}
-
-	// TODO: Draw gizmos here, after the scene is rendered but before ImGui::End() so they appear on top of the scene
-	Engine.GetECS()->GetSystem<SceneManager>().Draw();
-
-	// Rebind the back buffer so the ImGui backend's own draw calls
-	// (ImGui_ImplDX11_RenderDrawData) land in the swapchain, not m_finalFramebuffer.
-	m_DX2D->SetBackBufferRenderTarget();
-	ImGui::End();
-
-	Engine.GetImGuiLayer()->EndFrame();
-#else
-	m_DX2D->RenderScene();
-#endif
-
-	m_DX2D->EndScene();
 }
 
 void Renderer::DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform) { m_DX2D->DrawSprite(sprite, transform, layer, cameraTransform); }

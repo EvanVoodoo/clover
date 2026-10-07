@@ -85,6 +85,8 @@ bool EngineClass::Initialize(HINSTANCE hInstance, int nCmdShow)
 
 #ifdef CLOVER_EDITOR
     m_imgui = new ImGuiLayer();
+#else
+    SetEngineMode(EngineMode::Playing);
 #endif
     return true;
 }
@@ -135,95 +137,86 @@ void EngineClass::Run()
 
     while (running)
     {
-        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-        // If windows signals to end the application then exit out.
-        if (msg.message == WM_QUIT)
-        {
-            running = false;
-        }
-        else
-        {
-			// calculate delta time
-            auto now = std::chrono::steady_clock::now();
-            float deltaTime = std::chrono::duration<float>(now - lastTime).count();
-            lastTime = now;
-
-#ifdef CLOVER_EDITOR
-			m_imgui->BeginFrame();
-
-            ImGui::DockSpaceOverViewport();
-
-            if (ImGui::BeginMainMenuBar()) {
-                if (ImGui::BeginMenu("File")) {
-                    const bool canEditScene = GetEngineMode() == EngineMode::Editing;
-
-                    // signature: MenuItem(label, shortcut, selected, enabled)
-                    if (ImGui::MenuItem("Save Scene", "Ctrl+S", false, canEditScene)) {
-                        GetECS()->GetSystem<SceneManager>().SaveSceneToFile(
-                            GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "example.json"));
-                    }
-                    if (ImGui::MenuItem("Load Scene", "Ctrl+L", false, canEditScene)) {
-                        GetECS()->GetSystem<SceneManager>().LoadSceneFromFile(
-                            GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "example.json"));
-                    }
-                    ImGui::EndMenu();
-                }
-        
-				if (GetEngineMode() == EngineMode::Editing) {
-					if (ImGui::BeginMenu("Play")) {
-						if (ImGui::MenuItem("Play", "F5")) {
-							GetECS()->GetSystem<SceneManager>().Play();
-						}
-						ImGui::EndMenu();
-					}
-				}
-				else if (GetEngineMode() == EngineMode::Playing) {
-					if (ImGui::BeginMenu("Stop")) {
-						if (ImGui::MenuItem("Stop", "F5")) {
-							GetECS()->GetSystem<SceneManager>().Stop();
-						}
-						ImGui::EndMenu();
-					}
-				}
-
-                const float labelW = ImGui::CalcTextSize("X").x + ImGui::GetStyle().FramePadding.x;
-                ImGui::SetCursorPosX(ImGui::GetWindowWidth() - labelW - ImGui::GetStyle().WindowPadding.x);
-
-                ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.85f, 0.15f, 0.15f, 1.0f)); // hover
-                ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.65f, 0.10f, 0.10f, 1.0f)); // pressed
-                ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.65f, 0.10f, 0.10f, 1.0f)); // while the menu is open
-
-                const bool open = ImGui::BeginMenu("X");
-
-                ImGui::PopStyleColor(3); // pop before the popup contents so "Quit" isn't red too
-
-                if (open)
-                {
-                    if (ImGui::MenuItem("Quit", "Alt+F4"))
-                        running = false;
-                    ImGui::EndMenu();
-                }
-
-                ImGui::EndMainMenuBar();
-            }
-
-			GetECS()->InspectSystems(deltaTime);
-#endif // CLOVER_EDITOR
-
-			GetECS()->UpdateSystems(deltaTime);
-			GetECS()->RemoveDeleted();
-			GetECS()->RenderSystems();
-
-            result = Frame(deltaTime);
-            if (!result)
+            if (msg.message == WM_QUIT)
             {
                 running = false;
             }
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
         }
+		if (!running) break;
+        
+		// calculate delta time
+        auto now = std::chrono::steady_clock::now();
+        float deltaTime = std::chrono::duration<float>(now - lastTime).count();
+        lastTime = now;
+
+        result = Frame(deltaTime);
+        m_input->EndFrame();
+        if (!result)
+        {
+            running = false;
+        }
+    }
+}
+
+void EngineClass::MainMenuBar()
+{
+    ImGui::DockSpaceOverViewport();
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            const bool canEditScene = GetEngineMode() == EngineMode::Editing;
+
+            // signature: MenuItem(label, shortcut, selected, enabled)
+            if (ImGui::MenuItem("Save Scene", "Ctrl+S", false, canEditScene)) {
+                GetECS()->GetSystem<SceneManager>().SaveSceneToFile(
+                    GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "example.json"));
+            }
+            if (ImGui::MenuItem("Load Scene", "Ctrl+L", false, canEditScene)) {
+                GetECS()->GetSystem<SceneManager>().LoadSceneFromFile(
+                    GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "example.json"));
+            }
+            ImGui::EndMenu();
+        }
+
+        if (GetEngineMode() == EngineMode::Editing) {
+            if (ImGui::BeginMenu("Play")) {
+                if (ImGui::MenuItem("Play", "F5")) {
+                    GetECS()->GetSystem<SceneManager>().Play();
+                }
+                ImGui::EndMenu();
+            }
+        }
+        else if (GetEngineMode() == EngineMode::Playing) {
+            if (ImGui::BeginMenu("Stop")) {
+                if (ImGui::MenuItem("Stop", "F5")) {
+                    GetECS()->GetSystem<SceneManager>().Stop();
+                }
+                ImGui::EndMenu();
+            }
+        }
+
+        const float labelW = ImGui::CalcTextSize("X").x + ImGui::GetStyle().FramePadding.x;
+        ImGui::SetCursorPosX(ImGui::GetWindowWidth() - labelW - ImGui::GetStyle().WindowPadding.x);
+
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.85f, 0.15f, 0.15f, 1.0f)); // hover
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.65f, 0.10f, 0.10f, 1.0f)); // pressed
+        ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.65f, 0.10f, 0.10f, 1.0f)); // while the menu is open
+
+        const bool open = ImGui::BeginMenu("X");
+
+        ImGui::PopStyleColor(3); // pop before the popup contents so "Quit" isn't red too
+
+        if (open)
+        {
+            if (ImGui::MenuItem("Quit", "Alt+F4"))
+                running = false;
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMainMenuBar();
     }
 }
 
@@ -234,5 +227,20 @@ void EngineClass::SetEngineMode(EngineMode mode) {
 
 bool EngineClass::Frame(float dt)
 {
+#ifdef CLOVER_EDITOR
+    if (WasKeyJustPressed(VK_F5)) {
+        auto& sm = GetECS()->GetSystem<SceneManager>();
+        (GetEngineMode() == EngineMode::Editing) ? sm.Play() : sm.Stop();
+    }
+
+    m_imgui->BeginFrame();
+
+    MainMenuBar();
+
+    GetECS()->InspectSystems(dt);
+#endif // CLOVER_EDITOR
+    GetECS()->UpdateSystems(dt);
+    GetECS()->RemoveDeleted();
+    GetECS()->RenderSystems();
     return true;
 }

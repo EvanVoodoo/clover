@@ -30,6 +30,8 @@ namespace clvr
 		void Shutdown();
 		void Run();
 
+		void MainMenuBar();
+
 		EntityComponentSystem* GetECS() { return m_ecs; }
 		EntityComponentSystem& GetECSRef() { return *GetECS(); }
 		Window* GetWindow() { return m_window; }

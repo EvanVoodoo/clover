@@ -247,6 +247,8 @@ void SceneManager::LoadScene(const json& scene) {
 }
 
 bool SceneManager::SaveSceneToFile(const std::filesystem::path& path) {
+    if (Engine.GetEngineMode() == EngineMode::Playing) return false;
+
 	json scene = SaveScene();
     std::filesystem::create_directories(path.parent_path());   // make assets/scenes/ if missing
 
@@ -266,6 +268,8 @@ bool SceneManager::SaveSceneToFile(const std::filesystem::path& path) {
 }
 
 bool SceneManager::LoadSceneFromFile(const std::filesystem::path& path) {
+    if (Engine.GetEngineMode() == EngineMode::Playing) return false;
+
     std::ifstream file(path);
     if (!file) return false;
 

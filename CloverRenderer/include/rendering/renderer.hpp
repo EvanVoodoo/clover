@@ -41,6 +41,7 @@ namespace clvr
 
 		void Update(float dt);
 		void Render();
+		void SceneEntityPicker(const bool viewportHovered, entt::basic_view<entt::get_t<entt::constness_as_t<entt::storage_type_t<clvr::SpriteComponent, entt::entity, std::allocator<clvr::SpriteComponent>>, clvr::SpriteComponent>, entt::constness_as_t<entt::storage_type_t<clvr::Transform, entt::entity, std::allocator<clvr::Transform>>, clvr::Transform>>, entt::exclude_t<>, void>& view, ImVec2& viewportPos, ImVec2& viewportSize);
 		void Inspect(float dt);
 		json Save();
 		void Load(const json& j);
