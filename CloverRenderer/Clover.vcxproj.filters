@@ -372,6 +372,9 @@
     <ClInclude Include="include\input\input_command.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\input\input_controller.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Clover.cpp">
@@ -456,6 +459,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\input\input_command.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\input\input_controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\components.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

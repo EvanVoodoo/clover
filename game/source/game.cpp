@@ -3,6 +3,7 @@
 #include "core/components.hpp" 
 #include "rendering/renderer.hpp"
 #include <string>
+#include <input/input_controller.hpp>
 
 using namespace clvr;
 using Dir = ResourceManager::Directory;
@@ -32,6 +33,7 @@ void Game::SetupScene()
 		auto centerEntity = ecs->CreateEntity();
 		auto& t = ecs->CreateComponent<Transform>(centerEntity);
 		t.position = { 0.0f, -300.0f };
+		t.name = "Player";
 		clvr::Sprite cs = Sprite(rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png"), true);
 		cs.position = t.position;
 		cs.size = { 200.0f, 200.0f };
@@ -39,6 +41,9 @@ void Game::SetupScene()
 		cs.layer = renderer.FindOrCreateSpriteLayer(1);
 		cs.isOccluder = false;
 		ecs->CreateComponent<SpriteComponent>(centerEntity, cs);
+		auto& player = ecs->CreateComponent<PlayerComponent>(centerEntity);
+		player.speed = 400.0f;
+		ecs->CreateComponent<Controlled>(centerEntity, ControllerType::Player);
 	}
 
 	{
@@ -49,6 +54,7 @@ void Game::SetupScene()
 			auto& t = ecs->CreateComponent<Transform>(entity);
 			t.position = { (float) (rand() % 32000 - 16000), (float) (rand() % 16000 - 8000) };
 			t.rotation = (float) (rand() % 360) * 3.1415927f / 180.0f;
+			t.name = "Occluder " + std::to_string(i);
 			clvr::Sprite s;
 			s.position = t.position;
 			s.size = { (float) (rand() % 200 + 100), (float) (rand() % 100 + 50) };
@@ -58,26 +64,11 @@ void Game::SetupScene()
 			s.isOccluder = true;
 			ecs->CreateComponent<SpriteComponent>(entity, s);
 		}
-		/*for (int i = 0; i < 32; ++i)
-		{
-			auto entity = ecs->CreateEntity();
-			auto& t = ecs->CreateComponent<Transform>(entity);
-			t.position = { (float) (rand() % 3200 - 1600), (float) (rand() % 1600 - 800) };
-			t.rotation = (float) (rand() % 360) * 3.1415927f / 180.0f;
-			clvr::Sprite s;
-			s.position = t.position;
-			s.size = { (float) (rand() % 400 + 200), (float) (rand() % 200 + 100) };
-			s.color = { 0.5f, 0.0f, 1.0f, 1.0f };
-			s.uvRect = renderer.GetAtlasRegion(L"../CloverRenderer/assets/textures/white.jpg").uvRect;
-			SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(2);
-			s.layer = layer;
-			s.isOccluder = false;
-			ecs->CreateComponent<SpriteComponent>(entity, s);
-		}*/
 		{
 			auto entity = ecs->CreateEntity();
 			auto& t = ecs->CreateComponent<Transform>(entity);
 			t.position = { 0, 0 };
+			t.name = "Background";
 			clvr::Sprite s;
 			s.position = t.position;
 			s.size = { 3000, 3000 };
@@ -93,6 +84,7 @@ void Game::SetupScene()
 			auto entity = ecs->CreateEntity();
 			auto& t = ecs->CreateComponent<Transform>(entity);
 			t.position = { 0.0f, -400.0f };
+			t.name = "Ground Occluder";
 			clvr::Sprite s;
 			s.position = t.position;
 			s.size = { 16000.0f, 64.0f };
@@ -107,6 +99,7 @@ void Game::SetupScene()
 	{ // create a single directional light pointing downwards
 		auto lightEntity = ecs->CreateEntity();
 		auto& transform = ecs->CreateComponent<Transform>(lightEntity);
+		transform.name = "Directional Light";
 		auto& light = ecs->CreateComponent<Light>(lightEntity);
 		light.color = { 1.0f, 1.0f, 1.0f };
 		light.direction = { 0.2f, -1.0f, 0.0f };
@@ -123,6 +116,7 @@ void Game::SetupScene()
 
 			auto lightEntity = ecs->CreateEntity();
 			auto& transform = ecs->CreateComponent<Transform>(lightEntity);
+			transform.name = "Point Light " + std::to_string(i);
 			auto& light = ecs->CreateComponent<Light>(lightEntity);
 			ecs->CreateComponent<MovingLight>(lightEntity);
 
@@ -147,17 +141,6 @@ void Game::SetupScene()
 			light.type = 1;
 		}
 	}
-
-	/*{
-		auto lightEntity = ecs->CreateEntity();
-		ecs->CreateComponent<Transform>(lightEntity);
-		auto& light = ecs->CreateComponent<Light>(lightEntity);
-
-		light.direction = { 0.0f, 0.0f, 0.0f };
-		light.color = { 1.0f, 1.0f, 1.0f };
-		light.intensity = 5000.0f;
-		light.type = 1;
-	}*/
 }
 
 void Game::Update(float dt) {
@@ -168,4 +151,19 @@ void Game::Render() {}
 
 void Game::Inspect(float dt) {
 	
+}
+
+void Game::OnPlayStart() {
+	// Game camera goes in after the load, so nothing can clear it or take its ID
+	const entt::entity camEntity = Engine.GetECS()->CreateEntity();
+	auto& transform = Engine.GetECS()->CreateComponent<Transform>(camEntity);
+	transform.name = "Game Camera";
+	auto& camera = Engine.GetECS()->CreateComponent<CameraComponent>(camEntity);
+
+	for (auto [e, c, p] : Engine.GetECS()->GetRegistry().view<Controlled, PlayerComponent>().each()) {
+		if (c.type != ControllerType::Player) continue;
+		camera.followEntity = e;
+		camera.followTarget = true;
+		break;                                     // first player only
+	}
 }

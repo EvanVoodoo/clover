@@ -7,6 +7,8 @@
 #include "entt/core/hashed_string.hpp"
 #include <imgui_internal.h>
 #include <fstream>
+#include <core/components.hpp>
+#include <input/input_controller.hpp>
 
 using namespace clvr;
 
@@ -181,7 +183,24 @@ void SceneManager::Play()
 	const json snapshot = SaveScene();
 	Engine.SetEngineMode(EngineMode::Playing);
     Engine.GetECS()->GetRegistry().clear();
+    auto gameCamera = Engine.GetECS()->CreateEntity();
+	auto& transform = Engine.GetECS()->CreateComponent<Transform>(gameCamera);
+	auto& camera = Engine.GetECS()->CreateComponent<CameraComponent>(gameCamera);
+	// find first player entity and set followed entity to it
+	auto& registry = Engine.GetECS()->GetRegistry();
+    for (auto [e, c, p] : registry.view<Controlled, PlayerComponent>().each()) {
+        if (c.type != ControllerType::Player) continue;
+        camera.followEntity = e;
+        break;
+    }
+
 	LoadScene(snapshot);
+
+	for (auto&& s : Engine.GetECS()->GetSystems<System>()) {
+		if (s->GetRunMode() == RunMode::Playing || s->GetRunMode() == RunMode::Always) {
+			s->OnPlayStart();
+		}
+	}
 }
 
 void SceneManager::Stop()

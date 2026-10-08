@@ -481,6 +481,7 @@
     <ClInclude Include="include\imgui\imstb_textedit.h" />
     <ClInclude Include="include\imgui\imstb_truetype.h" />
     <ClInclude Include="include\input\input_command.hpp" />
+    <ClInclude Include="include\input\input_controller.hpp" />
     <ClInclude Include="include\input\input_handler.hpp" />
     <ClInclude Include="include\nlohmann\json.hpp" />
     <ClInclude Include="include\nlohmann\json_fwd.hpp" />
@@ -500,6 +501,8 @@
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\core\components.cpp" />
+    <ClCompile Include="source\input\input_controller.cpp" />
     <ClCompile Include="source\input\input_command.cpp" />
     <ClCompile Include="source\input\input_handler.cpp" />
     <ClCompile Include="source\core\transform.cpp" />

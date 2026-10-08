@@ -4,6 +4,7 @@
 #include "rendering/render_components.hpp"
 #include <core/engine.hpp>
 #include <core/scene.hpp>
+#include <core/components.hpp>
 
 using namespace clvr;
 
@@ -72,7 +73,11 @@ void Renderer::Shutdown()
 void Renderer::Update(float dt)
 {
 	// Render the graphics scene.
-	EditorWindowControls(dt);
+
+	if (Engine.GetEngineMode() == EngineMode::Playing)
+		UpdateGameCamera(dt);
+	else if (Engine.GetEngineMode() == EngineMode::Editing)
+		EditorWindowControls(dt);
 }
 
 void clvr::Renderer::Render()
@@ -481,8 +486,6 @@ void Renderer::EditorWindowControls(float dt)
 {
 	if (!m_gameWindowFocused) return;
 
-	if (Engine.GetEngineMode() == EngineMode::Playing) return;
-
 	auto ecs = Engine.GetECS();
 	auto input = Engine.GetInput();
 
@@ -560,5 +563,29 @@ void Renderer::EditorWindowControls(float dt)
 		camera.zoom = 1.0f;
 		camera.nearZ = 0.0f;
 		camera.farZ = 1.0f;
+	}
+}
+
+void Renderer::UpdateGameCamera(float dt)
+{
+	if (Engine.GetEngineMode() != EngineMode::Playing)
+		return;
+
+	auto ecs = Engine.GetECS();
+	
+	for (auto [e, c, t] : ecs->GetRegistry().view<CameraComponent, Transform>().each()) 
+	{
+		if (c.followTarget) {
+			auto& targetTransform = ecs->GetRegistry().get<Transform>(c.followEntity);
+			c.targetPosition = targetTransform.position;
+
+			// lerp the camera's position towards the target position based on the follow speed and delta time
+			t.position = XMFLOAT2(
+				t.position.x + (c.targetPosition.x - t.position.x) * c.followSpeed * dt,
+				t.position.y + (c.targetPosition.y - t.position.y) * c.followSpeed * dt
+			);
+		}
+		GetActiveCamera().transform = t;
+		break; // just get the first camera for now
 	}
 }

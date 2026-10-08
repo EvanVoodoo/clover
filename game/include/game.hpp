@@ -20,6 +20,8 @@ public:
 	void Update(float);
 	void Render();
 	void Inspect(float);
+	
+	void OnPlayStart() override;
 
 private:
 	void SetupScene();

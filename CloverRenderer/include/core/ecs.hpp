@@ -23,7 +23,11 @@ namespace clvr
 		virtual void Update(float) {}
 		virtual void Render() {}
 		virtual void Inspect(float) {}
+
 		virtual RunMode GetRunMode() const { return RunMode::Always; }
+
+		virtual void OnPlayStart() {}
+
 		virtual json Save() { return json(); }
 		virtual void Load(const json&) {}
 		int priority = 0;
@@ -131,6 +135,7 @@ namespace clvr
 	{
 		T* system = new T(std::forward<Args>(args)...);
 		m_systems.push_back(std::unique_ptr<System>(system));
+		// Sort systems by priority, higher priority first
 		std::sort(m_systems.begin(),
 			m_systems.end(),
 			[](const std::unique_ptr<System>& sl, const std::unique_ptr<System>& sr) { return sl->priority > sr->priority; });

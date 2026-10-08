@@ -72,8 +72,11 @@ namespace clvr
 		SpriteLayer* FindOrCreateSpriteLayer(unsigned int id);
 		std::vector<SpriteLayer*>& GetSpriteLayers() { return m_spriteLayers; }
 
+		bool GameWindowFocused() const { return m_gameWindowFocused; }
+
 	private:
 		void EditorWindowControls(float dt);
+		void UpdateGameCamera(float dt);
 
 	private:
 		DirectX2D* m_DX2D;

@@ -3,23 +3,23 @@
     {
       "Light": {
         "color": [
-          0.8698161840438843,
-          0.6067063808441162,
-          0.023549556732177734
+          1.0,
+          1.0,
+          1.0
         ],
         "direction": [
           143.75,
           -290.625,
           0.0
         ],
-        "intensity": 5082.5,
+        "intensity": 64004.5,
         "type": 1.0
       },
       "Transform": {
-        "name": "",
+        "name": "Point Light 3",
         "position": [
           143.75,
-          -290.625
+          328.875
         ],
         "rotation": 0.0,
         "scale": [
@@ -44,7 +44,7 @@
         "type": 1.0
       },
       "Transform": {
-        "name": "",
+        "name": "Point Light 2",
         "position": [
           -662.5,
           -1081.25
@@ -72,7 +72,7 @@
         "type": 1.0
       },
       "Transform": {
-        "name": "",
+        "name": "Point Light 1",
         "position": [
           706.25,
           -310.15625
@@ -100,7 +100,7 @@
         "type": 1.0
       },
       "Transform": {
-        "name": "",
+        "name": "Point Light 0",
         "position": [
           -800.0,
           -400.0
@@ -124,11 +124,11 @@
           -1.0,
           0.0
         ],
-        "intensity": 0.25,
+        "intensity": 0.004999999888241291,
         "type": 0.0
       },
       "Transform": {
-        "name": "",
+        "name": "Directional Light",
         "position": [
           0.0,
           0.0
@@ -175,7 +175,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Ground Occluder",
         "position": [
           0.0,
           -400.0
@@ -222,7 +222,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Background",
         "position": [
           0.0,
           0.0
@@ -269,7 +269,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 319",
         "position": [
           5078.0,
           -7122.0
@@ -316,7 +316,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 318",
         "position": [
           -12935.0,
           3065.0
@@ -363,7 +363,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 317",
         "position": [
           955.0,
           -817.0
@@ -410,7 +410,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 316",
         "position": [
           -15764.0,
           551.0
@@ -457,7 +457,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 315",
         "position": [
           -6185.0,
           2949.0
@@ -504,7 +504,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 314",
         "position": [
           -531.0,
           -1088.0
@@ -551,7 +551,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 313",
         "position": [
           10517.0,
           6629.0
@@ -598,7 +598,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 312",
         "position": [
           -10349.0,
           2986.0
@@ -645,7 +645,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 311",
         "position": [
           -10945.0,
           3191.0
@@ -692,7 +692,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 310",
         "position": [
           -9828.0,
           3243.0
@@ -739,7 +739,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 309",
         "position": [
           4899.0,
           3784.0
@@ -786,7 +786,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 308",
         "position": [
           8081.0,
           -5005.0
@@ -833,7 +833,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 307",
         "position": [
           9058.0,
           3577.0
@@ -880,7 +880,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 306",
         "position": [
           -8704.0,
           1916.0
@@ -927,7 +927,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 305",
         "position": [
           -12477.0,
           7758.0
@@ -974,7 +974,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 304",
         "position": [
           1006.0,
           670.0
@@ -1021,7 +1021,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 303",
         "position": [
           11032.0,
           6387.0
@@ -1068,7 +1068,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 302",
         "position": [
           -5096.0,
           -5401.0
@@ -1115,7 +1115,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 301",
         "position": [
           -9187.0,
           -5138.0
@@ -1162,7 +1162,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 300",
         "position": [
           -2284.0,
           -4068.0
@@ -1209,7 +1209,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 299",
         "position": [
           12761.0,
           3056.0
@@ -1256,7 +1256,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 298",
         "position": [
           -1804.0,
           4074.0
@@ -1303,7 +1303,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 297",
         "position": [
           -5792.0,
           -1523.0
@@ -1350,7 +1350,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 296",
         "position": [
           -3076.0,
           1072.0
@@ -1397,7 +1397,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 295",
         "position": [
           -4841.0,
           -3582.0
@@ -1444,7 +1444,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 294",
         "position": [
           -2174.0,
           7276.0
@@ -1491,7 +1491,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 293",
         "position": [
           -6723.0,
           -7927.0
@@ -1538,7 +1538,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 292",
         "position": [
           -2790.0,
           5549.0
@@ -1585,7 +1585,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 291",
         "position": [
           2529.0,
           7540.0
@@ -1632,7 +1632,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 290",
         "position": [
           -14440.0,
           7834.0
@@ -1679,7 +1679,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 289",
         "position": [
           -10462.0,
           -508.0
@@ -1726,7 +1726,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 288",
         "position": [
           -12660.0,
           5487.0
@@ -1773,7 +1773,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 287",
         "position": [
           -11081.0,
           -6220.0
@@ -1820,7 +1820,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 286",
         "position": [
           13891.0,
           3200.0
@@ -1867,7 +1867,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 285",
         "position": [
           14648.0,
           1523.0
@@ -1914,7 +1914,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 284",
         "position": [
           6015.0,
           2841.0
@@ -1961,7 +1961,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 283",
         "position": [
           -8792.0,
           -4736.0
@@ -2008,7 +2008,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 282",
         "position": [
           -9392.0,
           1252.0
@@ -2055,7 +2055,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 281",
         "position": [
           -8672.0,
           5352.0
@@ -2102,7 +2102,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 280",
         "position": [
           3810.0,
           3599.0
@@ -2149,7 +2149,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 279",
         "position": [
           13492.0,
           4433.0
@@ -2196,7 +2196,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 278",
         "position": [
           -8167.0,
           360.0
@@ -2243,7 +2243,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 277",
         "position": [
           3435.0,
           -1635.0
@@ -2290,7 +2290,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 276",
         "position": [
           10063.0,
           -7244.0
@@ -2337,7 +2337,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 275",
         "position": [
           6750.0,
           4614.0
@@ -2384,7 +2384,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 274",
         "position": [
           -1133.0,
           865.0
@@ -2431,7 +2431,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 273",
         "position": [
           -8872.0,
           -5566.0
@@ -2478,7 +2478,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 272",
         "position": [
           9783.0,
           -2714.0
@@ -2525,7 +2525,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 271",
         "position": [
           -15472.0,
           -2349.0
@@ -2572,7 +2572,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 270",
         "position": [
           12182.0,
           3058.0
@@ -2619,7 +2619,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 269",
         "position": [
           595.0,
           -3831.0
@@ -2666,7 +2666,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 268",
         "position": [
           590.0,
           823.0
@@ -2713,7 +2713,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 267",
         "position": [
           -2123.0,
           1770.0
@@ -2760,7 +2760,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 266",
         "position": [
           4972.0,
           -1170.0
@@ -2807,7 +2807,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 265",
         "position": [
           4267.0,
           -6287.0
@@ -2854,7 +2854,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 264",
         "position": [
           -4808.0,
           -6546.0
@@ -2901,7 +2901,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 263",
         "position": [
           -7150.0,
           1128.0
@@ -2948,7 +2948,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 262",
         "position": [
           14238.0,
           237.0
@@ -2995,7 +2995,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 261",
         "position": [
           -4973.0,
           3408.0
@@ -3042,7 +3042,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 260",
         "position": [
           13426.0,
           7871.0
@@ -3089,7 +3089,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 259",
         "position": [
           5991.0,
           -7804.0
@@ -3136,7 +3136,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 258",
         "position": [
           -4357.0,
           -466.0
@@ -3183,7 +3183,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 257",
         "position": [
           -7075.0,
           -3676.0
@@ -3230,7 +3230,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 256",
         "position": [
           -6780.0,
           7111.0
@@ -3277,7 +3277,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 255",
         "position": [
           10948.0,
           4723.0
@@ -3324,7 +3324,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 254",
         "position": [
           2283.0,
           2222.0
@@ -3371,7 +3371,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 253",
         "position": [
           12532.0,
           6556.0
@@ -3418,7 +3418,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 252",
         "position": [
           -7834.0,
           -5300.0
@@ -3465,7 +3465,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 251",
         "position": [
           13486.0,
           -3681.0
@@ -3512,7 +3512,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 250",
         "position": [
           -14092.0,
           -6777.0
@@ -3559,7 +3559,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 249",
         "position": [
           -10088.0,
           1762.0
@@ -3606,7 +3606,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 248",
         "position": [
           -13519.0,
           -6988.0
@@ -3653,7 +3653,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 247",
         "position": [
           14195.0,
           3594.0
@@ -3700,7 +3700,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 246",
         "position": [
           10122.0,
           1547.0
@@ -3747,7 +3747,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 245",
         "position": [
           12255.0,
           -3540.0
@@ -3794,7 +3794,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 244",
         "position": [
           -505.0,
           -2236.0
@@ -3841,7 +3841,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 243",
         "position": [
           -7221.0,
           6910.0
@@ -3888,7 +3888,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 242",
         "position": [
           10268.0,
           -4574.0
@@ -3935,7 +3935,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 241",
         "position": [
           -2839.0,
           7172.0
@@ -3982,7 +3982,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 240",
         "position": [
           -2491.0,
           6300.0
@@ -4029,7 +4029,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 239",
         "position": [
           -13391.0,
           3064.0
@@ -4076,7 +4076,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 238",
         "position": [
           -12195.0,
           -415.0
@@ -4123,7 +4123,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 237",
         "position": [
           -15389.0,
           -6059.0
@@ -4170,7 +4170,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 236",
         "position": [
           -9751.0,
           6640.0
@@ -4217,7 +4217,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 235",
         "position": [
           -7806.0,
           1876.0
@@ -4264,7 +4264,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 234",
         "position": [
           3281.0,
           -915.0
@@ -4311,7 +4311,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 233",
         "position": [
           -13377.0,
           4664.0
@@ -4358,7 +4358,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 232",
         "position": [
           3135.0,
           -5495.0
@@ -4405,7 +4405,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 231",
         "position": [
           -8364.0,
           6714.0
@@ -4452,7 +4452,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 230",
         "position": [
           3737.0,
           -7664.0
@@ -4499,7 +4499,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 229",
         "position": [
           15923.0,
           4350.0
@@ -4546,7 +4546,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 228",
         "position": [
           -1839.0,
           6524.0
@@ -4593,7 +4593,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 227",
         "position": [
           -3430.0,
           -7095.0
@@ -4640,7 +4640,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 226",
         "position": [
           -4479.0,
           -7525.0
@@ -4687,7 +4687,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 225",
         "position": [
           3569.0,
           638.0
@@ -4734,7 +4734,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 224",
         "position": [
           398.0,
           -854.0
@@ -4781,7 +4781,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 223",
         "position": [
           -14345.0,
           -3325.0
@@ -4828,7 +4828,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 222",
         "position": [
           8520.0,
           2940.0
@@ -4875,7 +4875,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 221",
         "position": [
           8230.0,
           -3551.0
@@ -4922,7 +4922,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 220",
         "position": [
           15418.0,
           -4103.0
@@ -4969,7 +4969,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 219",
         "position": [
           -11425.0,
           762.0
@@ -5016,7 +5016,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 218",
         "position": [
           2352.0,
           -3552.0
@@ -5063,7 +5063,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 217",
         "position": [
           11830.0,
           5292.0
@@ -5110,7 +5110,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 216",
         "position": [
           -5353.0,
           5458.0
@@ -5157,7 +5157,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 215",
         "position": [
           -3978.0,
           -6854.0
@@ -5204,7 +5204,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 214",
         "position": [
           12486.0,
           -2804.0
@@ -5251,7 +5251,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 213",
         "position": [
           10423.0,
           3918.0
@@ -5298,7 +5298,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 212",
         "position": [
           -9005.0,
           -6948.0
@@ -5345,7 +5345,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 211",
         "position": [
           14114.0,
           -7561.0
@@ -5392,7 +5392,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 210",
         "position": [
           -1292.0,
           -7752.0
@@ -5439,7 +5439,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 209",
         "position": [
           5293.0,
           5996.0
@@ -5486,7 +5486,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 208",
         "position": [
           8114.0,
           2809.0
@@ -5533,7 +5533,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 207",
         "position": [
           8307.0,
           -519.0
@@ -5580,7 +5580,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 206",
         "position": [
           -11194.0,
           4268.0
@@ -5627,7 +5627,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 205",
         "position": [
           7941.0,
           -7255.0
@@ -5674,7 +5674,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 204",
         "position": [
           13309.0,
           -3585.0
@@ -5721,7 +5721,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 203",
         "position": [
           -10314.0,
           -1979.0
@@ -5768,7 +5768,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 202",
         "position": [
           12666.0,
           5087.0
@@ -5815,7 +5815,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 201",
         "position": [
           -7595.0,
           826.0
@@ -5862,7 +5862,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 200",
         "position": [
           10667.0,
           -6472.0
@@ -5909,7 +5909,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 199",
         "position": [
           -11307.0,
           -3314.0
@@ -5956,7 +5956,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 198",
         "position": [
           -6324.0,
           7629.0
@@ -6003,7 +6003,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 197",
         "position": [
           6867.0,
           2153.0
@@ -6050,7 +6050,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 196",
         "position": [
           -10929.0,
           -6115.0
@@ -6097,7 +6097,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 195",
         "position": [
           5363.0,
           -7972.0
@@ -6144,7 +6144,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 194",
         "position": [
           10113.0,
           2008.0
@@ -6191,7 +6191,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 193",
         "position": [
           -15212.0,
           -23.0
@@ -6238,7 +6238,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 192",
         "position": [
           2115.0,
           -6321.0
@@ -6285,7 +6285,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 191",
         "position": [
           8774.0,
           380.0
@@ -6332,7 +6332,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 190",
         "position": [
           12082.0,
           -6046.0
@@ -6379,7 +6379,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 189",
         "position": [
           -8185.0,
           -5670.0
@@ -6426,7 +6426,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 188",
         "position": [
           -2029.0,
           2264.0
@@ -6473,7 +6473,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 187",
         "position": [
           9269.0,
           937.0
@@ -6520,7 +6520,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 186",
         "position": [
           -3492.0,
           1961.0
@@ -6567,7 +6567,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 185",
         "position": [
           -10062.0,
           -4963.0
@@ -6614,7 +6614,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 184",
         "position": [
           -15315.0,
           1313.0
@@ -6661,7 +6661,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 183",
         "position": [
           14003.0,
           -2055.0
@@ -6708,7 +6708,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 182",
         "position": [
           -12122.0,
           -3741.0
@@ -6755,7 +6755,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 181",
         "position": [
           -13780.0,
           -2598.0
@@ -6802,7 +6802,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 180",
         "position": [
           12489.0,
           948.0
@@ -6849,7 +6849,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 179",
         "position": [
           -12324.0,
           5643.0
@@ -6896,7 +6896,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 178",
         "position": [
           8050.0,
           155.0
@@ -6943,7 +6943,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 177",
         "position": [
           8028.0,
           5200.0
@@ -6990,7 +6990,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 176",
         "position": [
           -15852.0,
           3124.0
@@ -7037,7 +7037,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 175",
         "position": [
           -10546.0,
           -7697.0
@@ -7084,7 +7084,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 174",
         "position": [
           5416.0,
           5452.0
@@ -7131,7 +7131,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 173",
         "position": [
           -14350.0,
           -2338.0
@@ -7178,7 +7178,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 172",
         "position": [
           -1375.0,
           -5989.0
@@ -7225,7 +7225,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 171",
         "position": [
           -14645.0,
           -2985.0
@@ -7272,7 +7272,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 170",
         "position": [
           -7744.0,
           -1348.0
@@ -7319,7 +7319,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 169",
         "position": [
           36.0,
           6736.0
@@ -7366,7 +7366,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 168",
         "position": [
           4626.0,
           5812.0
@@ -7413,7 +7413,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 167",
         "position": [
           -1394.0,
           2173.0
@@ -7460,7 +7460,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 166",
         "position": [
           142.0,
           7196.0
@@ -7507,7 +7507,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 165",
         "position": [
           -6485.0,
           -6036.0
@@ -7554,7 +7554,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 164",
         "position": [
           4355.0,
           7001.0
@@ -7601,7 +7601,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 163",
         "position": [
           -1045.0,
           -682.0
@@ -7648,7 +7648,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 162",
         "position": [
           3923.0,
           -4641.0
@@ -7695,7 +7695,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 161",
         "position": [
           -8962.0,
           1853.0
@@ -7742,7 +7742,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 160",
         "position": [
           -11464.0,
           -3217.0
@@ -7789,7 +7789,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 159",
         "position": [
           -3157.0,
           -2570.0
@@ -7836,7 +7836,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 158",
         "position": [
           13954.0,
           -3112.0
@@ -7883,7 +7883,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 157",
         "position": [
           -4658.0,
           -7392.0
@@ -7930,7 +7930,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 156",
         "position": [
           6409.0,
           2463.0
@@ -7977,7 +7977,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 155",
         "position": [
           5543.0,
           1347.0
@@ -8024,7 +8024,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 154",
         "position": [
           -4400.0,
           2969.0
@@ -8071,7 +8071,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 153",
         "position": [
           13763.0,
           5901.0
@@ -8118,7 +8118,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 152",
         "position": [
           5132.0,
           472.0
@@ -8165,7 +8165,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 151",
         "position": [
           9508.0,
           4318.0
@@ -8212,7 +8212,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 150",
         "position": [
           12289.0,
           7944.0
@@ -8259,7 +8259,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 149",
         "position": [
           2678.0,
           -6231.0
@@ -8306,7 +8306,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 148",
         "position": [
           6913.0,
           3075.0
@@ -8353,7 +8353,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 147",
         "position": [
           -4753.0,
           5584.0
@@ -8400,7 +8400,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 146",
         "position": [
           -11025.0,
           -6461.0
@@ -8447,7 +8447,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 145",
         "position": [
           -9296.0,
           7818.0
@@ -8494,7 +8494,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 144",
         "position": [
           -3836.0,
           1542.0
@@ -8541,7 +8541,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 143",
         "position": [
           -13637.0,
           1010.0
@@ -8588,7 +8588,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 142",
         "position": [
           -15396.0,
           -7497.0
@@ -8635,7 +8635,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 141",
         "position": [
           2786.0,
           7498.0
@@ -8682,7 +8682,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 140",
         "position": [
           -13330.0,
           2428.0
@@ -8729,7 +8729,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 139",
         "position": [
           7992.0,
           1824.0
@@ -8776,7 +8776,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 138",
         "position": [
           4601.0,
           -1923.0
@@ -8823,7 +8823,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 137",
         "position": [
           13541.0,
           2129.0
@@ -8870,7 +8870,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 136",
         "position": [
           1549.0,
           5556.0
@@ -8917,7 +8917,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 135",
         "position": [
           -12171.0,
           -225.0
@@ -8964,7 +8964,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 134",
         "position": [
           -4808.0,
           -395.0
@@ -9011,7 +9011,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 133",
         "position": [
           10740.0,
           -1956.0
@@ -9058,7 +9058,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 132",
         "position": [
           9990.0,
           7145.0
@@ -9105,7 +9105,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 131",
         "position": [
           10488.0,
           4685.0
@@ -9152,7 +9152,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 130",
         "position": [
           12112.0,
           6695.0
@@ -9199,7 +9199,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 129",
         "position": [
           4072.0,
           4818.0
@@ -9246,7 +9246,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 128",
         "position": [
           12296.0,
           4673.0
@@ -9293,7 +9293,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 127",
         "position": [
           14877.0,
           -3576.0
@@ -9340,7 +9340,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 126",
         "position": [
           3855.0,
           855.0
@@ -9387,7 +9387,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 125",
         "position": [
           -5452.0,
           7881.0
@@ -9434,7 +9434,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 124",
         "position": [
           -10444.0,
           -6007.0
@@ -9481,7 +9481,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 123",
         "position": [
           6701.0,
           4193.0
@@ -9528,7 +9528,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 122",
         "position": [
           -795.0,
           7783.0
@@ -9575,7 +9575,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 121",
         "position": [
           1825.0,
           -4779.0
@@ -9622,7 +9622,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 120",
         "position": [
           7754.0,
           -1489.0
@@ -9669,7 +9669,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 119",
         "position": [
           6848.0,
           -3325.0
@@ -9716,7 +9716,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 118",
         "position": [
           -13393.0,
           -5517.0
@@ -9763,7 +9763,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 117",
         "position": [
           972.0,
           -2543.0
@@ -9810,7 +9810,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 116",
         "position": [
           -3947.0,
           -7038.0
@@ -9857,7 +9857,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 115",
         "position": [
           -11435.0,
           -1441.0
@@ -9904,7 +9904,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 114",
         "position": [
           -4415.0,
           41.0
@@ -9951,7 +9951,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 113",
         "position": [
           -2978.0,
           5617.0
@@ -9998,7 +9998,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 112",
         "position": [
           13337.0,
           -729.0
@@ -10045,7 +10045,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 111",
         "position": [
           7216.0,
           -6374.0
@@ -10092,7 +10092,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 110",
         "position": [
           -9928.0,
           5350.0
@@ -10139,7 +10139,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 109",
         "position": [
           -9460.0,
           7111.0
@@ -10186,7 +10186,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 108",
         "position": [
           -1540.0,
           -1572.0
@@ -10233,7 +10233,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 107",
         "position": [
           -10892.0,
           -2887.0
@@ -10280,7 +10280,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 106",
         "position": [
           -13697.0,
           4760.0
@@ -10327,7 +10327,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 105",
         "position": [
           -2993.0,
           3477.0
@@ -10374,7 +10374,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 104",
         "position": [
           14900.0,
           -6287.0
@@ -10421,7 +10421,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 103",
         "position": [
           5763.0,
           -3060.0
@@ -10468,7 +10468,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 102",
         "position": [
           5153.0,
           -2480.0
@@ -10515,7 +10515,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 101",
         "position": [
           4326.0,
           5011.0
@@ -10562,7 +10562,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 100",
         "position": [
           -14736.0,
           260.0
@@ -10609,7 +10609,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 99",
         "position": [
           8596.0,
           -4263.0
@@ -10656,7 +10656,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 98",
         "position": [
           9423.0,
           4520.0
@@ -10703,7 +10703,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 97",
         "position": [
           -1526.0,
           -5375.0
@@ -10750,7 +10750,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 96",
         "position": [
           -8118.0,
           -6914.0
@@ -10797,7 +10797,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 95",
         "position": [
           14227.0,
           4043.0
@@ -10844,7 +10844,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 94",
         "position": [
           -6990.0,
           -3243.0
@@ -10891,7 +10891,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 93",
         "position": [
           7152.0,
           -5200.0
@@ -10938,7 +10938,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 92",
         "position": [
           7851.0,
           1484.0
@@ -10985,7 +10985,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 91",
         "position": [
           10302.0,
           -6629.0
@@ -11032,7 +11032,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 90",
         "position": [
           12019.0,
           -5875.0
@@ -11079,7 +11079,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 89",
         "position": [
           -3450.0,
           -7860.0
@@ -11126,7 +11126,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 88",
         "position": [
           3711.0,
           1760.0
@@ -11173,7 +11173,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 87",
         "position": [
           14974.0,
           6270.0
@@ -11220,7 +11220,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 86",
         "position": [
           -2936.0,
           -100.0
@@ -11267,7 +11267,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 85",
         "position": [
           -2969.0,
           492.0
@@ -11314,7 +11314,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 84",
         "position": [
           15003.0,
           3432.0
@@ -11361,7 +11361,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 83",
         "position": [
           -14076.0,
           3023.0
@@ -11408,7 +11408,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 82",
         "position": [
           -11198.0,
           -3901.0
@@ -11455,7 +11455,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 81",
         "position": [
           -2015.0,
           -4898.0
@@ -11502,7 +11502,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 80",
         "position": [
           1773.0,
           -7730.0
@@ -11549,7 +11549,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 79",
         "position": [
           12070.0,
           -513.0
@@ -11596,7 +11596,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 78",
         "position": [
           13334.0,
           1874.0
@@ -11643,7 +11643,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 77",
         "position": [
           -12375.0,
           2477.0
@@ -11690,7 +11690,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 76",
         "position": [
           2787.0,
           1905.0
@@ -11737,7 +11737,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 75",
         "position": [
           -7687.0,
           -3526.0
@@ -11784,7 +11784,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 74",
         "position": [
           10154.0,
           5510.0
@@ -11831,7 +11831,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 73",
         "position": [
           5659.0,
           2292.0
@@ -11878,7 +11878,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 72",
         "position": [
           -10465.0,
           -3550.0
@@ -11925,7 +11925,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 71",
         "position": [
           -11856.0,
           -804.0
@@ -11972,7 +11972,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 70",
         "position": [
           12321.0,
           -4442.0
@@ -12019,7 +12019,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 69",
         "position": [
           -5192.0,
           -6168.0
@@ -12066,7 +12066,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 68",
         "position": [
           -11687.0,
           355.0
@@ -12113,7 +12113,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 67",
         "position": [
           -4299.0,
           7316.0
@@ -12160,7 +12160,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 66",
         "position": [
           8488.0,
           -7718.0
@@ -12207,7 +12207,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 65",
         "position": [
           7195.0,
           -4703.0
@@ -12254,7 +12254,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 64",
         "position": [
           6549.0,
           -6563.0
@@ -12301,7 +12301,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 63",
         "position": [
           -3577.0,
           -7721.0
@@ -12348,7 +12348,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 62",
         "position": [
           14145.0,
           -5940.0
@@ -12395,7 +12395,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 61",
         "position": [
           -5445.0,
           -4566.0
@@ -12442,7 +12442,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 60",
         "position": [
           3976.0,
           7329.0
@@ -12489,7 +12489,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 59",
         "position": [
           14932.0,
           -3831.0
@@ -12536,7 +12536,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 58",
         "position": [
           11088.0,
           7426.0
@@ -12583,7 +12583,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 57",
         "position": [
           423.0,
           -2998.0
@@ -12630,7 +12630,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 56",
         "position": [
           1861.0,
           6688.0
@@ -12677,7 +12677,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 55",
         "position": [
           -5288.0,
           -5400.0
@@ -12724,7 +12724,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 54",
         "position": [
           -12443.0,
           4476.0
@@ -12771,7 +12771,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 53",
         "position": [
           15998.0,
           2322.0
@@ -12818,7 +12818,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 52",
         "position": [
           13869.0,
           -3858.0
@@ -12865,7 +12865,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 51",
         "position": [
           6646.0,
           2362.0
@@ -12912,7 +12912,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 50",
         "position": [
           202.0,
           -5366.0
@@ -12959,7 +12959,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 49",
         "position": [
           -9809.0,
           -4185.0
@@ -13006,7 +13006,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 48",
         "position": [
           -9962.0,
           179.0
@@ -13053,7 +13053,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 47",
         "position": [
           11157.0,
           -3528.0
@@ -13100,7 +13100,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 46",
         "position": [
           -1202.0,
           7281.0
@@ -13147,7 +13147,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 45",
         "position": [
           9200.0,
           5458.0
@@ -13194,7 +13194,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 44",
         "position": [
           14523.0,
           -6413.0
@@ -13241,7 +13241,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 43",
         "position": [
           -15298.0,
           -4805.0
@@ -13288,7 +13288,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 42",
         "position": [
           -9776.0,
           3008.0
@@ -13335,7 +13335,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 41",
         "position": [
           -10751.0,
           -7481.0
@@ -13382,7 +13382,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 40",
         "position": [
           -1691.0,
           -384.0
@@ -13429,7 +13429,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 39",
         "position": [
           -13579.0,
           6310.0
@@ -13476,7 +13476,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 38",
         "position": [
           -12272.0,
           6893.0
@@ -13523,7 +13523,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 37",
         "position": [
           11938.0,
           -1100.0
@@ -13570,7 +13570,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 36",
         "position": [
           -7719.0,
           -3266.0
@@ -13617,7 +13617,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 35",
         "position": [
           8021.0,
           3348.0
@@ -13664,7 +13664,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 34",
         "position": [
           -5709.0,
           6836.0
@@ -13711,7 +13711,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 33",
         "position": [
           -9517.0,
           3595.0
@@ -13758,7 +13758,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 32",
         "position": [
           1410.0,
           -1641.0
@@ -13805,7 +13805,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 31",
         "position": [
           13168.0,
           -7100.0
@@ -13852,7 +13852,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 30",
         "position": [
           -9578.0,
           946.0
@@ -13899,7 +13899,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 29",
         "position": [
           -7091.0,
           -7791.0
@@ -13946,7 +13946,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 28",
         "position": [
           -543.0,
           4287.0
@@ -13993,7 +13993,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 27",
         "position": [
           -12570.0,
           7107.0
@@ -14040,7 +14040,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 26",
         "position": [
           11350.0,
           -6850.0
@@ -14087,7 +14087,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 25",
         "position": [
           8767.0,
           -345.0
@@ -14134,7 +14134,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 24",
         "position": [
           7986.0,
           5290.0
@@ -14181,7 +14181,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 23",
         "position": [
           -10171.0,
           2777.0
@@ -14228,7 +14228,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 22",
         "position": [
           -10979.0,
           4745.0
@@ -14275,7 +14275,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 21",
         "position": [
           -6070.0,
           5977.0
@@ -14322,7 +14322,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 20",
         "position": [
           -11167.0,
           7115.0
@@ -14369,7 +14369,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 19",
         "position": [
           5538.0,
           -7882.0
@@ -14416,7 +14416,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 18",
         "position": [
           944.0,
           -7561.0
@@ -14463,7 +14463,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 17",
         "position": [
           -4160.0,
           -3034.0
@@ -14510,7 +14510,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 16",
         "position": [
           3629.0,
           4623.0
@@ -14557,7 +14557,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 15",
         "position": [
           -650.0,
           7006.0
@@ -14604,7 +14604,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 14",
         "position": [
           11446.0,
           -195.0
@@ -14651,7 +14651,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 13",
         "position": [
           14106.0,
           1040.0
@@ -14698,7 +14698,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 12",
         "position": [
           -3684.0,
           -4965.0
@@ -14745,7 +14745,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 11",
         "position": [
           -3141.0,
           723.0
@@ -14792,7 +14792,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 10",
         "position": [
           9547.0,
           3644.0
@@ -14839,7 +14839,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 9",
         "position": [
           -11336.0,
           7141.0
@@ -14886,7 +14886,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 8",
         "position": [
           12703.0,
           -189.0
@@ -14933,7 +14933,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 7",
         "position": [
           3912.0,
           1667.0
@@ -14980,7 +14980,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 6",
         "position": [
           -10553.0,
           -2274.0
@@ -15027,7 +15027,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 5",
         "position": [
           -3618.0,
           -6579.0
@@ -15074,7 +15074,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 4",
         "position": [
           -15609.0,
           6604.0
@@ -15121,7 +15121,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 3",
         "position": [
           -15509.0,
           -5005.0
@@ -15168,7 +15168,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 2",
         "position": [
           -10295.0,
           4145.0
@@ -15215,7 +15215,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 1",
         "position": [
           -276.0,
           3478.0
@@ -15262,7 +15262,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Occluder 0",
         "position": [
           -15959.0,
           -5533.0
@@ -15275,6 +15275,9 @@
       }
     },
     {
+      "Player Component": {
+        "speed": 400.0
+      },
       "Sprite": {
         "sprite": {
           "color": [
@@ -15310,7 +15313,7 @@
         }
       },
       "Transform": {
-        "name": "",
+        "name": "Player",
         "position": [
           0.0,
           -300.0
@@ -15320,6 +15323,9 @@
           1.0,
           1.0
         ]
+      },
+      "controlled": {
+        "type": "player"
       }
     }
   ],

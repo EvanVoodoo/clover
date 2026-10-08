@@ -39,11 +39,12 @@ namespace clvr
 		ResourceManager* GetResourceManager() { return m_resourceManager; }
 		ImGuiLayer* GetImGuiLayer() { return m_imgui; }
 
-		bool running = false;
-
 		EngineMode GetEngineMode() const { return m_editorMode; }
 		void SetEngineMode(EngineMode mode);
 
+		bool GameWindowFocused();
+
+		bool running = false;
 	private:
 		bool Frame(float dt);
 

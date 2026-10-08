@@ -1,6 +1,7 @@
 #include "core/engine.hpp"
 #include <chrono>
 #include <core/scene.hpp>
+#include <rendering/renderer.hpp>
 
 namespace clvr {
 	bool IsMouseMoving() {
@@ -223,6 +224,11 @@ void EngineClass::MainMenuBar()
 void EngineClass::SetEngineMode(EngineMode mode) { 
     m_editorMode = mode; 
 	GetECS()->SetActiveRegistry(mode);
+}
+
+bool EngineClass::GameWindowFocused()
+{
+	return GetECS()->GetSystem<Renderer>().GameWindowFocused();
 }
 
 bool EngineClass::Frame(float dt)

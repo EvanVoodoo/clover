@@ -3,6 +3,7 @@
 #include "game.hpp"
 #include "rendering/renderer.hpp"
 #include <core/scene.hpp>
+#include <input/input_handler.hpp>
 
 using namespace clvr;
 
@@ -50,11 +51,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	if (!Engine.Initialize(hInstance, nCmdShow))
 		return 0;
 
-	Engine.GetECS()->CreateSystem<Renderer>();
+	auto ecs = Engine.GetECS();
+
+	ecs->CreateSystem<Renderer>();
 	SetupRenderer();
 
-	Engine.GetECS()->CreateSystem<SceneManager>();
-	Engine.GetECS()->CreateSystem<Game>();
+	ecs->CreateSystem<InputHandler>();
+	ecs->CreateSystem<SceneManager>();
+	ecs->CreateSystem<Game>();
 
 	Engine.Run();
 	Engine.Shutdown();

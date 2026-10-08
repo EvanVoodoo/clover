@@ -13,9 +13,12 @@ namespace clvr
 		virtual void Execute(CommandContext& ctx, entt::entity entity) = 0;
 	};
 
-    struct MoveCommand : public InputCommand {
-        float dirX, dirY;                                     // already normalized by the controller
-        MoveCommand(float x, float y) : dirX(x), dirY(y) {}
+    enum class MoveMode { Walk, Sprint, Crouch };
+
+    struct MoveCommand : InputCommand {
+        float dirX, dirY;                          // unit vector
+        MoveMode mode;
+        MoveCommand(float x, float y, MoveMode m) : dirX(x), dirY(y), mode(m) {}
 
         void Execute(CommandContext& ctx, entt::entity actor) override;
     };
