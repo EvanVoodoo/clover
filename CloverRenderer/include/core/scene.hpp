@@ -37,5 +37,7 @@ namespace clvr {
 		Entity m_selectedEntity = entt::null;
 		Entity m_scrollEntity = entt::null;
 		std::unique_ptr<TranslateGizmo> m_translateGizmo = nullptr;
+
+		json m_snapshot;
 	};
 }

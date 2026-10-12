@@ -7,10 +7,11 @@
 #include "core/common.hpp"
 #include "nlohmann/json.hpp"
 
+using json = nlohmann::json;
+
 namespace clvr
 {
 	using Entity = entt::entity;
-	using json = nlohmann::json;
 
 	enum class RunMode : uint8_t { Editing, Playing, Always };
 

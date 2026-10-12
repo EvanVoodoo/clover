@@ -4,6 +4,7 @@
 #include <entt/entity/fwd.hpp>
 #include <DirectXMath.h>
 #include "core/ecs.hpp"
+#include <Box2D/math_functions.h>
 
 using json = nlohmann::json;
 

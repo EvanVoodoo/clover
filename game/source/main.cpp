@@ -4,6 +4,7 @@
 #include "rendering/renderer.hpp"
 #include <core/scene.hpp>
 #include <input/input_handler.hpp>
+#include <physics/world.hpp>
 
 using namespace clvr;
 
@@ -55,6 +56,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	ecs->CreateSystem<Renderer>();
 	SetupRenderer();
+
+	ecs->CreateSystem<World>();
 
 	ecs->CreateSystem<InputHandler>();
 	ecs->CreateSystem<SceneManager>();

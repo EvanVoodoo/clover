@@ -180,7 +180,7 @@ void SceneManager::Inspect(float dt)
 
 void SceneManager::Play()
 {
-	const json snapshot = SaveScene();
+	m_snapshot = SaveScene();
 	Engine.SetEngineMode(EngineMode::Playing);
     Engine.GetECS()->GetRegistry().clear();
     auto gameCamera = Engine.GetECS()->CreateEntity();
@@ -194,7 +194,7 @@ void SceneManager::Play()
         break;
     }
 
-	LoadScene(snapshot);
+	LoadScene(m_snapshot);
 
 	for (auto&& s : Engine.GetECS()->GetSystems<System>()) {
 		if (s->GetRunMode() == RunMode::Playing || s->GetRunMode() == RunMode::Always) {
@@ -207,6 +207,7 @@ void SceneManager::Stop()
 {
     Engine.GetECS()->GetRegistry().clear();
 	Engine.SetEngineMode(EngineMode::Editing);
+    LoadScene(m_snapshot);
 }
 
 void SceneManager::DeleteSelectedEntity()

@@ -290,7 +290,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;$(ProjectDir)include\Box2D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -308,7 +308,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;$(ProjectDir)include\Box2D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -347,7 +347,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;$(ProjectDir)include\Box2D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -367,7 +367,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;$(ProjectDir)include\Box2D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -381,6 +381,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_rect_pack.h" />
+    <ClInclude Include="include\Box2D\base.h" />
+    <ClInclude Include="include\Box2D\box2d.h" />
+    <ClInclude Include="include\Box2D\collision.h" />
+    <ClInclude Include="include\Box2D\id.h" />
+    <ClInclude Include="include\Box2D\math_functions.h" />
+    <ClInclude Include="include\Box2D\types.h" />
     <ClInclude Include="include\core\common.hpp" />
     <ClInclude Include="include\core\components.hpp" />
     <ClInclude Include="include\core\ecs.hpp" />
@@ -485,6 +491,9 @@
     <ClInclude Include="include\input\input_handler.hpp" />
     <ClInclude Include="include\nlohmann\json.hpp" />
     <ClInclude Include="include\nlohmann\json_fwd.hpp" />
+    <ClInclude Include="include\physics\physics_components.hpp" />
+    <ClInclude Include="include\physics\units.hpp" />
+    <ClInclude Include="include\physics\world.hpp" />
     <ClInclude Include="include\rendering\framebuffer.hpp" />
     <ClInclude Include="include\rendering\renderer.hpp" />
     <ClInclude Include="include\rendering\render_components.hpp" />
@@ -501,6 +510,7 @@
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\physics\physics_components.cpp" />
     <ClCompile Include="source\core\components.cpp" />
     <ClCompile Include="source\input\input_controller.cpp" />
     <ClCompile Include="source\input\input_command.cpp" />
@@ -517,6 +527,7 @@
     <ClCompile Include="source\imgui\imgui_draw.cpp" />
     <ClCompile Include="source\imgui\imgui_tables.cpp" />
     <ClCompile Include="source\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="source\physics\world.cpp" />
     <ClCompile Include="source\rendering\framebuffer.cpp" />
     <ClCompile Include="source\rendering\shader_manager.cpp" />
     <ClCompile Include="source\rendering\texture.cpp" />

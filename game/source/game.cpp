@@ -4,6 +4,8 @@
 #include "rendering/renderer.hpp"
 #include <string>
 #include <input/input_controller.hpp>
+#include <physics/physics_components.hpp>
+#include <physics/units.hpp>
 
 using namespace clvr;
 using Dir = ResourceManager::Directory;
@@ -34,6 +36,7 @@ void Game::SetupScene()
 		auto& t = ecs->CreateComponent<Transform>(centerEntity);
 		t.position = { 0.0f, -300.0f };
 		t.name = "Player";
+
 		clvr::Sprite cs = Sprite(rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png"), true);
 		cs.position = t.position;
 		cs.size = { 200.0f, 200.0f };
@@ -41,6 +44,12 @@ void Game::SetupScene()
 		cs.layer = renderer.FindOrCreateSpriteLayer(1);
 		cs.isOccluder = false;
 		ecs->CreateComponent<SpriteComponent>(centerEntity, cs);
+
+		auto& rb = ecs->CreateComponent<RigidBody>(centerEntity);
+		rb.bodyType = b2_dynamicBody;
+		auto& box = ecs->CreateComponent<BoxCollider>(centerEntity);
+		box.halfExtents = (b2Vec2(71.0f, 71.0f));
+
 		auto& player = ecs->CreateComponent<PlayerComponent>(centerEntity);
 		player.speed = 400.0f;
 		ecs->CreateComponent<Controlled>(centerEntity, ControllerType::Player);
@@ -63,6 +72,11 @@ void Game::SetupScene()
 			s.layer = renderer.FindOrCreateSpriteLayer(0);
 			s.isOccluder = true;
 			ecs->CreateComponent<SpriteComponent>(entity, s);
+
+			auto& rb = ecs->CreateComponent<RigidBody>(entity);
+			rb.bodyType = b2_staticBody;
+			auto& box = ecs->CreateComponent<BoxCollider>(entity);
+			box.halfExtents = b2Vec2(s.size.x / 2.0f, s.size.y / 2.0f);
 		}
 		{
 			auto entity = ecs->CreateEntity();
@@ -93,6 +107,11 @@ void Game::SetupScene()
 			s.layer = renderer.FindOrCreateSpriteLayer(0);
 			s.isOccluder = true;
 			ecs->CreateComponent<SpriteComponent>(entity, s);
+
+			auto& rb = ecs->CreateComponent<RigidBody>(entity);
+			rb.bodyType = b2_staticBody;
+			auto& box = ecs->CreateComponent<BoxCollider>(entity);
+			box.halfExtents = b2Vec2(8000.0f, 32.0f);
 		}
 	}
 
