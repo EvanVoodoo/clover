@@ -31,7 +31,9 @@ namespace clvr
 		void SyncColliders();
 		void SyncBodies();
 		b2BodyId CreatePhysicsBody(const RigidBody& rb, const Transform& t);
+		void CreateShape(PhysicsMaterial mat, bool isSensor, b2ShapeDef& out);
         void CreateShapes(Entity e, b2BodyId body);
+		void UpdateShapeMaterial(b2ShapeId shape, const PhysicsMaterial& mat);
 
 		// Physics body manipulation
 

@@ -173,11 +173,11 @@ void EngineClass::MainMenuBar()
             // signature: MenuItem(label, shortcut, selected, enabled)
             if (ImGui::MenuItem("Save Scene", "Ctrl+S", false, canEditScene)) {
                 GetECS()->GetSystem<SceneManager>().SaveSceneToFile(
-                    GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "example.json"));
+                    GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "scenes/example.json"));
             }
             if (ImGui::MenuItem("Load Scene", "Ctrl+L", false, canEditScene)) {
                 GetECS()->GetSystem<SceneManager>().LoadSceneFromFile(
-                    GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "example.json"));
+                    GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "scenes/example.json"));
             }
             ImGui::EndMenu();
         }

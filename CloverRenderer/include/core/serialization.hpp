@@ -4,7 +4,6 @@
 #include <entt/entity/fwd.hpp>
 #include <DirectXMath.h>
 #include "core/ecs.hpp"
-#include <Box2D/math_functions.h>
 
 using json = nlohmann::json;
 
@@ -18,7 +17,6 @@ namespace DirectX {
 }
 
 namespace clvr {
-
     struct ComponentSerializer {
         const char* name;
         void (*save)(const entt::registry&, entt::entity, json&, const char* key);

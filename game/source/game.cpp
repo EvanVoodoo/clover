@@ -7,6 +7,7 @@
 #include <physics/physics_components.hpp>
 #include <input/input_handler.hpp>
 #include <player_controller.hpp>
+#include <core/scene.hpp>
 
 using namespace clvr;
 using Dir = ResourceManager::Directory;
@@ -14,15 +15,7 @@ using Dir = ResourceManager::Directory;
 Game::Game() {
 	priority = 10;
 	title = "GameSystem";
-	SetupScene();
-	auto& ih = Engine.GetECS()->GetSystem<InputHandler>();
-	ih.AddController(ControllerType::Player, std::make_unique<PhysicsPlayerController>());
-}
-
-void Game::SetupScene()
-{
-	auto ecs = Engine.GetECS();
-	auto& renderer = ecs->GetSystem<Renderer>();
+	auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
 	ResourceManager* rMngr = Engine.GetResourceManager();
 	std::string textures[] = {
 		rMngr->GetPath(Dir::SharedAssets, "textures/shrew1.jpg"),
@@ -33,6 +26,20 @@ void Game::SetupScene()
 	for (auto t : textures)
 		renderer.AddTexture(t);
 	renderer.BuildAtlas();   // built ONCE, after all textures added, before first frame
+	//SetupScene();
+
+	auto& ih = Engine.GetECS()->GetSystem<InputHandler>();
+	ih.AddController(ControllerType::Player, std::make_unique<PhysicsPlayerController>());
+
+	SceneManager& sceneManager = Engine.GetECS()->GetSystem<SceneManager>();
+	sceneManager.LoadSceneFromFile("assets/scenes/test_scene.json");
+}
+
+void Game::SetupScene()
+{
+	auto ecs = Engine.GetECS();
+	auto& renderer = ecs->GetSystem<Renderer>();
+	ResourceManager* rMngr = Engine.GetResourceManager();
 
 	{
 		auto centerEntity = ecs->CreateEntity();

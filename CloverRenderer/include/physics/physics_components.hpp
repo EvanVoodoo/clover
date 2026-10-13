@@ -8,6 +8,27 @@ inline void from_json(const nlohmann::json& j, b2Vec2& v) { j.at(0).get_to(v.x);
 
 namespace clvr
 {
+	struct PhysicsMaterial
+	{
+		float density = 1.0f;
+		float friction = 0.6f;
+		float restitution = 0.0f;
+
+		// optional, depending on your Box2D version
+		float rollingResistance = 0.0f;
+		float tangentSpeed = 0.0f;
+
+		// event flags (shape-level in Box2D)
+		bool enableContactEvents = true;
+		bool enableSensorEvents = true;
+		bool enableHitEvents = false;
+
+		bool dirty = true;
+
+		void Inspect();
+	};
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysicsMaterial, density, friction, restitution, rollingResistance, tangentSpeed, enableContactEvents, enableSensorEvents, enableHitEvents)
+
 	struct RigidBody
 	{
 		b2BodyId bodyId = b2_nullBodyId; // shouldn't be serialized, as it is managed by the physics world
@@ -22,7 +43,7 @@ namespace clvr
 		bool dirty = true;
 		void Inspect();
 	};
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(RigidBody, bodyType, linearDamping, angularDamping, gravityScale, fixedRotation, isBullet, enableSleep)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RigidBody, bodyType, linearDamping, angularDamping, gravityScale, fixedRotation, isBullet, enableSleep)
 
 	struct BoxCollider
 	{
@@ -30,12 +51,14 @@ namespace clvr
 		b2Vec2 offset = { 0.0f, 0.0f };
 		bool isSensor = false;
 
+		PhysicsMaterial material;
+
 		b2ShapeId shapeId = b2_nullShapeId;
 		bool dirty = true;
 
 		void Inspect();
 	};
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BoxCollider, halfExtents, offset, isSensor)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BoxCollider, halfExtents, offset, isSensor, material)
 
 	struct CircleCollider
 	{
@@ -43,26 +66,28 @@ namespace clvr
 		b2Vec2 offset = { 0.0f, 0.0f };
 		bool isSensor = false;
 
+		PhysicsMaterial material;
+		
 		b2ShapeId shapeId = b2_nullShapeId;
 		bool dirty = true;
 
 		void Inspect();
 	};
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CircleCollider, radius, offset, isSensor)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CircleCollider, radius, offset, isSensor, material)
 
 	struct PolygonCollider
 	{
 		std::vector<b2Vec2> vertices;  // convex, max 8
 		bool isSensor = false;
 
+		PhysicsMaterial material;
+
 		b2ShapeId shapeId = b2_nullShapeId;
 		bool dirty = true;
 
 		void Inspect();
 	};
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PolygonCollider, vertices, isSensor)
-
-	struct Material;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PolygonCollider, vertices, isSensor, material)
 }
 
 SAVEABLE_COMPONENT(clvr::RigidBody, "RigidBody");

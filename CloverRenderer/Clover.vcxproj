@@ -399,6 +399,7 @@
     <ClInclude Include="include\core\engine.hpp" />
     <ClInclude Include="include\Clover.h" />
     <ClInclude Include="include\core\gizmo.hpp" />
+    <ClInclude Include="include\core\imgui_helpers.hpp" />
     <ClInclude Include="include\core\imgui_layer.hpp" />
     <ClInclude Include="include\input\input.hpp" />
     <ClInclude Include="include\core\scene.hpp" />

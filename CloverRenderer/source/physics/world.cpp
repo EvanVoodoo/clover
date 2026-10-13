@@ -121,8 +121,8 @@ namespace clvr {
 				if (Engine.GetEngineMode() == EngineMode::Playing) {
 					if (auto* rb = reg.try_get<RigidBody>(entity)) {
 						if (b2Body_IsValid(rb->bodyId)) {
-							b2ShapeDef def = b2DefaultShapeDef();
-							def.isSensor = box.isSensor;
+							b2ShapeDef def;
+							CreateShape(box.material, box.isSensor, def);
 							b2Polygon poly = b2MakeOffsetBox(
 								Units::ToMeters(box.halfExtents.x),
 								Units::ToMeters(box.halfExtents.y),
@@ -140,8 +140,8 @@ namespace clvr {
 				Units::ToMeters(box.halfExtents.y),
 				Units::ToMeters(box.offset),
 				b2Rot_identity);
-
 			b2Shape_SetPolygon(box.shapeId, &poly);
+			UpdateShapeMaterial(box.shapeId, box.material);
 		}
 
 		for (auto [entity, circle] : reg.view<CircleCollider>().each())
@@ -153,8 +153,8 @@ namespace clvr {
 				if (Engine.GetEngineMode() == EngineMode::Playing) {
 					if (auto* rb = reg.try_get<RigidBody>(entity)) {
 						if (b2Body_IsValid(rb->bodyId)) {
-							b2ShapeDef def = b2DefaultShapeDef();
-							def.isSensor = circle.isSensor;
+							b2ShapeDef def;
+							CreateShape(circle.material, circle.isSensor, def);
 							b2Circle c = { Units::ToMeters(circle.offset), Units::ToMeters(circle.radius) };
 							circle.shapeId = b2CreateCircleShape(rb->bodyId, &def, &c);
 						}
@@ -165,6 +165,7 @@ namespace clvr {
 
 			b2Circle c = { Units::ToMeters(circle.offset), Units::ToMeters(circle.radius) };
 			b2Shape_SetCircle(circle.shapeId, &c);
+			UpdateShapeMaterial(circle.shapeId, circle.material);
 		}
 
 		for (auto [entity, poly] : reg.view<PolygonCollider>().each())
@@ -179,8 +180,8 @@ namespace clvr {
 							b2Hull hull = b2ComputeHull(poly.vertices.data(), (int)poly.vertices.size());
 							if (hull.count > 0)
 							{
-								b2ShapeDef def = b2DefaultShapeDef();
-								def.isSensor = poly.isSensor;
+								b2ShapeDef def;
+								CreateShape(poly.material, poly.isSensor, def);
 								b2Polygon p = b2MakePolygon(&hull, 0.0f);
 								poly.shapeId = b2CreatePolygonShape(rb->bodyId, &def, &p);
 							}
@@ -195,6 +196,7 @@ namespace clvr {
 			{
 				b2Polygon p = b2MakePolygon(&hull, 0.0f);
 				b2Shape_SetPolygon(poly.shapeId, &p);
+				UpdateShapeMaterial(poly.shapeId, poly.material);
 			}
 		}
 	}
@@ -240,6 +242,19 @@ namespace clvr {
 		return b2CreateBody(m_worldId, &bodyDef);
 	}
 
+	void World::CreateShape(PhysicsMaterial mat, bool isSensor, b2ShapeDef& out) {
+		out = b2DefaultShapeDef();
+		out.density = mat.density;
+		out.material.friction = mat.friction;
+		out.material.restitution = mat.restitution;
+		out.material.rollingResistance = mat.rollingResistance;
+		out.material.tangentSpeed = mat.tangentSpeed;
+		out.enableContactEvents = mat.enableContactEvents;
+		out.enableSensorEvents = mat.enableSensorEvents;
+		out.enableHitEvents = mat.enableHitEvents;
+		out.isSensor = isSensor;
+	}
+
 	void World::CreateShapes(Entity e, b2BodyId body)
 	{
 		if (!b2Body_IsValid(body))
@@ -248,8 +263,9 @@ namespace clvr {
 		auto& reg = Engine.GetECS()->GetRegistry();
 		if (auto* box = reg.try_get<BoxCollider>(e))
 		{
-			b2ShapeDef def = b2DefaultShapeDef();
-			def.isSensor = box->isSensor;
+			b2ShapeDef def;
+			CreateShape(box->material, box->isSensor, def);
+
 			b2Polygon poly = b2MakeOffsetBox(Units::ToMeters(box->halfExtents.x),
 				Units::ToMeters(box->halfExtents.y),
 				{ Units::ToMeters(box->offset.x), Units::ToMeters(box->offset.y) },
@@ -276,6 +292,20 @@ namespace clvr {
 				poly->shapeId = b2CreatePolygonShape(body, &def, &p);
 			}
 		}
+	}
+
+	void World::UpdateShapeMaterial(b2ShapeId shape, const PhysicsMaterial& mat)
+	{
+		b2SurfaceMaterial material = b2Shape_GetSurfaceMaterial(shape);
+		material.friction = mat.friction;
+		material.restitution = mat.restitution;
+		material.rollingResistance = mat.rollingResistance;
+		material.tangentSpeed = mat.tangentSpeed;
+		b2Shape_SetSurfaceMaterial(shape, material);
+		b2Shape_SetDensity(shape, mat.density, true);
+		b2Shape_EnableContactEvents(shape, mat.enableContactEvents);
+		b2Shape_EnableSensorEvents(shape, mat.enableSensorEvents);
+		b2Shape_EnableHitEvents(shape, mat.enableHitEvents);
 	}
 
 	b2Vec2 World::GetVelocity(RigidBody rb) const
