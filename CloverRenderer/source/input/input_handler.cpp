@@ -47,18 +47,18 @@ json InputHandler::Save() { return json(); }
 
 void InputHandler::Load(const json&) {}
 
-inline void InputHandler::AddController(ControllerType type, std::unique_ptr<InputController> controller) {
+void InputHandler::AddController(ControllerType type, std::unique_ptr<InputController> controller) {
 	m_controllers[type] = std::move(controller);
 }
 
-inline void InputHandler::RemoveController(ControllerType type) {
+void InputHandler::RemoveController(ControllerType type) {
 	m_controllers.erase(type);
 }
 
-inline std::unordered_map<ControllerType, std::unique_ptr<InputController>>& InputHandler::GetControllers() {
+std::unordered_map<ControllerType, std::unique_ptr<InputController>>& InputHandler::GetControllers() {
 	return m_controllers;
 }
 
-inline std::vector<std::pair<entt::entity, std::unique_ptr<InputCommand>>>& InputHandler::GetFrameCommands() {
+std::vector<std::pair<entt::entity, std::unique_ptr<InputCommand>>>& InputHandler::GetFrameCommands() {
 	return m_frame;
 }

@@ -230,6 +230,7 @@ void SceneManager::UpdateSelectedEntity(entt::entity entity)
 
 json SceneManager::SaveScene() {
     auto ecs = Engine.GetECS();
+    auto& registry = ecs->GetRegistry();
     json scene;
     scene["version"] = 1.0;
 
@@ -238,10 +239,14 @@ json SceneManager::SaveScene() {
         scene["systems"][s->title] = s->Save();
     }
 
-    for (auto e : ecs->GetRegistry().view<Transform>()) {
+    auto view = registry.view<Transform>();
+    std::vector<entt::entity> entities(view.begin(), view.end());
+    std::reverse(entities.begin(), entities.end());
+
+    for (auto e : entities) {
         json ent;
         for (auto& ser : GetSerializers()) {
-			ser.save(ecs->GetRegistry(), e, ent, ser.name);
+            ser.save(registry, e, ent, ser.name);
         }
         scene["entities"].push_back(ent);
     }

@@ -274,6 +274,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -292,6 +293,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;$(ProjectDir)include\Box2D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -310,6 +312,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;$(ProjectDir)include\Box2D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -330,6 +333,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -350,6 +354,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;$(ProjectDir)include\Box2D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -370,6 +375,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)include\imgui\backends;$(ProjectDir)include;$(ProjectDir)include\DirectXTex;$(ProjectDir)include\imgui;$(ProjectDir)include\Box2D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

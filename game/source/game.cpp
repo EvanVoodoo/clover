@@ -5,7 +5,8 @@
 #include <string>
 #include <input/input_controller.hpp>
 #include <physics/physics_components.hpp>
-#include <physics/units.hpp>
+#include <input/input_handler.hpp>
+#include <player_controller.hpp>
 
 using namespace clvr;
 using Dir = ResourceManager::Directory;
@@ -14,6 +15,8 @@ Game::Game() {
 	priority = 10;
 	title = "GameSystem";
 	SetupScene();
+	auto& ih = Engine.GetECS()->GetSystem<InputHandler>();
+	ih.AddController(ControllerType::Player, std::make_unique<PhysicsPlayerController>());
 }
 
 void Game::SetupScene()

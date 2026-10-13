@@ -33,6 +33,57 @@ namespace clvr
 		b2BodyId CreatePhysicsBody(const RigidBody& rb, const Transform& t);
         void CreateShapes(Entity e, b2BodyId body);
 
+		// Physics body manipulation
+
+		/// <summary>
+		/// Returns the current velocity of the body.
+		/// </summary>
+		/// <param name="rb">Rigidbody</param>
+		/// <returns></returns>
+		b2Vec2 GetVelocity(RigidBody rb) const;
+
+		/// <summary>
+		/// Returns the new velocity of the body after adding the specified value to it.
+		/// </summary>
+		/// <param name="rb">Rigidbody</param>
+		/// <param name="velocity">Velocity to be added</param>
+		/// <returns></returns>
+		b2Vec2 AddVelocity(RigidBody rb, const b2Vec2 velocity);
+
+		b2Vec2 AddVelocityX(RigidBody rb, float velocityX);
+
+		b2Vec2 AddVelocityY(RigidBody rb, float velocityY);
+
+		/// <summary>
+		/// Returns the new velocity of the body after setting it to the specified value.
+		/// </summary>
+		/// <param name="rb">Rigidbody</param>
+		/// <param name="velocity">New velocity</param>
+		/// <returns></returns>
+		b2Vec2 SetVelocity(RigidBody rb, const b2Vec2 velocity);
+
+		b2Vec2 SetVelocityX(RigidBody rb, float velocityX);
+
+		b2Vec2 SetVelocityY(RigidBody rb, float velocityY);
+
+		/// <summary>
+		/// Applies a force to the body at a specific point. This will also wake up the body if it is sleeping.
+		/// </summary>
+		/// <param name="rb"></param>
+		/// <param name="force"></param>
+		/// <param name="point"></param>
+		/// <param name="wake"></param>
+		void ApplyForce(RigidBody rb, const b2Vec2 force, const b2Vec2 point, bool wake);
+
+		/// <summary>
+		/// Applies an impulse to the body at a specific point. This will also wake up the body if it is sleeping.
+		/// </summary>
+		/// <param name="rb"></param>
+		/// <param name="impulse"></param>
+		/// <param name="point"></param>
+		/// <param name="wake"></param>
+		void ApplyImpulse(RigidBody rb, const b2Vec2 impulse, const b2Vec2 point, bool wake);
+
 	private:
 		b2WorldId m_worldId = b2_nullWorldId;
 		b2ContactEvents m_contactEvents;
