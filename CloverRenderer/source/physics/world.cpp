@@ -27,8 +27,8 @@ namespace clvr {
 		if (Engine.GetEngineMode() != EngineMode::Playing)
 			return;
 
-		SyncColliders();
 		SyncBodies();
+		SyncColliders();
 
 		b2World_Step(m_worldId, 1.0f / 60.0f, m_substeps);
 
@@ -111,26 +111,25 @@ namespace clvr {
 	{
 		auto& reg = Engine.GetECS()->GetRegistry();
 
-		for (auto [entity, box] : reg.view<BoxCollider>().each())
+		for (auto [entity, box, rb] : reg.view<BoxCollider, RigidBody>().each())
 		{
 			if (!box.dirty)
 				continue;
-			box.dirty = false;
-			if (!b2Shape_IsValid(box.shapeId)) {
+			if (!b2Shape_IsValid(box.shapeId) || B2_IS_NULL(box.shapeId)) {
 				// if playing, create the shape if it doesn't exist
 				if (Engine.GetEngineMode() == EngineMode::Playing) {
-					if (auto* rb = reg.try_get<RigidBody>(entity)) {
-						if (b2Body_IsValid(rb->bodyId)) {
-							b2ShapeDef def;
-							CreateShape(box.material, box.isSensor, def);
-							b2Polygon poly = b2MakeOffsetBox(
-								Units::ToMeters(box.halfExtents.x),
-								Units::ToMeters(box.halfExtents.y),
-								Units::ToMeters(box.offset),
-								b2Rot_identity);
-							box.shapeId = b2CreatePolygonShape(rb->bodyId, &def, &poly);
-						}
+					if (b2Body_IsValid(rb.bodyId)) {
+						b2ShapeDef def;
+						CreateShape(box.material, box.isSensor, def);
+						b2Polygon poly = b2MakeOffsetBox(
+							Units::ToMeters(box.halfExtents.x),
+							Units::ToMeters(box.halfExtents.y),
+							Units::ToMeters(box.offset),
+							b2Rot_identity);
+						box.shapeId = b2CreatePolygonShape(rb.bodyId, &def, &poly);
+						box.dirty = false;
 					}
+					else continue;
 				}
 				else continue;
 			}
@@ -142,23 +141,23 @@ namespace clvr {
 				b2Rot_identity);
 			b2Shape_SetPolygon(box.shapeId, &poly);
 			UpdateShapeMaterial(box.shapeId, box.material);
+			box.dirty = false;
 		}
 
-		for (auto [entity, circle] : reg.view<CircleCollider>().each())
+		for (auto [entity, circle, rb] : reg.view<CircleCollider, RigidBody>().each())
 		{
 			if (!circle.dirty)
 				continue;
-			circle.dirty = false;
-			if (!b2Shape_IsValid(circle.shapeId)) {
+			if (!b2Shape_IsValid(circle.shapeId) || B2_IS_NULL(circle.shapeId)) {
 				if (Engine.GetEngineMode() == EngineMode::Playing) {
-					if (auto* rb = reg.try_get<RigidBody>(entity)) {
-						if (b2Body_IsValid(rb->bodyId)) {
-							b2ShapeDef def;
-							CreateShape(circle.material, circle.isSensor, def);
-							b2Circle c = { Units::ToMeters(circle.offset), Units::ToMeters(circle.radius) };
-							circle.shapeId = b2CreateCircleShape(rb->bodyId, &def, &c);
-						}
+					if (b2Body_IsValid(rb.bodyId)) {
+						b2ShapeDef def;
+						CreateShape(circle.material, circle.isSensor, def);
+						b2Circle c = { Units::ToMeters(circle.offset), Units::ToMeters(circle.radius) };
+						circle.shapeId = b2CreateCircleShape(rb.bodyId, &def, &c);
+						circle.dirty = false;
 					}
+					else continue;
 				}
 				else continue;
 			}
@@ -166,27 +165,27 @@ namespace clvr {
 			b2Circle c = { Units::ToMeters(circle.offset), Units::ToMeters(circle.radius) };
 			b2Shape_SetCircle(circle.shapeId, &c);
 			UpdateShapeMaterial(circle.shapeId, circle.material);
+			circle.dirty = false;
 		}
 
-		for (auto [entity, poly] : reg.view<PolygonCollider>().each())
+		for (auto [entity, poly, rb] : reg.view<PolygonCollider, RigidBody>().each())
 		{
 			if (!poly.dirty)
 				continue;
-			poly.dirty = false;
-			if (!b2Shape_IsValid(poly.shapeId)) {
+			if (!b2Shape_IsValid(poly.shapeId) || B2_IS_NULL(poly.shapeId)) {
 				if (Engine.GetEngineMode() == EngineMode::Playing) {
-					if (auto* rb = reg.try_get<RigidBody>(entity)) {
-						if (b2Body_IsValid(rb->bodyId)) {
-							b2Hull hull = b2ComputeHull(poly.vertices.data(), (int)poly.vertices.size());
-							if (hull.count > 0)
-							{
-								b2ShapeDef def;
-								CreateShape(poly.material, poly.isSensor, def);
-								b2Polygon p = b2MakePolygon(&hull, 0.0f);
-								poly.shapeId = b2CreatePolygonShape(rb->bodyId, &def, &p);
-							}
+					if (b2Body_IsValid(rb.bodyId)) {
+						b2Hull hull = b2ComputeHull(poly.vertices.data(), (int)poly.vertices.size());
+						if (hull.count > 0)
+						{
+							b2ShapeDef def;
+							CreateShape(poly.material, poly.isSensor, def);
+							b2Polygon p = b2MakePolygon(&hull, 0.0f);
+							poly.shapeId = b2CreatePolygonShape(rb.bodyId, &def, &p);
+							poly.dirty = false;
 						}
 					}
+					else continue;
 				}
 				else continue;
 			}
@@ -197,6 +196,7 @@ namespace clvr {
 				b2Polygon p = b2MakePolygon(&hull, 0.0f);
 				b2Shape_SetPolygon(poly.shapeId, &p);
 				UpdateShapeMaterial(poly.shapeId, poly.material);
+				poly.dirty = false;
 			}
 		}
 	}
