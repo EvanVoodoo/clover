@@ -35,6 +35,8 @@ namespace clvr
         void CreateShapes(Entity e, b2BodyId body);
 		void UpdateShapeMaterial(b2ShapeId shape, const PhysicsMaterial& mat);
 
+		void UpdatePlayerMovement(float dt);
+
 		// Physics body manipulation
 
 		/// <summary>
@@ -93,5 +95,6 @@ namespace clvr
 
 		b2Vec2 m_gravity = { 0.0f, -9.81f };
 		int m_substeps = 4;
+		float m_accumulator = 0.0f;
 	};
 }

@@ -373,6 +373,7 @@ void Renderer::Inspect(float dt)
 	if (layerToRemove != -1)
 	{
 		// TODO: store layer íds so removing a layer and then adding one, doesn't cause issues with sprites still referencing the old layer
+		// TODO: Deleting sprite layer causes crash if any sprites are still referencing it. Need to reassign those sprites to a default layer or something.
 		delete m_spriteLayers[layerToRemove];
 		m_spriteLayers.erase(m_spriteLayers.begin() + layerToRemove);
 	}

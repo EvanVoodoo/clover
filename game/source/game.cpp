@@ -32,7 +32,7 @@ Game::Game() {
 	ih.AddController(ControllerType::Player, std::make_unique<PhysicsPlayerController>());
 
 	SceneManager& sceneManager = Engine.GetECS()->GetSystem<SceneManager>();
-	sceneManager.LoadSceneFromFile("assets/scenes/test_scene.json");
+	sceneManager.LoadSceneFromFile(rMngr->GetPath(ResourceManager::Directory::Assets, "scenes/example.json"));
 }
 
 void Game::SetupScene()
@@ -61,7 +61,7 @@ void Game::SetupScene()
 		box.halfExtents = (b2Vec2(71.0f, 71.0f));
 
 		auto& player = ecs->CreateComponent<PlayerComponent>(centerEntity);
-		player.speed = 400.0f;
+		player.acceleration = 400.0f;
 		ecs->CreateComponent<Controlled>(centerEntity, ControllerType::Player);
 	}
 

@@ -4,35 +4,47 @@
 #include <core/components.hpp>
 #include <core/transform.hpp>
 #include <physics/world.hpp>
+#include <Box2D/math_functions.h>
 
 using namespace clvr;
 
 void PhysicsPlayerController::Produce(entt::registry& reg, entt::entity entity, CommandList& out)
 {
-    if (!Engine.GameWindowFocused()) return;
+    float x = 0.f, y = 0.f;
+    bool jump = false;
 
-    const float x = float(IsKeyDown('D')) - float(IsKeyDown('A'));
-    const float y = float(IsKeyDown('W')) - float(IsKeyDown('S'));
+    if (Engine.GameWindowFocused())     // unfocused = no input, but still send the stop
+    {
+        x = float(IsKeyDown('D')) - float(IsKeyDown('A'));
+        y = float(IsKeyDown('W')) - float(IsKeyDown('S'));
+        jump = WasKeyJustPressed(VK_SPACE);
+    }
+
     const float len = std::sqrt(x * x + y * y);
+    MoveMode mode = MoveMode::Walk;
 
-    if (len > 0.f) {                                    // not an early return: discrete actions below still need to run
+    if (len > 0.f)
+    {
         const bool sprint = IsKeyDown(VK_SHIFT);
         const bool crouch = IsKeyDown(VK_CONTROL);
-        MoveMode mode = MoveMode::Walk;
         if (sprint != crouch) mode = sprint ? MoveMode::Sprint : MoveMode::Crouch;
-        out.push_back(std::make_unique<PhysicsMoveCommand>(x / len, y / len, mode));
+        x /= len;
+        y /= len;
     }
+
+    out.push_back(std::make_unique<PhysicsMoveCommand>(x, y, jump, mode));
 }
 
 void PhysicsMoveCommand::Execute(CommandContext& ctx, entt::entity actor)
 {
-    auto* tf = ctx.reg.try_get<Transform>(actor);
     auto* p = ctx.reg.try_get<PlayerComponent>(actor);
-	auto* rb = ctx.reg.try_get<RigidBody>(actor);
-    if (!tf || !p || !rb) return;
-    float scale = mode == MoveMode::Sprint ? p->sprintScale
-        : mode == MoveMode::Crouch ? p->crouchScale : 1.f;
-    World& world = Engine.GetECS()->GetSystem<World>();
-	// move the player by aplying a force to the rigid body
-	world.ApplyForce(*rb, b2Vec2(dirX * p->speed * scale, dirY * p->speed * scale), b2Body_GetPosition(rb->bodyId), true);
+    if (!p) return;
+
+    b2Vec2 dir = { dirX, dirY };
+    if (b2LengthSquared(dir) > 0.0f)
+        dir = b2Normalize(dir);               // diagonals aren't faster
+
+    p->moveInput = dir;
+    p->moveScale = mode == MoveMode::Sprint ? p->sprintScale
+        : mode == MoveMode::Crouch ? p->crouchScale : 1.0f;
 }

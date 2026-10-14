@@ -7,9 +7,10 @@ using namespace clvr;
 
 struct PhysicsMoveCommand : InputCommand
 {
-	float dirX, dirY;                          // unit vector
+	float dirX = 0, dirY = 0;                          // unit vector
+	bool jump = false;
 	MoveMode mode;
-	PhysicsMoveCommand(float x, float y, MoveMode m) : dirX(x), dirY(y), mode(m) {}
+	PhysicsMoveCommand(float x, float y, bool j, MoveMode m) : dirX(x), dirY(y), jump(j), mode(m) {}
 	void Execute(CommandContext& ctx, entt::entity actor) override;
 };
 

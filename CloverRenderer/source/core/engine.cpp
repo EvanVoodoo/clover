@@ -248,5 +248,12 @@ bool EngineClass::Frame(float dt)
     GetECS()->UpdateSystems(dt);
     GetECS()->RemoveDeleted();
     GetECS()->RenderSystems();
+
+    m_frameCount++;
+
+	if (m_frameCount % 60 == 0) {
+        m_resourceManager->UnloadUnusedResources();
+	}
+
     return true;
 }

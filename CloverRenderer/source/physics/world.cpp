@@ -4,6 +4,7 @@
 #include <physics/physics_components.hpp>
 #include "physics/units.hpp"
 #include <core/transform.hpp>
+#include <core/components.hpp>
 
 namespace clvr {
 	World::World()
@@ -30,7 +31,15 @@ namespace clvr {
 		SyncBodies();
 		SyncColliders();
 
-		b2World_Step(m_worldId, 1.0f / 60.0f, m_substeps);
+		constexpr float fixedStep = 1.0f / 60.0f;
+		m_accumulator += std::fmin(dt, 0.25f);
+
+		while (m_accumulator >= fixedStep)
+		{
+			UpdatePlayerMovement(fixedStep);            // same dt as the step it feeds
+			b2World_Step(m_worldId, fixedStep, m_substeps);
+			m_accumulator -= fixedStep;
+		}
 
 		for (auto [entity, t, rb] : Engine.GetECS()->GetRegistry().view<Transform, RigidBody>().each())
 		{
@@ -46,7 +55,6 @@ namespace clvr {
 				t.position.x = Units::ToPixels(pos.x);
 				t.position.y = Units::ToPixels(pos.y);
 				t.rotation = b2Rot_GetAngle(b2Body_GetRotation(body));
-				// for now, we won't handle rotation, but it can be added later if needed
 			}
 		}
 	}
@@ -78,6 +86,7 @@ namespace clvr {
 
 	void World::OnPlayStart() 
 	{
+		m_accumulator = 0.0f;
 		// on play start, we need to create physics bodies for all entities that have a RigidBody component
 		auto ecs = Engine.GetECS();
 		for (auto [entity, rb, t] : ecs->GetRegistry().view<RigidBody, Transform>().each())
@@ -308,18 +317,44 @@ namespace clvr {
 		b2Shape_EnableHitEvents(shape, mat.enableHitEvents);
 	}
 
+	void World::UpdatePlayerMovement(float dt)   // dt = fixed step
+	{
+		auto& reg = Engine.GetECS()->GetRegistry();
+		for (auto [e, rb, p] : reg.view<RigidBody, PlayerComponent>().each())
+		{
+			if (!b2Body_IsValid(rb.bodyId))
+				continue;
+
+			b2Vec2 vel = GetVelocity(rb);                           // px/s
+			b2Vec2 target = b2MulSV(p.maxSpeed * p.moveScale, p.moveInput);
+
+			bool hasInput = b2LengthSquared(p.moveInput) > 0.0f;
+			float rate = (hasInput ? p.acceleration : p.deceleration) * dt;
+
+			b2Vec2 delta = b2Sub(target, vel);
+			float dist = b2Length(delta);
+
+			if (dist <= rate)
+				vel = target;                                       // arrived
+			else
+				vel = b2Add(vel, b2MulSV(rate / dist, delta));      // step toward target
+
+			SetVelocity(rb, vel);
+		}
+	}
+
 	b2Vec2 World::GetVelocity(RigidBody rb) const
 	{
-		if (!b2Body_IsValid(rb.bodyId))
+		if (!b2Body_IsValid(rb.bodyId) || !b2Body_IsAwake(rb.bodyId))
 			return { 0.0f, 0.0f };
-		return b2Body_GetLinearVelocity(rb.bodyId);
+		return Units::ToPixels(b2Body_GetLinearVelocity(rb.bodyId));
 	}
 
 	b2Vec2 World::AddVelocity(RigidBody rb, const b2Vec2 velocity)
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return { 0.0f, 0.0f };
-		b2Body_SetLinearVelocity(rb.bodyId, b2Body_GetLinearVelocity(rb.bodyId) + velocity);
+		b2Body_SetLinearVelocity(rb.bodyId, b2Body_GetLinearVelocity(rb.bodyId) + Units::ToMeters(velocity));
 		return b2Body_GetLinearVelocity(rb.bodyId);
 	}
 
@@ -327,7 +362,7 @@ namespace clvr {
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return { 0.0f, 0.0f };
-		b2Body_SetLinearVelocity(rb.bodyId, b2Vec2(b2Body_GetLinearVelocity(rb.bodyId).x + velocityX, b2Body_GetLinearVelocity(rb.bodyId).y));
+		b2Body_SetLinearVelocity(rb.bodyId, b2Vec2(b2Body_GetLinearVelocity(rb.bodyId).x + Units::ToMeters(velocityX), b2Body_GetLinearVelocity(rb.bodyId).y));
 		return b2Body_GetLinearVelocity(rb.bodyId);
 	}
 
@@ -335,7 +370,7 @@ namespace clvr {
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return { 0.0f, 0.0f };
-		b2Body_SetLinearVelocity(rb.bodyId, b2Vec2(b2Body_GetLinearVelocity(rb.bodyId).x, b2Body_GetLinearVelocity(rb.bodyId).y + velocityY));
+		b2Body_SetLinearVelocity(rb.bodyId, b2Vec2(b2Body_GetLinearVelocity(rb.bodyId).x, b2Body_GetLinearVelocity(rb.bodyId).y + Units::ToMeters(velocityY)));
 		return b2Body_GetLinearVelocity(rb.bodyId);
 	}
 
@@ -343,7 +378,7 @@ namespace clvr {
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return { 0.0f, 0.0f };
-		b2Body_SetLinearVelocity(rb.bodyId, velocity);
+		b2Body_SetLinearVelocity(rb.bodyId, Units::ToMeters(velocity));
 		return b2Body_GetLinearVelocity(rb.bodyId);
 	}
 
@@ -351,7 +386,7 @@ namespace clvr {
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return { 0.0f, 0.0f };
-		b2Body_SetLinearVelocity(rb.bodyId, b2Vec2(velocityX, b2Body_GetLinearVelocity(rb.bodyId).y));
+		b2Body_SetLinearVelocity(rb.bodyId, b2Vec2(Units::ToMeters(velocityX), b2Body_GetLinearVelocity(rb.bodyId).y));
 		return b2Body_GetLinearVelocity(rb.bodyId);
 	}
 
@@ -359,7 +394,7 @@ namespace clvr {
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return { 0.0f, 0.0f };
-		b2Body_SetLinearVelocity(rb.bodyId, b2Vec2(b2Body_GetLinearVelocity(rb.bodyId).x, velocityY));
+		b2Body_SetLinearVelocity(rb.bodyId, b2Vec2(b2Body_GetLinearVelocity(rb.bodyId).x, Units::ToMeters(velocityY)));
 		return b2Body_GetLinearVelocity(rb.bodyId);
 	}
 
@@ -367,13 +402,13 @@ namespace clvr {
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return;
-		b2Body_ApplyForce(rb.bodyId, force, point, wake);
+		b2Body_ApplyForce(rb.bodyId, Units::ToMeters(force), Units::ToMeters(point), wake);
 	}
 
 	void World::ApplyImpulse(RigidBody rb, const b2Vec2 impulse, const b2Vec2 point, bool wake)
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return;
-		b2Body_ApplyLinearImpulse(rb.bodyId, impulse, point, wake);
+		b2Body_ApplyLinearImpulse(rb.bodyId, Units::ToMeters(impulse), Units::ToMeters(point), wake);
 	}
 };

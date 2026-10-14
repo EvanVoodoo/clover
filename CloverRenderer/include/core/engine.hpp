@@ -54,6 +54,7 @@ namespace clvr
 		ImGuiLayer* m_imgui = nullptr;
 		ResourceManager* m_resourceManager = nullptr;
 		EngineMode m_editorMode = EngineMode::Editing;
+		unsigned long long m_frameCount = 0;
 	};
 
 	extern EngineClass Engine;

@@ -20,8 +20,10 @@
         "radius": 71.0
       },
       "Player Component": {
+        "acceleration": 3000.0,
         "crouchScale": 0.5,
-        "speed": 400.0,
+        "deceleration": 0.0,
+        "maxSpeed": 850.0,
         "sprintScale": 2.0
       },
       "RigidBody": {
