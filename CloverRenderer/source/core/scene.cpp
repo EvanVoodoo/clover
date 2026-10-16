@@ -5,21 +5,31 @@
 #include <rendering/renderer.hpp>
 #include "entt/meta/meta.hpp"
 #include "entt/core/hashed_string.hpp"
-#include <imgui_internal.h>
 #include <fstream>
-#include <core/components.hpp>
-#include <input/input_controller.hpp>
+#include <core/selection_gizmo.hpp>
+#include <core/translate_gizmo.hpp>
 
 using namespace clvr;
 
 SceneManager::SceneManager()
 {
-    m_translateGizmo = std::make_unique<TranslateGizmo>();
+    // Create the selection gizmo
+    m_selectionGizmo = std::make_unique<SelectionGizmo>();
+    // Create the translate gizmo
+    //m_translateGizmo = std::make_unique<TranslateGizmo>();
 }
 
 void SceneManager::Update(float dt)
 {
-    return; // gizmos disabled for now 
+    // Create a default sprite layer for the gizmos
+    auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
+    auto gizmoLayer = renderer.FindOrCreateSpriteLayer(-1);
+    gizmoLayer->hiddenInInspector = true;
+    gizmoLayer->generated = true;
+
+    if (m_selectionGizmo)
+		m_selectionGizmo->Update(Engine.GetECS()->GetSystem<Renderer>().GetActiveCamera());
+    return; // translate gizmos disabled for now 
 	if (m_translateGizmo)
 		m_translateGizmo->Update(Engine.GetECS()->GetSystem<Renderer>().GetActiveCamera());
 }
@@ -33,6 +43,8 @@ void SceneManager::Render()
 
 void SceneManager::Draw()
 {
+    if (m_selectionGizmo)
+		m_selectionGizmo->Draw(Engine.GetECS()->GetSystem<Renderer>().GetActiveCamera());
     return; // gizmos disabled for now
 	if (m_translateGizmo)
 		m_translateGizmo->Draw(Engine.GetECS()->GetSystem<Renderer>().GetActiveCamera());
@@ -183,18 +195,14 @@ void SceneManager::Play()
 	m_snapshot = SaveScene();
 	Engine.SetEngineMode(EngineMode::Playing);
     Engine.GetECS()->GetRegistry().clear();
-    auto gameCamera = Engine.GetECS()->CreateEntity();
-	auto& transform = Engine.GetECS()->CreateComponent<Transform>(gameCamera);
-	auto& camera = Engine.GetECS()->CreateComponent<CameraComponent>(gameCamera);
-	// find first player entity and set followed entity to it
-	auto& registry = Engine.GetECS()->GetRegistry();
-    for (auto [e, c, p] : registry.view<Controlled, PlayerComponent>().each()) {
-        if (c.type != ControllerType::Player) continue;
-        camera.followEntity = e;
-        break;
-    }
 
 	LoadScene(m_snapshot);
+
+    // Create a default sprite layer for the gizmos
+    auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
+    auto gizmoLayer = renderer.FindOrCreateSpriteLayer(-1);
+    gizmoLayer->hiddenInInspector = true;
+    gizmoLayer->generated = true;
 
 	for (auto&& s : Engine.GetECS()->GetSystems<System>()) {
 		if (s->GetRunMode() == RunMode::Playing || s->GetRunMode() == RunMode::Always) {
@@ -217,6 +225,7 @@ void SceneManager::DeleteSelectedEntity()
 
     Engine.GetECS()->DeleteEntity(m_selectedEntity);
     m_selectedEntity = entt::null;
+	m_selectionGizmo->SetSelectedEntity(entt::null);
     m_translateGizmo->SetSelectedEntity(entt::null);
 }
 
@@ -224,6 +233,8 @@ void SceneManager::UpdateSelectedEntity(entt::entity entity)
 {
     m_selectedEntity = entity;
 
+	if (m_selectionGizmo)
+        m_selectionGizmo->SetSelectedEntity(entity);
     if (m_translateGizmo)
 		m_translateGizmo->SetSelectedEntity(entity);
 }

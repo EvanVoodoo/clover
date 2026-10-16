@@ -183,16 +183,35 @@ void Game::Inspect(float dt) {
 }
 
 void Game::OnPlayStart() {
-	// Game camera goes in after the load, so nothing can clear it or take its ID
-	const entt::entity camEntity = Engine.GetECS()->CreateEntity();
-	auto& transform = Engine.GetECS()->CreateComponent<Transform>(camEntity);
-	transform.name = "Game Camera";
-	auto& camera = Engine.GetECS()->CreateComponent<CameraComponent>(camEntity);
+	if (Engine.GetECS()->GetRegistry().view<CameraComponent>().empty()) 
+	{
+		// if no camera exists, create one and set it to follow the first player entity found
+		const entt::entity camEntity = Engine.GetECS()->CreateEntity();
 
-	for (auto [e, c, p] : Engine.GetECS()->GetRegistry().view<Controlled, PlayerComponent>().each()) {
-		if (c.type != ControllerType::Player) continue;
-		camera.followEntity = e;
-		camera.followTarget = true;
-		break;                                     // first player only
+		auto& transform = Engine.GetECS()->CreateComponent<Transform>(camEntity);
+		transform.name = "Game Camera";
+		auto& camera = Engine.GetECS()->CreateComponent<CameraComponent>(camEntity);
+
+		for (auto [e, c, p] : Engine.GetECS()->GetRegistry().view<Controlled, PlayerComponent>().each()) 
+		{
+			if (c.type != ControllerType::Player) continue;
+			camera.followEntity = e;
+			camera.followTarget = true;
+			break;                                     // first player only
+		}
+	} 
+	else 
+	{
+		// find game camera and set it to follow the first player entity found
+		for (auto [camEntity, camera, transform] : Engine.GetECS()->GetRegistry().view<CameraComponent, Transform>().each()) 
+		{
+			for (auto [e, c, p] : Engine.GetECS()->GetRegistry().view<Controlled, PlayerComponent>().each()) 
+			{
+				if (c.type != ControllerType::Player) continue;
+				camera.followEntity = e;
+				camera.followTarget = true;
+				break;                                     // first player only
+			}
+		}
 	}
 }

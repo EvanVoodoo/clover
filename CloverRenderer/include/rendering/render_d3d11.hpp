@@ -47,7 +47,7 @@ namespace clvr
 		void SetupLayer(const SpriteLayer& layer);
 		void DrawLayer(const SpriteLayer& layer);
 		void DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform);
-		void DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer);
+		void DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const bool UISprite = false);
 
 		void SetActiveShader(const std::wstring& name);
 		void SetPostProcessShader(const std::wstring& name);
@@ -66,7 +66,7 @@ namespace clvr
 		ID3D11Device* GetDevice();
 		ID3D11DeviceContext* GetDeviceContext();
 
-		XMMATRIX GetProjectionMatrix();
+		XMMATRIX GetProjectionMatrix(bool noZoom = false);
 		XMMATRIX GetWorldMatrix();
 		XMMATRIX GetViewMatrix();
 		Camera& GetActiveCamera();
@@ -83,6 +83,10 @@ namespace clvr
 			m_lightCb.Update(m_deviceContext, data);
 			m_lights = data;
 		}
+
+		XMFLOAT2 GetCurrentWindowSize() const { return m_currentWindowSize; }
+		XMFLOAT2 GetSceneWindowSize() const { return m_sceneWindowSize; }
+
 		void UpdateWindowSize(float w, float h);
 		void UpdateSceneWindowSize(float w, float h);
 		void ResizeBuffers(int width, int height);
@@ -142,6 +146,7 @@ namespace clvr
 		SpriteBatcher* m_spriteBatcher;
 		ID3D11SamplerState* m_pointSampler;
 		ID3D11SamplerState* m_linearSampler;
+		ID3D11SamplerState* m_linearClampSampler;
 		TextureAtlas* m_textureAtlas;
 	};
 }

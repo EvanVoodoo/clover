@@ -4,6 +4,7 @@
 #include <core/engine.hpp>
 #include "core/ecs.hpp"
 #include <rendering/texture.hpp>
+#include <rendering/renderer.hpp>
 
 namespace clvr {
 	Gizmo::Gizmo() 
@@ -51,6 +52,12 @@ namespace clvr {
 	{
 		m_cameraZoom = camera.zoom;
 		GetMousePosition(m_lastMousePos.x, m_lastMousePos.y);
+	}
+
+	void Gizmo::Draw(const Camera& camera)
+	{
+		auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
+		renderer.FindOrCreateSpriteLayer(-1)->parallaxFactor = m_layerParallaxFactor;
 	}
 
 	void Gizmo::SetSelectedEntity(Entity entity)
@@ -213,59 +220,60 @@ namespace clvr {
 		return 0.0f;
 	}
 
-	void Gizmo::SetGizmoPosition(Entity selectedEntity)
+	void Gizmo::SetGizmoPosition(entt::entity selectedEntity)
 	{
 		auto& registry = Engine.GetECS()->GetRegistry();
 		if (!registry.valid(selectedEntity))
 			return;
-		
-		float spriteWidth = 0.0f;
-		float spriteHeight = 0.0f;
 
-		SpriteComponent* spriteComponent = registry.try_get<SpriteComponent>(selectedEntity);
-		if (const auto* spriteComponent = registry.try_get<SpriteComponent>(selectedEntity))
-		{
-			Sprite s = spriteComponent->sprite;
-			spriteWidth = s.size.x;
-			spriteHeight = s.size.y;
-		}
+		const Transform* transform = registry.try_get<Transform>(selectedEntity);
+		if (!transform)
+			return;
 
-		const Transform& transform = registry.get<Transform>(selectedEntity);
+		const SpriteComponent* sprite = registry.try_get<SpriteComponent>(selectedEntity);
+		if (sprite) {
+			const Sprite s = sprite->sprite;
+			if (sprite && s.layer)
+			{
+				m_layerParallaxFactor = s.layer->parallaxFactor;
+			}
+			else m_layerParallaxFactor = 1.0f;
+		}
+		else m_layerParallaxFactor = 1.0f; // default parallax factor for gizmo layer
 
-		XMFLOAT2 position = transform.position;
-		if (!m_oneAxis)
-		{
-			if (m_xAxisParams)
-				m_xAxisParams->transform.position = 
-				XMFLOAT2(
-					position.x + m_xAxisParams->offset.x + (spriteWidth * 0.5f * transform.scale.x),
-					position.y + m_xAxisParams->offset.y + (spriteHeight * 0.5f * transform.scale.y) 
-					- (m_xAxisParams->sprite.size.y * m_xAxisParams->transform.scale.y * 0.5f)
-				);
-			if (m_yAxisParams)
-				m_yAxisParams->transform.position =
-				XMFLOAT2(
-					position.x + m_yAxisParams->offset.x + (spriteWidth * 0.5f * transform.scale.x)
-					- (m_yAxisParams->sprite.size.x * m_yAxisParams->transform.scale.x * 0.5f),
-					position.y + m_yAxisParams->offset.y + (spriteHeight * 0.5f * transform.scale.y)
-					- (m_yAxisParams->sprite.size.y * m_yAxisParams->transform.scale.y * 0.5f)
-				);
-		}
-		else
-		{
-			if (m_xAxisParams)
-				m_xAxisParams->transform.position =
-				XMFLOAT2(
-					position.x + m_xAxisParams->offset.x + (spriteWidth * 0.5f * transform.scale.x)
-					- (m_xAxisParams->sprite.size.x * m_xAxisParams->transform.scale.x * 0.5f),
-					position.y + m_xAxisParams->offset.y + (spriteHeight * 0.5f * transform.scale.y)
-					- (m_xAxisParams->sprite.size.y * m_xAxisParams->transform.scale.y * 0.5f)
-				);
-		}
+		// TODO: Needs to take the camera's position into account
+		// TODO: Shadow bug with the parallax
+		const XMFLOAT2 center = {
+			transform->position.x,
+			transform->position.y
+		};
+
+		// Half the on-screen size of an axis handle
+		auto halfSize = [](const auto& axis)
+			{
+				return XMFLOAT2{
+					axis.sprite.size.x * axis.transform.scale.x * 0.5f,
+					axis.sprite.size.y * axis.transform.scale.y * 0.5f
+				};
+			};
 
 		if (m_xAxisParams)
-			m_xAxisParams->transform.position = position;
-		if (m_yAxisParams)
-			m_yAxisParams->transform.position = position;
+		{
+			const XMFLOAT2 h = halfSize(*m_xAxisParams);
+			m_xAxisParams->transform.position = {
+				// Single-axis mode centers the handle; two-axis mode starts it at the center
+				center.x + m_xAxisParams->offset.x - (m_oneAxis ? h.x : 0.0f),
+				center.y + m_xAxisParams->offset.y - h.y
+			};
+		}
+
+		if (!m_oneAxis && m_yAxisParams)
+		{
+			const XMFLOAT2 h = halfSize(*m_yAxisParams);
+			m_yAxisParams->transform.position = {
+				center.x + m_yAxisParams->offset.x - h.x,
+				center.y + m_yAxisParams->offset.y - h.y
+			};
+		}
 	}
 }

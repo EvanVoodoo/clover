@@ -25,7 +25,8 @@ namespace clvr
 		Entity followEntity = entt::null;
 		void Inspect();
 	};
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CameraComponent, followTarget, followSpeed)
 }
 
 SAVEABLE_COMPONENT(clvr::PlayerComponent, "Player Component")
-REGISTER_COMPONENT(clvr::CameraComponent, "Camera Component")
+SAVEABLE_COMPONENT(clvr::CameraComponent, "Camera Component")

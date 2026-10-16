@@ -2,6 +2,8 @@
 #include <DirectXTex.h>
 #include <core/engine.hpp>
 #include <resources/resource_manager.hpp>
+#include <core/scene.hpp>
+#include <core/components.hpp>
 
 #pragma comment(lib, "DirectXTex.lib")
 
@@ -22,6 +24,7 @@ DirectX2D::DirectX2D()
 	m_spriteBatcher = nullptr;
 	m_pointSampler = nullptr;
 	m_linearSampler = nullptr;
+	m_linearClampSampler = nullptr;
 	m_textureAtlas = nullptr;
 	m_framebuffer = nullptr;
 	m_occluderMaskFramebuffer = nullptr;
@@ -320,6 +323,15 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, bool f
 	if (FAILED(result))
 		return false;
 
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+	result = m_device->CreateSamplerState(&samplerDesc, &m_linearClampSampler);
+	if (FAILED(result))
+		return false;
+
 	// Setup the viewport for rendering.
 	m_viewport.Width = (float)screenWidth;
 	m_viewport.Height = (float)screenHeight;
@@ -546,6 +558,12 @@ void DirectX2D::Shutdown()
 		m_swapChain->SetFullscreenState(false, NULL);
 	}
 
+	if (m_linearClampSampler)
+	{
+		m_linearClampSampler->Release();
+		m_linearClampSampler = nullptr;
+	}
+
 	if (m_linearSampler)
 	{
 		m_linearSampler->Release();
@@ -705,6 +723,8 @@ void* DirectX2D::RenderScene()
 
 	m_shaderManager.get()->GetShader(L"occlusion")->Bind(m_deviceContext);
 
+	BufferType::MVPBufferType maskMvp = { GetWorldMatrix(), GetViewMatrix(), GetProjectionMatrix() };
+	m_mvpCb.Update(m_deviceContext, maskMvp.Transposed());
 	m_mvpCb.BindVS(m_deviceContext, 0);
 	ID3D11ShaderResourceView* srv = m_textureAtlas->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
@@ -805,6 +825,9 @@ void* DirectX2D::RenderScene()
 
 	ConstantBuffer<ResolutionBuffer> resolutionBuffer;
 #ifdef CLOVER_EDITOR
+	// TODO: Draw gizmos here, after the scene is rendered but before ImGui::End() so they appear on top of the scene
+	Engine.GetECS()->GetSystem<SceneManager>().Draw();
+
 	m_finalFramebuffer->Bind(m_deviceContext);
 	m_deviceContext->ClearRenderTargetView(m_finalFramebuffer->GetRTV(), color);
 
@@ -1152,7 +1175,7 @@ void DirectX2D::DrawLayer(const SpriteLayer& layer)
 
 void DirectX2D::DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform) { m_spriteBatcher->DrawSprite(sprite, transform, layer, cameraTransform); }
 
-void DirectX2D::DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer)
+void DirectX2D::DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const bool UISprite)
 {
 	if (!sprite.texture)
 		return; // nothing to bind — bail rather than draw garbage
@@ -1160,13 +1183,13 @@ void DirectX2D::DrawUnbatchedSprite(const Sprite& sprite, const Transform& trans
 	m_shaderManager.get()->GetShader(L"default")->Bind(m_deviceContext);
 
 	// Same parallax-adjusted view as the batched path for this layer
-	BufferType::MVPBufferType mvpData = { GetWorldMatrix(), GetLayerViewMatrix(layer), GetProjectionMatrix() };
+	BufferType::MVPBufferType mvpData = { GetWorldMatrix(), GetLayerViewMatrix(layer), GetProjectionMatrix(UISprite) };
 	m_mvpCb.Update(m_deviceContext, mvpData.Transposed());
 	m_mvpCb.BindVS(m_deviceContext, 0);
 
 	ID3D11ShaderResourceView* srv = sprite.texture->GetSRV();
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
-	m_deviceContext->PSSetSamplers(0, 1, &m_linearSampler);
+	m_deviceContext->PSSetSamplers(0, 1, &m_linearClampSampler);
 
 	// Build the quad exactly like SpriteBatcher::DrawSprite does —
 	// corners transformed into world space, uvRect mapped to the same winding
@@ -1260,9 +1283,9 @@ ID3D11DeviceContext* DirectX2D::GetDeviceContext()
 	return m_deviceContext;
 }
 
-XMMATRIX DirectX2D::GetProjectionMatrix()
+XMMATRIX DirectX2D::GetProjectionMatrix(bool noZoom)
 {
-	return GetActiveCamera().GetProjectionMatrix();
+	return GetActiveCamera().GetProjectionMatrix(noZoom);
 }
 
 XMMATRIX DirectX2D::GetWorldMatrix()

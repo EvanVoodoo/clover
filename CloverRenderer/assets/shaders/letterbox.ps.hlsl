@@ -33,7 +33,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_TARGET
     }
     else
     {
-        float4 texColor = texture0.Sample(sampler0, scaledUV);
+        float4 texColor = float4(texture0.Sample(sampler0, scaledUV).rgb, 1.0f);
         return texColor * input.color;
     }
 }

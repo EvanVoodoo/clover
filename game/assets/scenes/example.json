@@ -24988,6 +24988,24 @@
           1.0
         ]
       }
+    },
+    {
+      "Camera Component": {
+        "followSpeed": 5.0,
+        "followTarget": false
+      },
+      "Transform": {
+        "name": "Game Camera",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "rotation": 0.0,
+        "scale": [
+          1.0,
+          1.0
+        ]
+      }
     }
   ],
   "systems": {

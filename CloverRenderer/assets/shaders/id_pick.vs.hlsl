@@ -7,5 +7,5 @@ cbuffer ObjectBuffer : register(b0)
 
 float4 ColorVertexShader(float3 position : POSITION) : SV_POSITION
 {
-    return mul(mvp, float4(position, 1.0f));
+    return mul(float4(position, 1.0f), mvp);
 }

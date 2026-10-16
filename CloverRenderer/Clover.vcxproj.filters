@@ -405,6 +405,9 @@
     <ClInclude Include="include\core\imgui_helpers.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\core\selection_gizmo.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Clover.cpp">
@@ -501,6 +504,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\physics\physics_components.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\selection_gizmo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

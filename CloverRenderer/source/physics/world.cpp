@@ -15,6 +15,7 @@ namespace clvr {
 		m_substeps = 4;
 
 		title = "Physics World";
+		priority = 90;
 	}
 
 	World::~World()

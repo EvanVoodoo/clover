@@ -16,7 +16,7 @@ namespace clvr {
 
 		m_xAxisParams->color = { 0.0f, 1.0f, 0.0f, 1.0f }; // green
 		m_yAxisParams->color = { 1.0f, 0.0f, 0.0f, 1.0f }; // red
-		
+
 		m_xAxisParams->hoverColor = { 1.0f, 1.0f, 0.0f, 1.0f }; // yellow
 		m_yAxisParams->hoverColor = { 1.0f, 1.0f, 0.0f, 1.0f }; // yellow
 
@@ -61,9 +61,9 @@ namespace clvr {
 			return;
 
 		auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
-		renderer.DrawUnbatchedSprite(m_xAxisParams->sprite, m_xAxisParams->transform, *renderer.FindOrCreateSpriteLayer(-1));
+		renderer.DrawUnbatchedSprite(m_xAxisParams->sprite, m_xAxisParams->transform, *renderer.FindOrCreateSpriteLayer(-1), false);
 
 		if (!m_oneAxis)
-			renderer.DrawUnbatchedSprite(m_yAxisParams->sprite, m_yAxisParams->transform, *renderer.FindOrCreateSpriteLayer(-1));
+			renderer.DrawUnbatchedSprite(m_yAxisParams->sprite, m_yAxisParams->transform, *renderer.FindOrCreateSpriteLayer(-1), false);
 	}
 }

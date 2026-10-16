@@ -26,7 +26,7 @@ namespace clvr {
 		Gizmo(const GizmoAxisParams& xAxisParams, const GizmoAxisParams& yAxisParams, bool oneAxis = false);
 
 		virtual void Update(const Camera& camera);
-		virtual void Draw(const Camera& camera) = 0;
+		virtual void Draw(const Camera& camera);
 		
 		void SetSelectedEntity(entt::entity entity);
 		void Hide();
@@ -59,5 +59,6 @@ namespace clvr {
 		bool m_oneAxis = false;
 
 		float m_cameraZoom = 1.0f;
+		float m_layerParallaxFactor = 1.0f; // default parallax factor for gizmo layer
 	};
 }

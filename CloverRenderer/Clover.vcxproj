@@ -401,6 +401,7 @@
     <ClInclude Include="include\core\gizmo.hpp" />
     <ClInclude Include="include\core\imgui_helpers.hpp" />
     <ClInclude Include="include\core\imgui_layer.hpp" />
+    <ClInclude Include="include\core\selection_gizmo.hpp" />
     <ClInclude Include="include\input\input.hpp" />
     <ClInclude Include="include\core\scene.hpp" />
     <ClInclude Include="include\core\serialization.hpp" />
@@ -517,6 +518,7 @@
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\core\selection_gizmo.cpp" />
     <ClCompile Include="source\physics\physics_components.cpp" />
     <ClCompile Include="source\core\components.cpp" />
     <ClCompile Include="source\input\input_controller.cpp" />

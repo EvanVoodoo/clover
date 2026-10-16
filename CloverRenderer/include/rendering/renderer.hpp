@@ -49,12 +49,14 @@ namespace clvr
 		void* GetNativeDeviceHandle() override;
 
 		void DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform);
-		void DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer);
+		void DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const bool UISprite = false);
 		void SetActiveShader(const std::wstring& name);
 		void SetPostProcessShader(const std::wstring& name);
 		bool LoadShader(const std::string& name, const std::string& vsFilename, const std::string& psFilename);
 		bool ReloadShaders();
 		Camera& GetActiveCamera();
+		XMFLOAT2 GetViewportPosition() const;
+		XMFLOAT2 GetViewportSize() const;
 
 		bool SetFullscreen(bool fullscreen);
 		bool IsFullscreen() const;
@@ -85,5 +87,7 @@ namespace clvr
 		std::vector<SpriteLayer*> m_spriteLayers; // store sprite layers for sorting
 
 		bool m_gameWindowFocused = false;
+		XMFLOAT2 m_viewportPosition = { 0.0f, 0.0f };
+		XMFLOAT2 m_viewportSize = { 0.0f, 0.0f };
 	};
 }

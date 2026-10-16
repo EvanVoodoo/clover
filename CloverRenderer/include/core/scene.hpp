@@ -1,12 +1,15 @@
 #pragma once
 
 #include "ecs.hpp"
-#include "translate_gizmo.hpp"
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 
 namespace clvr {
+
+	class TranslateGizmo;
+	class SelectionGizmo;
+
 	class SceneManager : public System {
 	public:
 		SceneManager();
@@ -37,6 +40,7 @@ namespace clvr {
 		Entity m_selectedEntity = entt::null;
 		Entity m_scrollEntity = entt::null;
 		std::unique_ptr<TranslateGizmo> m_translateGizmo = nullptr;
+		std::unique_ptr<SelectionGizmo> m_selectionGizmo = nullptr;
 
 		json m_snapshot;
 	};

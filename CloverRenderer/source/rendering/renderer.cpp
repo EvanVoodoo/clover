@@ -12,7 +12,7 @@ Renderer::Renderer()
 {
 	m_DX2D = nullptr;
 
-	priority = -1;
+	priority = -100;
 	title = "Renderer";
 }
 
@@ -122,6 +122,7 @@ void clvr::Renderer::Render()
 	const bool viewportHovered = ImGui::IsWindowHovered();
 
 	ImVec2 viewportPos = ImGui::GetCursorScreenPos();
+	m_viewportPosition = { viewportPos.x, viewportPos.y };
 	ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 	m_DX2D->UpdateSceneWindowSize(viewportSize.x, viewportSize.y);
 	ImGui::Image(m_DX2D->RenderScene(), viewportSize);
@@ -129,9 +130,6 @@ void clvr::Renderer::Render()
 	// Handle mouse picking
 	if (Engine.GetEngineMode() == EngineMode::Editing)
 		SceneEntityPicker(viewportHovered, view, viewportPos, viewportSize);
-
-	// TODO: Draw gizmos here, after the scene is rendered but before ImGui::End() so they appear on top of the scene
-	Engine.GetECS()->GetSystem<SceneManager>().Draw();
 
 	// Rebind the back buffer so the ImGui backend's own draw calls
 	// (ImGui_ImplDX11_RenderDrawData) land in the swapchain, not m_finalFramebuffer.
@@ -206,7 +204,7 @@ void Renderer::SceneEntityPicker(const bool viewportHovered, entt::basic_view<en
 			{
 				entityID = pickedEntity.value();
 			}
-			if (entityID != 0)
+			if (entityID != entt::null)
 			{
 				Entity selectedEntity = static_cast<Entity>(entityID);
 				auto& sceneManager = Engine.GetECS()->GetSystem<SceneManager>();
@@ -223,7 +221,7 @@ void Renderer::SceneEntityPicker(const bool viewportHovered, entt::basic_view<en
 
 void Renderer::DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform) { m_DX2D->DrawSprite(sprite, transform, layer, cameraTransform); }
 
-void Renderer::DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer) { m_DX2D->DrawUnbatchedSprite(sprite, transform, layer); }
+void Renderer::DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const bool UISprite) { m_DX2D->DrawUnbatchedSprite(sprite, transform, layer, UISprite); }
 
 void Renderer::SetActiveShader(const std::wstring& name) { m_DX2D->SetActiveShader(name); }
 
@@ -237,6 +235,16 @@ bool Renderer::LoadShader(const std::string& name, const std::string& vsFilename
 bool Renderer::ReloadShaders() { return m_DX2D->ReloadShaders(); }
 
 Camera& Renderer::GetActiveCamera() { return m_DX2D->GetActiveCamera(); }
+
+XMFLOAT2 Renderer::GetViewportPosition() const
+{
+	return m_viewportPosition;
+}
+
+XMFLOAT2 Renderer::GetViewportSize() const
+{
+	return m_DX2D->GetSceneWindowSize();
+}
 
 inline bool Renderer::SetFullscreen(bool fullscreen) {
 	bool result = m_DX2D->SetFullscreen(fullscreen);
@@ -325,6 +333,13 @@ void Renderer::Inspect(float dt)
 	for (int i = 0; i < static_cast<int>(m_spriteLayers.size()); ++i)
 	{
 		SpriteLayer* layer = m_spriteLayers[i];
+
+		if (layer == nullptr)
+			continue;
+
+		if (layer->hiddenInInspector)
+			continue;
+
 		ImGui::PushID(layer->id);
 
 		// Drag handle
@@ -387,6 +402,11 @@ json Renderer::Save()
 	j["spriteLayers"] = json::array();
 	for (const auto& layer : m_spriteLayers)
 	{
+		if (layer == nullptr)
+			continue;
+		if (layer->generated)
+			continue;
+
 		json layerJson;
 		layerJson["id"] = layer->id;
 		layerJson["parallaxFactor"] = layer->parallaxFactor;
