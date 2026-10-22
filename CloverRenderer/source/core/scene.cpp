@@ -213,6 +213,12 @@ void SceneManager::Play()
 
 void SceneManager::Stop()
 {
+    for (auto&& s : Engine.GetECS()->GetSystems<System>()) {
+		if (s->GetRunMode() == RunMode::Playing || s->GetRunMode() == RunMode::Always) {
+			s->OnPlayStop();
+		}
+    }
+
     Engine.GetECS()->GetRegistry().clear();
 	Engine.SetEngineMode(EngineMode::Editing);
     LoadScene(m_snapshot);

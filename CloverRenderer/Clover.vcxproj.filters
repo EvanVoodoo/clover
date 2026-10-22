@@ -408,6 +408,12 @@
     <ClInclude Include="include\core\selection_gizmo.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\physics\sensor_component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\world_helpers.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Clover.cpp">
@@ -507,6 +513,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\core\selection_gizmo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\physics\world_helpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\physics\sensor_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

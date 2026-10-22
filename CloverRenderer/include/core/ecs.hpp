@@ -28,6 +28,7 @@ namespace clvr
 		virtual RunMode GetRunMode() const { return RunMode::Always; }
 
 		virtual void OnPlayStart() {}
+		virtual void OnPlayStop() {}
 
 		virtual json Save() { return json(); }
 		virtual void Load(const json&) {}

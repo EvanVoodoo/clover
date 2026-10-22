@@ -1,13 +1,19 @@
 #include "game.hpp"
 #include "core/engine.hpp"
 #include "core/components.hpp" 
+#include <core/scene.hpp>
+
 #include "rendering/renderer.hpp"
-#include <string>
+
 #include <input/input_controller.hpp>
-#include <physics/physics_components.hpp>
 #include <input/input_handler.hpp>
 #include <player_controller.hpp>
-#include <core/scene.hpp>
+
+#include <physics/physics_components.hpp>
+#include <physics/sensor_component.hpp>
+#include "physics/world_helpers.hpp"
+
+#include <string>
 
 using namespace clvr;
 using Dir = ResourceManager::Directory;
@@ -26,12 +32,16 @@ Game::Game() {
 	for (auto t : textures)
 		renderer.AddTexture(t);
 	renderer.BuildAtlas();   // built ONCE, after all textures added, before first frame
+	
+	SensorCommandFactory::Get().Register<ColorSensorCommand>("ColorSensorCommand");
+	
 	//SetupScene();
 
 	auto& ih = Engine.GetECS()->GetSystem<InputHandler>();
 	ih.AddController(ControllerType::Player, std::make_unique<PhysicsPlayerController>());
 
 	SceneManager& sceneManager = Engine.GetECS()->GetSystem<SceneManager>();
+	// loads the scene from the file "scenes/example.json" located in the Assets directory of the ResourceManager
 	sceneManager.LoadSceneFromFile(rMngr->GetPath(ResourceManager::Directory::Assets, "scenes/example.json"));
 }
 
@@ -88,6 +98,29 @@ void Game::SetupScene()
 			auto& box = ecs->CreateComponent<BoxCollider>(entity);
 			box.halfExtents = b2Vec2(s.size.x / 2.0f, s.size.y / 2.0f);
 		}
+		// create a few large sensor sprites randomly around the scene
+		for (int i = 0; i < 32; ++i)
+		{
+			auto entity = ecs->CreateEntity();
+			auto& t = ecs->CreateComponent<Transform>(entity);
+			t.position = { (float) (rand() % 3200 - 1600), (float) (rand() % 1600 - 800) };
+			t.name = "Sensor " + std::to_string(i);
+			clvr::Sprite s;
+			s.position = t.position;
+			s.size = { (float) (rand() % 80 + 40), (float) (rand() % 40 + 20) };
+			s.color = { 1.0f, 0.0f, 0.0f, 0.5f };
+			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg")).uvRect;
+			s.textureName = "textures/white.jpg";
+			s.layer = renderer.FindOrCreateSpriteLayer(0);
+			s.isOccluder = false;
+			ecs->CreateComponent<SpriteComponent>(entity, s);
+
+			b2Vec2 halfExtents = b2Vec2(s.size.x / 2.0f, s.size.y / 2.0f);
+			auto& sensor = CreateBoxSensor(ecs->GetSystem<World>(), entity, halfExtents.x, halfExtents.y);
+			sensor.AddCommand<ColorSensorCommand>();
+		}
+		
+		// create a large background sprite
 		{
 			auto entity = ecs->CreateEntity();
 			auto& t = ecs->CreateComponent<Transform>(entity);

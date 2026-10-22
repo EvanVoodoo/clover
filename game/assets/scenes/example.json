@@ -25006,6 +25006,91 @@
           1.0
         ]
       }
+    },
+    {
+      "BoxCollider": {
+        "halfExtents": [
+          16.0,
+          40.79999923706055
+        ],
+        "isSensor": true,
+        "material": {
+          "density": 1.0,
+          "enableContactEvents": true,
+          "enableHitEvents": false,
+          "enableSensorEvents": true,
+          "friction": 0.6000000238418579,
+          "restitution": 0.0,
+          "rollingResistance": 0.0,
+          "tangentSpeed": 0.0
+        },
+        "offset": [
+          0.0,
+          0.0
+        ]
+      },
+      "RigidBody": {
+        "angularDamping": 0.0,
+        "bodyType": 0,
+        "enableSleep": true,
+        "fixedRotation": false,
+        "gravityScale": 1.0,
+        "isBullet": false,
+        "linearDamping": 0.0
+      },
+      "SensorComponent": {
+        "active": true,
+        "commands": [
+          {
+            "type": "ColorSensorCommand"
+          }
+        ]
+      },
+      "Sprite": {
+        "sprite": {
+          "color": [
+            1.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "isOccluder": false,
+          "layerId": 0,
+          "pivot": [
+            -431602080.0,
+            -431602080.0
+          ],
+          "position": [
+            -431602080.0,
+            -431602080.0
+          ],
+          "rotation": -431602080.0,
+          "size": [
+            100.0,
+            100.0
+          ],
+          "textureName": "textures/white.jpg",
+          "useLinkedTexture": false,
+          "uvRect": [
+            0.461181640625,
+            0.000244140625,
+            0.00390625,
+            0.00390625
+          ]
+        }
+      },
+      "Transform": {
+        "name": "Color Change Sensor",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "rotation": 0.0,
+        "scale": [
+          1.0,
+          1.0
+        ]
+      }
     }
   ],
   "systems": {

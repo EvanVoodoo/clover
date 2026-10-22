@@ -2,6 +2,7 @@
 
 #include "Box2D/types.h"
 #include "core/serialization.hpp"
+#include <memory>
 
 inline void to_json(nlohmann::json& j, const b2Vec2& v) { j = nlohmann::json::array({ v.x, v.y }); }
 inline void from_json(const nlohmann::json& j, b2Vec2& v) { j.at(0).get_to(v.x); j.at(1).get_to(v.y); }
@@ -45,6 +46,11 @@ namespace clvr
 	};
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RigidBody, bodyType, linearDamping, angularDamping, gravityScale, fixedRotation, isBullet, enableSleep)
 
+	struct ShapeUserData
+	{
+		Entity entity;
+	};
+
 	struct BoxCollider
 	{
 		b2Vec2 halfExtents = { 0.5f, 0.5f };
@@ -54,6 +60,7 @@ namespace clvr
 		PhysicsMaterial material;
 
 		b2ShapeId shapeId = b2_nullShapeId;
+		std::unique_ptr<ShapeUserData> userData;
 		bool dirty = true;
 
 		void Inspect();
@@ -69,6 +76,7 @@ namespace clvr
 		PhysicsMaterial material;
 		
 		b2ShapeId shapeId = b2_nullShapeId;
+		std::unique_ptr<ShapeUserData> userData;
 		bool dirty = true;
 
 		void Inspect();
@@ -83,6 +91,7 @@ namespace clvr
 		PhysicsMaterial material;
 
 		b2ShapeId shapeId = b2_nullShapeId;
+		std::unique_ptr<ShapeUserData> userData;
 		bool dirty = true;
 
 		void Inspect();

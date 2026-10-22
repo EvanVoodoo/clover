@@ -5,13 +5,13 @@
 #include "physics/units.hpp"
 #include <core/transform.hpp>
 #include <core/components.hpp>
+#include <rendering/render_components.hpp>
+#include <physics/sensor_component.hpp>
 
 namespace clvr {
 	World::World()
 	{
-		b2WorldDef worldDef = b2DefaultWorldDef();
-		worldDef.gravity = m_gravity;
-		m_worldId = b2CreateWorld(&worldDef);
+		m_worldId = b2_nullWorldId;
 		m_substeps = 4;
 
 		title = "Physics World";
@@ -20,7 +20,8 @@ namespace clvr {
 
 	World::~World()
 	{
-		b2DestroyWorld(m_worldId);
+		if (b2World_IsValid(m_worldId))
+			b2DestroyWorld(m_worldId);
 	}
 
 	void World::Update(float dt)
@@ -40,6 +41,8 @@ namespace clvr {
 			UpdatePlayerMovement(fixedStep);            // same dt as the step it feeds
 			b2World_Step(m_worldId, fixedStep, m_substeps);
 			m_accumulator -= fixedStep;
+			HandleContactEvents();
+			HandleSensorEvents();
 		}
 
 		for (auto [entity, t, rb] : Engine.GetECS()->GetRegistry().view<Transform, RigidBody>().each())
@@ -88,6 +91,9 @@ namespace clvr {
 	void World::OnPlayStart() 
 	{
 		m_accumulator = 0.0f;
+		b2WorldDef worldDef = b2DefaultWorldDef();
+		worldDef.gravity = m_gravity;
+		m_worldId = b2CreateWorld(&worldDef);
 		// on play start, we need to create physics bodies for all entities that have a RigidBody component
 		auto ecs = Engine.GetECS();
 		for (auto [entity, rb, t] : ecs->GetRegistry().view<RigidBody, Transform>().each())
@@ -95,6 +101,21 @@ namespace clvr {
 			rb.bodyId = CreatePhysicsBody(rb, t);
 			CreateShapes(entity, rb.bodyId);
 		}
+	}
+
+	void World::OnPlayStop()
+	{
+		auto ecs = Engine.GetECS();
+		for (auto [entity, rb, t] : ecs->GetRegistry().view<RigidBody, Transform>().each())
+		{
+			if (b2Body_IsValid(rb.bodyId))
+			{
+				rb.bodyId = b2_nullBodyId;
+			}
+		}
+
+		b2DestroyWorld(m_worldId);
+		m_worldId = b2_nullWorldId;
 	}
 
 	json World::Save() {
@@ -110,7 +131,9 @@ namespace clvr {
 		if (j.contains("gravity") && j["gravity"].is_array() && j["gravity"].size() == 2) {
 			m_gravity.x = j["gravity"][0].get<float>();
 			m_gravity.y = j["gravity"][1].get<float>();
-			b2World_SetGravity(m_worldId, m_gravity);
+			if (b2World_IsValid(m_worldId)) {
+				b2World_SetGravity(m_worldId, m_gravity);
+			}
 		}
 		if (j.contains("substeps") && j["substeps"].is_number()) {
 			m_substeps = j["substeps"].get<int>();
@@ -131,6 +154,8 @@ namespace clvr {
 					if (b2Body_IsValid(rb.bodyId)) {
 						b2ShapeDef def;
 						CreateShape(box.material, box.isSensor, def);
+						box.userData = std::make_unique<ShapeUserData>(ShapeUserData{entity});
+						def.userData = box.userData.get();
 						b2Polygon poly = b2MakeOffsetBox(
 							Units::ToMeters(box.halfExtents.x),
 							Units::ToMeters(box.halfExtents.y),
@@ -144,6 +169,26 @@ namespace clvr {
 				else continue;
 			}
 
+			if (b2Shape_IsSensor(box.shapeId) != box.isSensor) {
+				if (Engine.GetEngineMode() == EngineMode::Playing) {
+					if (b2Body_IsValid(rb.bodyId)) {
+						b2ShapeDef def;
+						CreateShape(box.material, box.isSensor, def);
+						box.userData = std::make_unique<ShapeUserData>(ShapeUserData{ entity });
+						def.userData = box.userData.get();
+						b2Polygon poly = b2MakeOffsetBox(
+							Units::ToMeters(box.halfExtents.x),
+							Units::ToMeters(box.halfExtents.y),
+							Units::ToMeters(box.offset),
+							b2Rot_identity);
+						b2DestroyShape(box.shapeId, true);
+						box.shapeId = b2CreatePolygonShape(rb.bodyId, &def, &poly);
+						box.dirty = false;
+					}
+					else continue;
+				}
+				else continue;
+			}
 			b2Polygon poly = b2MakeOffsetBox(
 				Units::ToMeters(box.halfExtents.x),
 				Units::ToMeters(box.halfExtents.y),
@@ -163,6 +208,8 @@ namespace clvr {
 					if (b2Body_IsValid(rb.bodyId)) {
 						b2ShapeDef def;
 						CreateShape(circle.material, circle.isSensor, def);
+						circle.userData = std::make_unique<ShapeUserData>(ShapeUserData{ entity });
+						def.userData = circle.userData.get();
 						b2Circle c = { Units::ToMeters(circle.offset), Units::ToMeters(circle.radius) };
 						circle.shapeId = b2CreateCircleShape(rb.bodyId, &def, &c);
 						circle.dirty = false;
@@ -171,7 +218,23 @@ namespace clvr {
 				}
 				else continue;
 			}
-
+			// check if sensor state has changed, if so, recreate the shape
+			if (b2Shape_IsSensor(circle.shapeId) != circle.isSensor) {
+				if (Engine.GetEngineMode() == EngineMode::Playing) {
+					if (b2Body_IsValid(rb.bodyId)) {
+						b2ShapeDef def;
+						CreateShape(circle.material, circle.isSensor, def);
+						circle.userData = std::make_unique<ShapeUserData>(ShapeUserData{ entity });
+						def.userData = circle.userData.get();
+						b2Circle c = { Units::ToMeters(circle.offset), Units::ToMeters(circle.radius) };
+						b2DestroyShape(circle.shapeId, true);
+						circle.shapeId = b2CreateCircleShape(rb.bodyId, &def, &c);
+						circle.dirty = false;
+					}
+					else continue;
+				}
+				else continue;
+			}
 			b2Circle c = { Units::ToMeters(circle.offset), Units::ToMeters(circle.radius) };
 			b2Shape_SetCircle(circle.shapeId, &c);
 			UpdateShapeMaterial(circle.shapeId, circle.material);
@@ -190,6 +253,8 @@ namespace clvr {
 						{
 							b2ShapeDef def;
 							CreateShape(poly.material, poly.isSensor, def);
+							poly.userData = std::make_unique<ShapeUserData>(ShapeUserData{ entity });
+							def.userData = poly.userData.get();
 							b2Polygon p = b2MakePolygon(&hull, 0.0f);
 							poly.shapeId = b2CreatePolygonShape(rb.bodyId, &def, &p);
 							poly.dirty = false;
@@ -200,6 +265,26 @@ namespace clvr {
 				else continue;
 			}
 			
+			if (b2Shape_IsSensor(poly.shapeId) != poly.isSensor) {
+				if (Engine.GetEngineMode() == EngineMode::Playing) {
+					if (b2Body_IsValid(rb.bodyId)) {
+						b2Hull hull = b2ComputeHull(poly.vertices.data(), (int) poly.vertices.size());
+						if (hull.count > 0)
+						{
+							b2ShapeDef def;
+							CreateShape(poly.material, poly.isSensor, def);
+							poly.userData = std::make_unique<ShapeUserData>(ShapeUserData{ entity });
+							def.userData = poly.userData.get();
+							b2Polygon p = b2MakePolygon(&hull, 0.0f);
+							b2DestroyShape(poly.shapeId, true);
+							poly.shapeId = b2CreatePolygonShape(rb.bodyId, &def, &p);
+							poly.dirty = false;
+						}
+					}
+					else continue;
+				}
+				else continue;
+			}
 			b2Hull hull = b2ComputeHull(poly.vertices.data(), (int)poly.vertices.size());
 			if (hull.count > 0)
 			{
@@ -275,7 +360,8 @@ namespace clvr {
 		{
 			b2ShapeDef def;
 			CreateShape(box->material, box->isSensor, def);
-
+			box->userData = std::make_unique<ShapeUserData>(ShapeUserData{ e });
+			def.userData = box->userData.get();
 			b2Polygon poly = b2MakeOffsetBox(Units::ToMeters(box->halfExtents.x),
 				Units::ToMeters(box->halfExtents.y),
 				{ Units::ToMeters(box->offset.x), Units::ToMeters(box->offset.y) },
@@ -285,8 +371,10 @@ namespace clvr {
 
 		if (auto* circle = reg.try_get<CircleCollider>(e))
 		{
-			b2ShapeDef def = b2DefaultShapeDef();
-			def.isSensor = circle->isSensor;
+			b2ShapeDef def;
+			CreateShape(circle->material, circle->isSensor, def);
+			circle->userData = std::make_unique<ShapeUserData>(ShapeUserData{ e });
+			def.userData = circle->userData.get();
 			b2Circle c = { Units::ToMeters(circle->offset), Units::ToMeters(circle->radius) };
 			circle->shapeId = b2CreateCircleShape(body, &def, &c);
 		}
@@ -296,8 +384,10 @@ namespace clvr {
 			b2Hull hull = b2ComputeHull(poly->vertices.data(), (int)poly->vertices.size());
 			if (hull.count > 0)
 			{
-				b2ShapeDef def = b2DefaultShapeDef();
-				def.isSensor = poly->isSensor;
+				b2ShapeDef def;
+				CreateShape(poly->material, poly->isSensor, def);
+				poly->userData = std::make_unique<ShapeUserData>(ShapeUserData{ e });
+				def.userData = poly->userData.get();
 				b2Polygon p = b2MakePolygon(&hull, 0.0f);
 				poly->shapeId = b2CreatePolygonShape(body, &def, &p);
 			}
@@ -341,6 +431,157 @@ namespace clvr {
 				vel = b2Add(vel, b2MulSV(rate / dist, delta));      // step toward target
 
 			SetVelocity(rb, vel);
+		}
+	}
+
+	void World::HandleContactEvents()
+	{
+		b2ContactEvents contactEvents = b2World_GetContactEvents(m_worldId);
+		for (int i = 0; i < contactEvents.beginCount; ++i)
+		{
+			const b2ContactBeginTouchEvent& event = contactEvents.beginEvents[i];
+
+			auto shapeA = event.shapeIdA;
+			auto shapeB = event.shapeIdB;
+			if (!b2Shape_IsValid(shapeA) || !b2Shape_IsValid(shapeB))
+				continue;
+			auto bodyA = b2Shape_GetBody(shapeA);
+			auto bodyB = b2Shape_GetBody(shapeB);
+			if (!b2Body_IsValid(bodyA) || !b2Body_IsValid(bodyB))
+				continue;
+
+			// Handle contact begin event
+			// You can add your custom logic here
+		}
+		for (int i = 0; i < contactEvents.hitCount; ++i)
+		{
+			const b2ContactHitEvent& event = contactEvents.hitEvents[i];
+
+			auto shapeA = event.shapeIdA;
+			auto shapeB = event.shapeIdB;
+			if (!b2Shape_IsValid(shapeA) || !b2Shape_IsValid(shapeB))
+				continue;
+			auto bodyA = b2Shape_GetBody(shapeA);
+			auto bodyB = b2Shape_GetBody(shapeB);
+			if (!b2Body_IsValid(bodyA) || !b2Body_IsValid(bodyB))
+				continue;
+
+			// Handle contact hit event
+			// You can add your custom logic here
+		}
+		for (int i = 0; i < contactEvents.endCount; ++i)
+		{
+			const b2ContactEndTouchEvent& event = contactEvents.endEvents[i];
+
+			auto shapeA = event.shapeIdA;
+			auto shapeB = event.shapeIdB;
+			if (!b2Shape_IsValid(shapeA) || !b2Shape_IsValid(shapeB))
+				continue;
+			auto bodyA = b2Shape_GetBody(shapeA);
+			auto bodyB = b2Shape_GetBody(shapeB);
+			if (!b2Body_IsValid(bodyA) || !b2Body_IsValid(bodyB))
+				continue;
+
+			// Handle contact end event
+			// You can add your custom logic here
+		}
+	}
+
+	void World::HandleSensorEvents()
+	{
+		// first check for stay events in the current frame, if so, call OnStay for the sensor component
+		auto& registry = Engine.GetECS()->GetRegistry();
+
+		for (auto [entity, sensor, box] : registry.view<SensorComponent, BoxCollider>().each())
+		{
+			if (!b2Shape_IsValid(box.shapeId))
+				continue;
+			sensor.OnStay(registry, entt::null);
+		}
+
+		for (auto [entity, sensor, circle] : registry.view<SensorComponent, CircleCollider>().each())
+		{
+			if (!b2Shape_IsValid(circle.shapeId))
+				continue;
+			sensor.OnStay(registry, entt::null);
+		}
+
+		for (auto [entity, sensor, poly] : registry.view<SensorComponent, PolygonCollider>().each())
+		{
+			if (!b2Shape_IsValid(poly.shapeId))
+				continue;
+			sensor.OnStay(registry, entt::null);
+		}
+
+		// then check for begin and end events in the current frame, if so, call OnBegin/OnEnd for the sensor component
+		b2SensorEvents events = b2World_GetSensorEvents(m_worldId);
+		for (int i = 0; i < events.beginCount; ++i)
+		{
+			const b2SensorBeginTouchEvent& event = events.beginEvents[i];
+
+			auto sensorId = event.sensorShapeId;
+			auto visitorId = event.visitorShapeId;
+			if (!b2Shape_IsValid(sensorId) || !b2Shape_IsValid(visitorId))
+				continue;
+			auto sensorBody = b2Shape_GetBody(sensorId);
+			auto visitorBody = b2Shape_GetBody(visitorId);
+			if (!b2Body_IsValid(sensorBody) || !b2Body_IsValid(visitorBody))
+				continue;
+
+			// Handle sensor begin touch event
+			// You can add your custom logic here
+
+			auto* sData = static_cast<ShapeUserData*>(b2Shape_GetUserData(sensorId));
+			auto* vData = static_cast<ShapeUserData*>(b2Shape_GetUserData(visitorId));
+			if (!sData || !vData)
+				continue;
+
+			Entity sEntity = sData->entity;
+			Entity vEntity = vData->entity;
+
+			if (!registry.valid(sEntity) || !registry.valid(vEntity))
+				continue;
+
+			// check if the sensor has a SensorComponent, if so, call its OnBegin method
+			auto* sensorComp = registry.try_get<SensorComponent>(sEntity);
+			if (sensorComp)
+			{
+				sensorComp->OnBegin(registry, vEntity);
+			}
+		}
+		for (int i = 0; i < events.endCount; ++i)
+		{
+			const b2SensorEndTouchEvent& event = events.endEvents[i];
+
+			auto sensorId = event.sensorShapeId;
+			auto visitorId = event.visitorShapeId;
+			if (!b2Shape_IsValid(sensorId) || !b2Shape_IsValid(visitorId))
+				continue;
+			auto sensorBody = b2Shape_GetBody(sensorId);
+			auto visitorBody = b2Shape_GetBody(visitorId);
+			if (!b2Body_IsValid(sensorBody) || !b2Body_IsValid(visitorBody))
+				continue;
+
+			// Handle sensor end touch event
+			// You can add your custom logic here
+
+			auto* sData = static_cast<ShapeUserData*>(b2Shape_GetUserData(sensorId));
+			auto* vData = static_cast<ShapeUserData*>(b2Shape_GetUserData(visitorId));
+			if (!sData || !vData)
+				continue;
+
+			Entity sEntity = sData->entity;
+			Entity vEntity = vData->entity;
+
+			if (!registry.valid(sEntity) || !registry.valid(vEntity))
+				continue;
+
+			// check if the sensor has a SensorComponent, if so, call its OnEnd method
+			auto* sensorComp = registry.try_get<SensorComponent>(sEntity);
+			if (sensorComp)
+			{
+				sensorComp->OnEnd(registry, vEntity);
+			}
 		}
 	}
 

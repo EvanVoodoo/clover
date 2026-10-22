@@ -20,6 +20,7 @@ namespace clvr
 		RunMode GetRunMode() const { return RunMode::Always; }
 
 		void OnPlayStart() override;
+		void OnPlayStop() override;
 
 		json Save() override;
 		void Load(const json&) override;
@@ -36,6 +37,11 @@ namespace clvr
 		void UpdateShapeMaterial(b2ShapeId shape, const PhysicsMaterial& mat);
 
 		void UpdatePlayerMovement(float dt);
+
+		// Physics world events
+
+		void HandleContactEvents();
+		void HandleSensorEvents();
 
 		// Physics body manipulation
 
