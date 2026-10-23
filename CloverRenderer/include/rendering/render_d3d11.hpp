@@ -14,6 +14,7 @@
 #include "texture_atlas.hpp"
 #include "framebuffer.hpp"
 #include "texture.hpp"
+#include "render_common.hpp"
 
 using namespace DirectX;
 
@@ -35,6 +36,9 @@ namespace clvr
 		void* RenderScene();
 		void EndScene();
 		void OcclusionRender();
+
+		void SubmitDebugLines(const std::vector<DebugLine>& lines);
+		void DrawDebugLines();
 
 		void BeginIDPass();
 		void DrawSpriteID(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, uint32_t entityID);
@@ -120,6 +124,7 @@ namespace clvr
 		ID3D11Buffer* m_fullscreenQuadVB;
 		ID3D11Buffer* m_fullscreenQuadIB;
 		ID3D11Buffer* m_unbatchedQuadVB;
+		ID3D11Buffer* m_debugLineVB;
 
 		ID3D11Texture2D* m_idStagingTexture;
 
@@ -148,5 +153,8 @@ namespace clvr
 		ID3D11SamplerState* m_linearSampler;
 		ID3D11SamplerState* m_linearClampSampler;
 		TextureAtlas* m_textureAtlas;
+
+		std::vector<DebugLine> m_debugLines;
+		static constexpr UINT kMaxDebugVerts = 1 << 16;
 	};
 }

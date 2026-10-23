@@ -284,6 +284,11 @@ void Renderer::UpdateLights()
 	m_DX2D->UpdateLights(lightData);   // forwards to m_lightCb.Update
 }
 
+void Renderer::SubmitDebugLines(const std::vector<DebugLine>& lines)
+{
+	m_DX2D->SubmitDebugLines(lines);
+}
+
 void Renderer::Inspect(float dt)
 {
 	ImGui::Begin("Graphics Settings");

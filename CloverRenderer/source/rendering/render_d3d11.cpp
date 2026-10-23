@@ -38,6 +38,7 @@ DirectX2D::DirectX2D()
 	m_idFramebuffer = nullptr;
 	m_fullscreenQuadIB = nullptr;
 	m_fullscreenQuadVB = nullptr;
+	m_debugLineVB = nullptr;
 	m_idStagingTexture = nullptr;
 }
 
@@ -385,6 +386,9 @@ bool DirectX2D::Initialize(int screenWidth, int screenHeight, bool vsync, bool f
 	LoadShader("id_pick", 
 		resManager->GetPath(Dir::SharedAssets, "shaders/id_pick.vs.hlsl"), 
 		resManager->GetPath(Dir::SharedAssets, "shaders/id_pick.ps.hlsl"));
+	LoadShader("debug_line",
+		resManager->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+		resManager->GetPath(Dir::SharedAssets, "shaders/debug_line.ps.hlsl"));
 
 
 	m_shaderManager.get()->SetPostProcessShader(L"passthrough");
@@ -545,6 +549,14 @@ bool DirectX2D::InitializeQuadBuffers()
 	unbatchedVBDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 	result = m_device->CreateBuffer(&unbatchedVBDesc, nullptr, &m_unbatchedQuadVB);
+	if (FAILED(result)) return false;
+
+	D3D11_BUFFER_DESC lineDesc = {};
+	lineDesc.Usage = D3D11_USAGE_DYNAMIC;
+	lineDesc.ByteWidth = sizeof(Vertex) * kMaxDebugVerts;
+	lineDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	lineDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	result = m_device->CreateBuffer(&lineDesc, nullptr, &m_debugLineVB);
 	if (FAILED(result)) return false;
 
 	return true;
@@ -795,6 +807,8 @@ void* DirectX2D::RenderScene()
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_deviceContext->DrawIndexed(6, 0, 0);
 
+	DrawDebugLines();
+
 	m_shaderManager.get()->GetPostProcessShader()->Bind(m_deviceContext);
 
 	m_letterboxFramebuffer->Bind(m_deviceContext);
@@ -1040,6 +1054,45 @@ void DirectX2D::OcclusionRender()
 	}
 
 	ResetViewport();
+}
+
+void DirectX2D::SubmitDebugLines(const std::vector<DebugLine>& lines)
+{
+	m_debugLines.insert(m_debugLines.end(), lines.begin(), lines.end());
+}
+
+void DirectX2D::DrawDebugLines()
+{
+	if (m_debugLines.empty()) return;
+
+	// Each line is 2 vertices; cap to buffer size. (std::min) avoids the Windows macro.
+	const size_t lineCount = (std::min) (m_debugLines.size(), size_t(kMaxDebugVerts / 2));
+
+	D3D11_MAPPED_SUBRESOURCE mapped = {};
+	if (FAILED(m_deviceContext->Map(m_debugLineVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+		return;
+
+	Vertex* v = static_cast<Vertex*>(mapped.pData);
+	for (size_t i = 0; i < lineCount; ++i)
+	{
+		const DebugLine& l = m_debugLines[i];
+		v[i * 2] = { XMFLOAT3(l.a.x, l.a.y, 0.5f), XMFLOAT2(0, 0), l.color };
+		v[i * 2 + 1] = { XMFLOAT3(l.b.x, l.b.y, 0.5f), XMFLOAT2(0, 0), l.color };
+	}
+	m_deviceContext->Unmap(m_debugLineVB, 0);
+
+	m_shaderManager.get()->GetShader(L"debug_line")->Bind(m_deviceContext);
+
+	BufferType::MVPBufferType mvp = { GetWorldMatrix(), GetViewMatrix(), GetProjectionMatrix() };
+	m_mvpCb.Update(m_deviceContext, mvp.Transposed());
+	m_mvpCb.BindVS(m_deviceContext, 0);
+
+	unsigned int stride = sizeof(Vertex), offset = 0;
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_debugLineVB, &stride, &offset);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	m_deviceContext->Draw(static_cast<UINT>(lineCount * 2), 0);
+
+	m_debugLines.clear();
 }
 
 void DirectX2D::BeginIDPass()

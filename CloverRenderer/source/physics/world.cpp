@@ -11,7 +11,10 @@
 namespace clvr {
 	World::World()
 	{
-		m_worldId = b2_nullWorldId;
+		b2WorldDef worldDef = b2DefaultWorldDef();
+		worldDef.gravity = m_gravity;
+		m_worldId = b2CreateWorld(&worldDef);
+
 		m_substeps = 4;
 
 		title = "Physics World";
@@ -27,13 +30,11 @@ namespace clvr {
 	void World::Update(float dt)
 	{
 		// fixed time step
-		if (Engine.GetEngineMode() != EngineMode::Playing)
-			return;
-
 		SyncBodies();
 		SyncColliders();
 
 		constexpr float fixedStep = 1.0f / 60.0f;
+
 		m_accumulator += std::fmin(dt, 0.25f);
 
 		while (m_accumulator >= fixedStep)
@@ -41,31 +42,41 @@ namespace clvr {
 			UpdatePlayerMovement(fixedStep);            // same dt as the step it feeds
 			b2World_Step(m_worldId, fixedStep, m_substeps);
 			m_accumulator -= fixedStep;
-			HandleContactEvents();
-			HandleSensorEvents();
+			if (Engine.GetEngineMode() == EngineMode::Playing)
+			{
+				HandleContactEvents();
+				HandleSensorEvents();
+			}
 		}
 
-		for (auto [entity, t, rb] : Engine.GetECS()->GetRegistry().view<Transform, RigidBody>().each())
-		{
-			b2BodyId body = rb.bodyId;
-
-			// check if static body, if so, skip updating transform
-			if (rb.bodyType == b2BodyType::b2_staticBody)
-				continue;
-
-			if (b2Body_IsValid(body))
+		if (m_drawEnabled) {
+			m_debugDraw.Begin();
+			b2World_Draw(m_worldId, &m_debugDraw);
+		}
+		
+		if (Engine.GetEngineMode() == EngineMode::Playing) {
+			for (auto [entity, t, rb] : Engine.GetECS()->GetRegistry().view<Transform, RigidBody>().each())
 			{
-				b2Vec2 pos = b2Body_GetPosition(body);
-				t.position.x = Units::ToPixels(pos.x);
-				t.position.y = Units::ToPixels(pos.y);
-				t.rotation = b2Rot_GetAngle(b2Body_GetRotation(body));
+				b2BodyId body = rb.bodyId;
+
+				// check if static body, if so, skip updating transform
+				if (rb.bodyType == b2BodyType::b2_staticBody)
+					continue;
+
+				if (b2Body_IsValid(body))
+				{
+					b2Vec2 pos = b2Body_GetPosition(body);
+					t.position.x = Units::ToPixels(pos.x);
+					t.position.y = Units::ToPixels(pos.y);
+					t.rotation = b2Rot_GetAngle(b2Body_GetRotation(body));
+				}
 			}
 		}
 	}
 
 	void World::Render()
 	{
-		// No rendering for physics world
+		m_debugDraw.End();
 	}
 
 	void World::Inspect(float dt)
@@ -82,6 +93,12 @@ namespace clvr {
 			{
 				if (b2Body_IsValid(rb.bodyId))
 					b2Body_SetAwake(rb.bodyId, true);
+			}
+		}
+
+		if (ImGui::Checkbox("Debug Draw", &m_drawEnabled)) {
+			if (!m_drawEnabled) {
+				m_debugDraw.End();
 			}
 		}
 
@@ -105,29 +122,70 @@ namespace clvr {
 
 	void World::OnPlayStop()
 	{
+		m_debugDraw.End();
+
 		auto ecs = Engine.GetECS();
 		for (auto [entity, rb, t] : ecs->GetRegistry().view<RigidBody, Transform>().each())
 		{
 			if (b2Body_IsValid(rb.bodyId))
 			{
+				b2DestroyBody(rb.bodyId);
 				rb.bodyId = b2_nullBodyId;
 			}
 		}
 
+		for (auto [entity, box] : ecs->GetRegistry().view<BoxCollider>().each())
+		{
+			if (b2Shape_IsValid(box.shapeId))
+			{
+				b2DestroyShape(box.shapeId, true);
+				box.shapeId = b2_nullShapeId;
+			}
+		}
+
+		for (auto [entity, circle] : ecs->GetRegistry().view<CircleCollider>().each())
+		{
+			if (b2Shape_IsValid(circle.shapeId))
+			{
+				b2DestroyShape(circle.shapeId, true);
+				circle.shapeId = b2_nullShapeId;
+			}
+		}
+
+		for (auto [entity, poly] : ecs->GetRegistry().view<PolygonCollider>().each())
+		{
+			if (b2Shape_IsValid(poly.shapeId))
+			{
+				b2DestroyShape(poly.shapeId, true);
+				poly.shapeId = b2_nullShapeId;
+			}
+		}
+
 		b2DestroyWorld(m_worldId);
-		m_worldId = b2_nullWorldId;
+		b2WorldDef worldDef = b2DefaultWorldDef();
+		worldDef.gravity = m_gravity;
+		m_worldId = b2CreateWorld(&worldDef);
 	}
 
 	json World::Save() {
 		// Save gravity and substeps
 		return json{
 			{ "gravity", { m_gravity.x, m_gravity.y } },
-			{ "substeps", m_substeps }
+			{ "substeps", m_substeps },
+			{ "debugDraw", m_drawEnabled },
 		};
 	}
 
 	void World::Load(const json& j) {
 		// Load gravity and substeps
+		b2DestroyWorld(m_worldId);
+		b2WorldDef worldDef = b2DefaultWorldDef();
+		worldDef.gravity = m_gravity;
+		m_worldId = b2CreateWorld(&worldDef);
+
+		if (j.contains("debugDraw") && j["debugDraw"].is_boolean()) {
+			m_drawEnabled = j["debugDraw"].get<bool>();
+		}
 		if (j.contains("gravity") && j["gravity"].is_array() && j["gravity"].size() == 2) {
 			m_gravity.x = j["gravity"][0].get<float>();
 			m_gravity.y = j["gravity"][1].get<float>();
@@ -150,7 +208,7 @@ namespace clvr {
 				continue;
 			if (!b2Shape_IsValid(box.shapeId) || B2_IS_NULL(box.shapeId)) {
 				// if playing, create the shape if it doesn't exist
-				if (Engine.GetEngineMode() == EngineMode::Playing) {
+				//if (Engine.GetEngineMode() == EngineMode::Playing) {
 					if (b2Body_IsValid(rb.bodyId)) {
 						b2ShapeDef def;
 						CreateShape(box.material, box.isSensor, def);
@@ -165,12 +223,12 @@ namespace clvr {
 						box.dirty = false;
 					}
 					else continue;
-				}
-				else continue;
+				//}
+				//else continue;
 			}
 
 			if (b2Shape_IsSensor(box.shapeId) != box.isSensor) {
-				if (Engine.GetEngineMode() == EngineMode::Playing) {
+				//if (Engine.GetEngineMode() == EngineMode::Playing) {
 					if (b2Body_IsValid(rb.bodyId)) {
 						b2ShapeDef def;
 						CreateShape(box.material, box.isSensor, def);
@@ -186,8 +244,8 @@ namespace clvr {
 						box.dirty = false;
 					}
 					else continue;
-				}
-				else continue;
+				//}
+				//else continue;
 			}
 			b2Polygon poly = b2MakeOffsetBox(
 				Units::ToMeters(box.halfExtents.x),
@@ -204,7 +262,7 @@ namespace clvr {
 			if (!circle.dirty)
 				continue;
 			if (!b2Shape_IsValid(circle.shapeId) || B2_IS_NULL(circle.shapeId)) {
-				if (Engine.GetEngineMode() == EngineMode::Playing) {
+				//if (Engine.GetEngineMode() == EngineMode::Playing) {
 					if (b2Body_IsValid(rb.bodyId)) {
 						b2ShapeDef def;
 						CreateShape(circle.material, circle.isSensor, def);
@@ -215,12 +273,12 @@ namespace clvr {
 						circle.dirty = false;
 					}
 					else continue;
-				}
-				else continue;
+				//}
+				//else continue;
 			}
 			// check if sensor state has changed, if so, recreate the shape
 			if (b2Shape_IsSensor(circle.shapeId) != circle.isSensor) {
-				if (Engine.GetEngineMode() == EngineMode::Playing) {
+				//if (Engine.GetEngineMode() == EngineMode::Playing) {
 					if (b2Body_IsValid(rb.bodyId)) {
 						b2ShapeDef def;
 						CreateShape(circle.material, circle.isSensor, def);
@@ -232,8 +290,8 @@ namespace clvr {
 						circle.dirty = false;
 					}
 					else continue;
-				}
-				else continue;
+				//}
+				//else continue;
 			}
 			b2Circle c = { Units::ToMeters(circle.offset), Units::ToMeters(circle.radius) };
 			b2Shape_SetCircle(circle.shapeId, &c);
@@ -246,7 +304,7 @@ namespace clvr {
 			if (!poly.dirty)
 				continue;
 			if (!b2Shape_IsValid(poly.shapeId) || B2_IS_NULL(poly.shapeId)) {
-				if (Engine.GetEngineMode() == EngineMode::Playing) {
+				//if (Engine.GetEngineMode() == EngineMode::Playing) {
 					if (b2Body_IsValid(rb.bodyId)) {
 						b2Hull hull = b2ComputeHull(poly.vertices.data(), (int)poly.vertices.size());
 						if (hull.count > 0)
@@ -261,12 +319,12 @@ namespace clvr {
 						}
 					}
 					else continue;
-				}
-				else continue;
+				//}
+				//else continue;
 			}
 			
 			if (b2Shape_IsSensor(poly.shapeId) != poly.isSensor) {
-				if (Engine.GetEngineMode() == EngineMode::Playing) {
+				//if (Engine.GetEngineMode() == EngineMode::Playing) {
 					if (b2Body_IsValid(rb.bodyId)) {
 						b2Hull hull = b2ComputeHull(poly.vertices.data(), (int) poly.vertices.size());
 						if (hull.count > 0)
@@ -282,8 +340,8 @@ namespace clvr {
 						}
 					}
 					else continue;
-				}
-				else continue;
+				//}
+				//else continue;
 			}
 			b2Hull hull = b2ComputeHull(poly.vertices.data(), (int)poly.vertices.size());
 			if (hull.count > 0)
@@ -305,11 +363,11 @@ namespace clvr {
 				continue;
 
 			if (!b2Body_IsValid(rb.bodyId)) {
-				if (Engine.GetEngineMode() == EngineMode::Playing) {
+				//if (Engine.GetEngineMode() == EngineMode::Playing) {
 					rb.bodyId = CreatePhysicsBody(rb, t);
 					CreateShapes(entity, rb.bodyId);
-				}
-				else continue;
+				//}
+				//else continue;
 			}
 
 			b2Body_SetType(rb.bodyId, rb.bodyType);
@@ -406,6 +464,11 @@ namespace clvr {
 		b2Shape_EnableContactEvents(shape, mat.enableContactEvents);
 		b2Shape_EnableSensorEvents(shape, mat.enableSensorEvents);
 		b2Shape_EnableHitEvents(shape, mat.enableHitEvents);
+	}
+
+	void World::DrawShape(b2ShapeId shape, b2HexColor color)
+	{
+		m_debugDraw.DrawShape(shape, color);
 	}
 
 	void World::UpdatePlayerMovement(float dt)   // dt = fixed step

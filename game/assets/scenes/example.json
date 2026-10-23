@@ -73,7 +73,7 @@
         "name": "Player",
         "position": [
           0.0,
-          -300.0
+          -210.0
         ],
         "rotation": 0.0,
         "scale": [
@@ -25097,6 +25097,7 @@
     "": null,
     "GameSystem": null,
     "Physics World": {
+      "debugDraw": true,
       "gravity": [
         0.0,
         0.0

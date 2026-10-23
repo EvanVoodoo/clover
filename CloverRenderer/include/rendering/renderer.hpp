@@ -10,6 +10,7 @@
 #include "render_components.hpp"
 #include "texture.hpp"
 #include "texture_atlas.hpp"
+#include "render_common.hpp"
 
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
@@ -62,6 +63,7 @@ namespace clvr
 		bool IsFullscreen() const;
 
 		void UpdateLights();
+		void SubmitDebugLines(const std::vector<DebugLine>& lines);
 
 		int AddTexture(const std::string filename);
 		std::shared_ptr<Texture> LoadTexture(std::string filename);

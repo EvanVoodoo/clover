@@ -503,9 +503,11 @@
     <ClInclude Include="include\physics\sensor_component.hpp" />
     <ClInclude Include="include\physics\units.hpp" />
     <ClInclude Include="include\physics\world.hpp" />
+    <ClInclude Include="include\physics\debug_draw_2d.hpp" />
     <ClInclude Include="include\physics\world_helpers.hpp" />
     <ClInclude Include="include\rendering\framebuffer.hpp" />
     <ClInclude Include="include\rendering\renderer.hpp" />
+    <ClInclude Include="include\rendering\render_common.hpp" />
     <ClInclude Include="include\rendering\render_components.hpp" />
     <ClInclude Include="include\rendering\render_d3d11.hpp" />
     <ClInclude Include="include\rendering\shader.hpp" />
@@ -520,6 +522,7 @@
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\physics\debug_draw_2d.cpp" />
     <ClCompile Include="source\physics\sensor_component.cpp" />
     <ClCompile Include="source\physics\world_helpers.cpp" />
     <ClCompile Include="source\core\selection_gizmo.cpp" />

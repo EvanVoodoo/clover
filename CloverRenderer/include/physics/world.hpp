@@ -4,6 +4,7 @@
 #include "Box2D/box2d.h"
 #include "physics_components.hpp"
 #include <core/transform.hpp>
+#include "debug_draw_2d.hpp"
 
 namespace clvr
 {
@@ -35,6 +36,8 @@ namespace clvr
 		void CreateShape(PhysicsMaterial mat, bool isSensor, b2ShapeDef& out);
         void CreateShapes(Entity e, b2BodyId body);
 		void UpdateShapeMaterial(b2ShapeId shape, const PhysicsMaterial& mat);
+
+		void DrawShape(b2ShapeId shape, b2HexColor color);
 
 		void UpdatePlayerMovement(float dt);
 
@@ -95,6 +98,8 @@ namespace clvr
 		void ApplyImpulse(RigidBody rb, const b2Vec2 impulse, const b2Vec2 point, bool wake);
 
 	private:
+		DebugDraw2D m_debugDraw;
+
 		b2WorldId m_worldId = b2_nullWorldId;
 		b2ContactEvents m_contactEvents;
 		b2SensorEvents m_sensorEvents;
@@ -102,5 +107,6 @@ namespace clvr
 		b2Vec2 m_gravity = { 0.0f, -9.81f };
 		int m_substeps = 4;
 		float m_accumulator = 0.0f;
+		bool m_drawEnabled = false;
 	};
 }

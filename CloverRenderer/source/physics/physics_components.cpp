@@ -2,6 +2,8 @@
 #include <imgui.h>
 #include "core/imgui_helpers.hpp"
 #include <Box2D/box2d.h>
+#include <core/engine.hpp>
+#include <physics/world.hpp>
 
 using namespace clvr;
 
@@ -45,6 +47,7 @@ void BoxCollider::Inspect() {
 		}
 		ImGui::TreePop();
 	}
+	Engine.GetECS()->GetSystem<World>().DrawShape(shapeId, isSensor ? b2_colorYellow : b2_colorGreen);
 }
 
 void CircleCollider::Inspect() {
@@ -65,6 +68,7 @@ void CircleCollider::Inspect() {
 		}
 		ImGui::TreePop();
 	}
+	Engine.GetECS()->GetSystem<World>().DrawShape(shapeId, isSensor ? b2_colorYellow : b2_colorGreen);
 }
 
 void PolygonCollider::Inspect() {
@@ -105,6 +109,7 @@ void PolygonCollider::Inspect() {
 		}
 		ImGui::TreePop();
 	}
+	Engine.GetECS()->GetSystem<World>().DrawShape(shapeId, isSensor ? b2_colorYellow : b2_colorGreen);
 }
 
 void PhysicsMaterial::Inspect()
