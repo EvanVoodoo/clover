@@ -13,20 +13,12 @@ namespace clvr
 		if (spriteComp)
 		{
 			auto& sprite = spriteComp->sprite;
-			sprite.color = { 1.0f, 0.0f, 0.0f, 1.0f }; // Change color to red on begin
+			sprite.color = { modifiedColor[0], modifiedColor[1], modifiedColor[2], modifiedColor[3] }; // Change color to specified color on begin
 		}
 	}
 	void ColorSensorCommand::OnStay(entt::registry& reg, const SensorContext& context)
 	{
-		if (!reg.valid(context.visitor))
-			return;
-
-		SpriteComponent* spriteComp = reg.try_get<SpriteComponent>(context.visitor);
-		if (spriteComp)
-		{
-			auto& sprite = spriteComp->sprite;
-			sprite.color = { 0.0f, 1.0f, 0.0f, 1.0f }; // Change color to green while staying
-		}
+		return; // No action needed while staying in the sensor area
 	}
 	void ColorSensorCommand::OnEnd(entt::registry& reg, const SensorContext& context)
 	{
@@ -39,6 +31,10 @@ namespace clvr
 			auto& sprite = spriteComp->sprite;
 			sprite.color = { 1.0f, 1.0f, 1.0f, 1.0f }; // Change color back to white on end
 		}
+	}
+
+	void ColorSensorCommand::Inspect() {
+		ImGui::ColorEdit4("Modified Color", modifiedColor);
 	}
 
 	void SensorComponent::Inspect()

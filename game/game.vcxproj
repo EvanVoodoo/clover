@@ -434,6 +434,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\gravity_sensor.cpp" />
     <ClCompile Include="source\player_controller.cpp" />
     <ClCompile Include="source\game.cpp" />
     <ClCompile Include="source\main.cpp" />
@@ -445,6 +446,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.hpp" />
+    <ClInclude Include="include\gravity_sensor.hpp" />
     <ClInclude Include="include\player_controller.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

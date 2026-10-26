@@ -24,12 +24,18 @@
     <ClCompile Include="source\player_controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\gravity_sensor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\player_controller.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gravity_sensor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

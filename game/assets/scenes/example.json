@@ -25656,8 +25656,8 @@
     {
       "BoxCollider": {
         "halfExtents": [
-          16.0,
-          40.79999923706055
+          350.0,
+          150.0
         ],
         "isSensor": true,
         "material": {
@@ -25688,17 +25688,27 @@
         "active": true,
         "commands": [
           {
+            "modifiedColor": [
+              0.0,
+              0.6745098233222961,
+              1.0,
+              1.0
+            ],
             "type": "ColorSensorCommand"
+          },
+          {
+            "modifiedGravityScale": -10.0,
+            "type": "GravitySensorCommand"
           }
         ]
       },
       "Sprite": {
         "sprite": {
           "color": [
+            0.0,
+            0.6745098233222961,
             1.0,
-            0.0,
-            0.0,
-            1.0
+            0.6784313917160034
           ],
           "flipX": false,
           "flipY": false,
@@ -25714,8 +25724,8 @@
           ],
           "rotation": -431602080.0,
           "size": [
-            100.0,
-            100.0
+            700.0,
+            300.0
           ],
           "textureName": "textures/white.jpg",
           "useLinkedTexture": false,
@@ -25728,7 +25738,7 @@
         }
       },
       "Transform": {
-        "name": "Color Change Sensor",
+        "name": "Water",
         "position": [
           0.0,
           0.0
@@ -25748,7 +25758,7 @@
       "debugDraw": false,
       "gravity": [
         0.0,
-        0.0
+        -20.0
       ],
       "substeps": 4
     },

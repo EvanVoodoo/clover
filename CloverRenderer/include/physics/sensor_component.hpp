@@ -26,13 +26,29 @@ namespace clvr
 		virtual void FromJson(const nlohmann::json& j) {}
 	};
 
-	struct ColorSensorCommand : public SensorCommand {
+	class ColorSensorCommand : public SensorCommand {
+	public:
 		ColorSensorCommand() {}
 		void OnBegin(entt::registry& reg, const SensorContext& context) override;
 		void OnStay(entt::registry& reg, const SensorContext& context) override;
 		void OnEnd(entt::registry& reg, const SensorContext& context) override;
 
 		const char* GetTypeName() const override { return "ColorSensorCommand"; }
+
+		void Inspect() override;
+
+		void ToJson(nlohmann::json& j) const override {
+			j["modifiedColor"] = { modifiedColor[0], modifiedColor[1], modifiedColor[2], modifiedColor[3] };
+		}
+		void FromJson(const nlohmann::json& j) override {
+			if (j.contains("modifiedColor") && j["modifiedColor"].is_array() && j["modifiedColor"].size() == 4) {
+				for (int i = 0; i < 4; ++i) {
+					modifiedColor[i] = j["modifiedColor"][i].get<float>();
+				}
+			}
+		}
+	private:
+		float modifiedColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f }; // Red color
 	};
 
 	class SensorCommandFactory

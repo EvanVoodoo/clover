@@ -14,6 +14,7 @@
 #include "physics/world_helpers.hpp"
 
 #include <string>
+#include <gravity_sensor.hpp>
 
 using namespace clvr;
 using Dir = ResourceManager::Directory;
@@ -34,6 +35,7 @@ Game::Game() {
 	renderer.BuildAtlas();   // built ONCE, after all textures added, before first frame
 	
 	SensorCommandFactory::Get().Register<ColorSensorCommand>("ColorSensorCommand");
+	SensorCommandFactory::Get().Register<GravitySensorCommand>("GravitySensorCommand");
 	
 	//SetupScene();
 
