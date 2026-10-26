@@ -47,6 +47,8 @@ namespace clvr
 		SpriteLayer* layer = nullptr;
 		float rotation;
 		bool isOccluder = true; // if true, this sprite will be used for occlusion rendering
+		bool flipX = false; // if true, this sprite will be flipped horizontally
+		bool flipY = false; // if true, this sprite will be flipped vertically
 
 		bool useLinkedTexture = false;
 		std::shared_ptr<Texture> texture = nullptr; // set once, e.g. via LoadTexture function
@@ -66,6 +68,8 @@ namespace clvr
 			{"layerId", s.layer ? s.layer->id : -1},
 			{"rotation", s.rotation},
 			{"isOccluder", s.isOccluder},
+			{"flipX", s.flipX},
+			{"flipY", s.flipY},
 			{"textureName", s.textureName},
 			{"useLinkedTexture", s.useLinkedTexture}
 		};
@@ -83,6 +87,8 @@ namespace clvr
 		s.layer = nullptr; // will be set later by the renderer based on layerId
 		s.rotation = j.value("rotation", 0.0f);
 		s.isOccluder = j.value("isOccluder", true);
+		s.flipX = j.value("flipX", false);
+		s.flipY = j.value("flipY", false);
 		s.textureName = j.value("textureName", "");
 		s.useLinkedTexture = j.value("useLinkedTexture", false);
 		if (s.useLinkedTexture) {

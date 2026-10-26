@@ -1254,6 +1254,13 @@ void DirectX2D::DrawUnbatchedSprite(const Sprite& sprite, const Transform& trans
 	float uvRight = sprite.uvRect.x + sprite.uvRect.z;
 	float uvBottom = sprite.uvRect.y + sprite.uvRect.w;
 
+
+	if (sprite.flipX)
+		std::swap(uvLeft, uvRight);
+
+	if (sprite.flipY)
+		std::swap(uvTop, uvBottom);
+
 	XMFLOAT2 corners[4] = {
 		{ -halfWidth, -halfHeight },
 		{  halfWidth, -halfHeight },

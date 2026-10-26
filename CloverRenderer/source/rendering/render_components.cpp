@@ -41,6 +41,9 @@ void SpriteComponent::Inspect()
 		ImGui::DragFloat2("Size", &sprite.size.x, 0.5f);
 		ImGui::ColorEdit4("Color", &sprite.color.x);
 		ImGui::Checkbox("Is Occluder", &sprite.isOccluder);
+		ImGui::Checkbox("Flip X", &sprite.flipX);
+		ImGui::SameLine();
+		ImGui::Checkbox("Flip Y", &sprite.flipY);
 		// Combo for selecting a sprite layer from the available layers in the renderer
 		auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
 		const char* layerNames[100];

@@ -21,7 +21,7 @@ void RigidBody::Inspect() {
 		//ImGui::Text("Body Type: %s", bodyType == b2_staticBody ? "Static" : bodyType == b2_kinematicBody ? "Kinematic" : "Dynamic");
 		ImGui::DragFloat("Linear Damping", &linearDamping, 0.01f, 0.0f, 10.0f);
 		ImGui::DragFloat("Angular Damping", &angularDamping, 0.01f, 0.0f, 10.0f);
-		ImGui::DragFloat("Gravity Scale", &gravityScale, 0.1f, 0.0f, 10.0f);
+		ImGui::DragFloat("Gravity Scale", &gravityScale, 0.1f, -10.0f, 10.0f);
 		ImGui::Checkbox("Fixed Rotation", &fixedRotation);
 		ImGui::Checkbox("Is Bullet", &isBullet);
 		ImGui::Checkbox("Enable Sleep", &enableSleep);
@@ -36,10 +36,10 @@ void BoxCollider::Inspect() {
 			dirty = true;
 			material.dirty = false;
 		}
-		if (ImGui::DragFloat2("Half Extents", &halfExtents.x, 0.01f, 0.0f, 100.0f)) {
+		if (ImGui::DragFloat2("Half Extents", &halfExtents.x, 0.1f, 0.0f, 10000.0f)) {
 			dirty = true;
 		}
-		if (ImGui::DragFloat2("Offset", &offset.x, 0.01f, -100.0f, 100.0f)) {
+		if (ImGui::DragFloat2("Offset", &offset.x, 0.1f, -10000.0f, 10000.0f)) {
 			dirty = true;
 		}
 		if (ImGui::Checkbox("Is Sensor", &isSensor)) {
@@ -57,10 +57,10 @@ void CircleCollider::Inspect() {
 			dirty = true;
 			material.dirty = false;
 		}
-		if (ImGui::DragFloat("Radius", &radius, 0.01f, 0.0f, 100.0f)) {
+		if (ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, 10000.0f)) {
 			dirty = true;
 		}
-		if (ImGui::DragFloat2("Offset", &offset.x, 0.01f, -100.0f, 100.0f)) {
+		if (ImGui::DragFloat2("Offset", &offset.x, 0.1f, -10000.0f, 10000.0f)) {
 			dirty = true;
 		}
 		if (ImGui::Checkbox("Is Sensor", &isSensor)) {

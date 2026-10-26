@@ -18,7 +18,7 @@ namespace clvr
 
 		m_xAxisParams->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // regular color
 
-		m_xAxisParams->hoverColor = { 1.0f, 1.0f, 0.0f, 1.0f }; // yellow
+		m_xAxisParams->hoverColor = { 1.0f, 1.0f, 1.0f, 1.0f }; // dont change color on hover
 
 		float scaleFactor = 1.8f; // scale up the gizmo for better visibility
 		m_xAxisParams->transform.scale = { scaleFactor, scaleFactor };

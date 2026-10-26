@@ -5,6 +5,7 @@
 #include <core/transform.hpp>
 #include <physics/world.hpp>
 #include <Box2D/math_functions.h>
+#include <rendering/render_components.hpp>
 
 using namespace clvr;
 
@@ -31,6 +32,16 @@ void PhysicsPlayerController::Produce(entt::registry& reg, entt::entity entity, 
         x /= len;
         y /= len;
     }
+
+    auto* sc = reg.try_get<SpriteComponent>(entity);
+	if (sc) {
+		if (x > 0.f) {
+            sc->sprite.flipX = true; // face right
+		}
+		else if (x < 0.f) {
+            sc->sprite.flipX = false; // face left
+		}
+	}
 
     out.push_back(std::make_unique<PhysicsMoveCommand>(x, y, jump, mode));
 }
