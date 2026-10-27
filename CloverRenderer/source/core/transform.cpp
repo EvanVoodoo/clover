@@ -10,7 +10,8 @@ using namespace clvr;
 
 void Transform::Inspect()
 {
-    if (ImGui::TreeNode("Transform")) 
+	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen;
+    if (ImGui::TreeNodeEx("Transform", flags)) 
     {
         char nameBuffer[128];
 		bool dirty = false;

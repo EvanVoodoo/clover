@@ -55,7 +55,7 @@ namespace clvr
 		template <typename T>
 		void RemoveComponent(Entity entity) { m_active->remove<T>(entity); }
 		template <typename T>
-		static void RegisterComponent(const char* name = nullptr);
+		static void RegisterComponent(const char* name = nullptr, int order = 1000);
 		template <typename T, typename... Args>
 		T& CreateSystem(Args&&... args);
 		template <typename T>
@@ -100,6 +100,16 @@ namespace clvr
 	}
 
 	template<typename T>
+	struct ComponentOrderOverride {
+		static inline int value = 1000;   // unlisted components sort last
+	};
+
+	template<typename T>
+	int GetComponentOrder() {
+		return ComponentOrderOverride<T>::value;
+	}
+
+	template<typename T>
 	bool HasComponent(entt::registry& registry, entt::entity entity) {
 		return registry.all_of<T>(entity);
 	}
@@ -117,16 +127,18 @@ namespace clvr
 	}
 
 	template<typename T>
-	void EntityComponentSystem::RegisterComponent(const char* name)
+	void EntityComponentSystem::RegisterComponent(const char* name, int order)
 	{
 		using namespace entt::literals;
 		if (name)
 			ComponentNameOverride<T>::value = name;
+		ComponentOrderOverride<T>::value = order;
 
 		entt::meta_factory<T>{}
 			.template func<&GetComponent<T>, entt::as_ref_t>("get"_hs)
 			.template func<&T::Inspect>("inspect"_hs)
 			.template func<&GetComponentName<T>>("name"_hs)
+			.template func<&GetComponentOrder<T>>("order"_hs)
 			.template func<&HasComponent<T>>("has"_hs)
 			.template func<&clvr::CreateComponent<T>>("create"_hs)
 			.template func<&clvr::RemoveComponent<T>>("remove"_hs);

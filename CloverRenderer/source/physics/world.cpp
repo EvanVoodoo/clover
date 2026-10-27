@@ -39,13 +39,19 @@ namespace clvr {
 
 		while (m_accumulator >= fixedStep)
 		{
-			UpdatePlayerMovement(fixedStep);            // same dt as the step it feeds
-			b2World_Step(m_worldId, fixedStep, m_substeps);
-			m_accumulator -= fixedStep;
 			if (Engine.GetEngineMode() == EngineMode::Playing)
 			{
+				UpdatePlayerMovement(fixedStep);            // same dt as the step it feeds
+				b2World_Step(m_worldId, fixedStep, m_substeps);
+				m_accumulator -= fixedStep;
 				HandleContactEvents();
 				HandleSensorEvents();
+			}
+			else if (Engine.GetEngineMode() == EngineMode::Editing)
+			{
+				// In edit mode, we still want to step the world to update the debug draw and any other physics-related things
+				b2World_Step(m_worldId, 0, m_substeps);
+				m_accumulator -= fixedStep;
 			}
 		}
 
@@ -211,7 +217,7 @@ namespace clvr {
 				//if (Engine.GetEngineMode() == EngineMode::Playing) {
 					if (b2Body_IsValid(rb.bodyId)) {
 						b2ShapeDef def;
-						CreateShape(box.material, box.isSensor, def);
+						CreateShape(box.material, box.isSensor, def, box.category);
 						box.userData = std::make_unique<ShapeUserData>(ShapeUserData{entity});
 						def.userData = box.userData.get();
 						b2Polygon poly = b2MakeOffsetBox(
@@ -231,7 +237,7 @@ namespace clvr {
 				//if (Engine.GetEngineMode() == EngineMode::Playing) {
 					if (b2Body_IsValid(rb.bodyId)) {
 						b2ShapeDef def;
-						CreateShape(box.material, box.isSensor, def);
+						CreateShape(box.material, box.isSensor, def, box.category);
 						box.userData = std::make_unique<ShapeUserData>(ShapeUserData{ entity });
 						def.userData = box.userData.get();
 						b2Polygon poly = b2MakeOffsetBox(
@@ -265,7 +271,7 @@ namespace clvr {
 				//if (Engine.GetEngineMode() == EngineMode::Playing) {
 					if (b2Body_IsValid(rb.bodyId)) {
 						b2ShapeDef def;
-						CreateShape(circle.material, circle.isSensor, def);
+						CreateShape(circle.material, circle.isSensor, def, circle.category);
 						circle.userData = std::make_unique<ShapeUserData>(ShapeUserData{ entity });
 						def.userData = circle.userData.get();
 						b2Circle c = { Units::ToMeters(circle.offset), Units::ToMeters(circle.radius) };
@@ -281,7 +287,7 @@ namespace clvr {
 				//if (Engine.GetEngineMode() == EngineMode::Playing) {
 					if (b2Body_IsValid(rb.bodyId)) {
 						b2ShapeDef def;
-						CreateShape(circle.material, circle.isSensor, def);
+						CreateShape(circle.material, circle.isSensor, def, circle.category);
 						circle.userData = std::make_unique<ShapeUserData>(ShapeUserData{ entity });
 						def.userData = circle.userData.get();
 						b2Circle c = { Units::ToMeters(circle.offset), Units::ToMeters(circle.radius) };
@@ -310,7 +316,7 @@ namespace clvr {
 						if (hull.count > 0)
 						{
 							b2ShapeDef def;
-							CreateShape(poly.material, poly.isSensor, def);
+							CreateShape(poly.material, poly.isSensor, def, poly.category);
 							poly.userData = std::make_unique<ShapeUserData>(ShapeUserData{ entity });
 							def.userData = poly.userData.get();
 							b2Polygon p = b2MakePolygon(&hull, 0.0f);
@@ -330,7 +336,7 @@ namespace clvr {
 						if (hull.count > 0)
 						{
 							b2ShapeDef def;
-							CreateShape(poly.material, poly.isSensor, def);
+							CreateShape(poly.material, poly.isSensor, def, poly.category);
 							poly.userData = std::make_unique<ShapeUserData>(ShapeUserData{ entity });
 							def.userData = poly.userData.get();
 							b2Polygon p = b2MakePolygon(&hull, 0.0f);
@@ -395,7 +401,8 @@ namespace clvr {
 		return b2CreateBody(m_worldId, &bodyDef);
 	}
 
-	void World::CreateShape(PhysicsMaterial mat, bool isSensor, b2ShapeDef& out) {
+	void World::CreateShape(PhysicsMaterial mat, bool isSensor, b2ShapeDef& out, CollisionFilters::CC category) {
+		assert(CollisionFilters::IsSingleBit(category) && "Collision category must be a single bit.");
 		out = b2DefaultShapeDef();
 		out.density = mat.density;
 		out.material.friction = mat.friction;
@@ -406,6 +413,9 @@ namespace clvr {
 		out.enableSensorEvents = mat.enableSensorEvents;
 		out.enableHitEvents = mat.enableHitEvents;
 		out.isSensor = isSensor;
+		
+		out.filter.categoryBits = CollisionFilters::Bits(category);
+		out.filter.maskBits = CollisionFilters::MaskFor(category);
 	}
 
 	void World::CreateShapes(Entity e, b2BodyId body)
@@ -417,7 +427,7 @@ namespace clvr {
 		if (auto* box = reg.try_get<BoxCollider>(e))
 		{
 			b2ShapeDef def;
-			CreateShape(box->material, box->isSensor, def);
+			CreateShape(box->material, box->isSensor, def, box->category);
 			box->userData = std::make_unique<ShapeUserData>(ShapeUserData{ e });
 			def.userData = box->userData.get();
 			b2Polygon poly = b2MakeOffsetBox(Units::ToMeters(box->halfExtents.x),
@@ -430,7 +440,7 @@ namespace clvr {
 		if (auto* circle = reg.try_get<CircleCollider>(e))
 		{
 			b2ShapeDef def;
-			CreateShape(circle->material, circle->isSensor, def);
+			CreateShape(circle->material, circle->isSensor, def, circle->category);
 			circle->userData = std::make_unique<ShapeUserData>(ShapeUserData{ e });
 			def.userData = circle->userData.get();
 			b2Circle c = { Units::ToMeters(circle->offset), Units::ToMeters(circle->radius) };
@@ -443,7 +453,7 @@ namespace clvr {
 			if (hull.count > 0)
 			{
 				b2ShapeDef def;
-				CreateShape(poly->material, poly->isSensor, def);
+				CreateShape(poly->material, poly->isSensor, def, poly->category);
 				poly->userData = std::make_unique<ShapeUserData>(ShapeUserData{ e });
 				def.userData = poly->userData.get();
 				b2Polygon p = b2MakePolygon(&hull, 0.0f);

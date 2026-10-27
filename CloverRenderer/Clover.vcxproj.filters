@@ -420,6 +420,9 @@
     <ClInclude Include="include\rendering\render_common.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\physics\collision_filters.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Clover.cpp">
@@ -528,6 +531,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\physics\debug_draw_2d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\physics\collision_filters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

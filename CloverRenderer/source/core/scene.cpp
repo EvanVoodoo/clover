@@ -153,34 +153,51 @@ void SceneManager::Inspect(float dt)
     ImGui::Begin("Inspector");
     if (registry.valid(m_selectedEntity))
     {
+        struct Row {
+            int order;
+            entt::id_type id;
+            entt::meta_type type;
+        };
+
+        using namespace entt::literals;
+
+        std::vector<Row> rows;
         for (auto&& [id, storage] : registry.storage())
         {
             if (!storage.contains(m_selectedEntity))
-                continue; // this pool doesn't have a component for the selected entity — skip it
+                continue;
 
-            entt::meta_type meta_type = entt::resolve(id);
-            if (!meta_type)
-                continue; // component type isn't registered as inspectable
+            entt::meta_type type = entt::resolve(id);
+            if (!type)
+                continue;
 
-            using namespace entt::literals;
-            entt::meta_any comp = meta_type.invoke("get"_hs, {}, entt::forward_as_meta(registry), m_selectedEntity);
-            meta_type.invoke("inspect"_hs, comp);
+            int order = type.invoke("order"_hs, {}).cast<int>();
+            rows.push_back({ order, id, type });
+        }
 
-			ImGui::PushID(static_cast<int>(entt::to_integral(id)));
+        std::sort(rows.begin(), rows.end(), [](const Row& a, const Row& b) {
+            return a.order != b.order ? a.order < b.order : a.id < b.id;   // id tie-break keeps the order stable between frames
+        });
 
-            // Right-click context menu for deleting the Transform component
+        using namespace entt::literals;
+        for (const Row& row : rows)
+        {
+            ImGui::PushID(static_cast<int>(row.id));
+
+            entt::meta_any comp = row.type.invoke("get"_hs, {}, entt::forward_as_meta(registry), m_selectedEntity);
+            row.type.invoke("inspect"_hs, comp);
+
             if (ImGui::BeginPopupContextItem("ComponentContextMenu"))
             {
-				if (ImGui::MenuItem("Delete Component"))
-				{
-                    auto removeFunc = meta_type.func("remove"_hs);
-                    if (removeFunc)
+                if (ImGui::MenuItem("Delete Component"))
+                {
+                    if (auto removeFunc = row.type.func("remove"_hs))
                         removeFunc.invoke(entt::meta_handle{}, entt::forward_as_meta(registry), entt::forward_as_meta(m_selectedEntity));
-				}
+                }
                 ImGui::EndPopup();
             }
 
-			ImGui::PopID();
+            ImGui::PopID();
         }
     }
     else

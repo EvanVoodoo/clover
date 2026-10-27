@@ -499,6 +499,7 @@
     <ClInclude Include="include\input\input_handler.hpp" />
     <ClInclude Include="include\nlohmann\json.hpp" />
     <ClInclude Include="include\nlohmann\json_fwd.hpp" />
+    <ClInclude Include="include\physics\collision_filters.hpp" />
     <ClInclude Include="include\physics\physics_components.hpp" />
     <ClInclude Include="include\physics\sensor_component.hpp" />
     <ClInclude Include="include\physics\units.hpp" />
@@ -522,6 +523,7 @@
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\physics\collision_filters.cpp" />
     <ClCompile Include="source\physics\debug_draw_2d.cpp" />
     <ClCompile Include="source\physics\sensor_component.cpp" />
     <ClCompile Include="source\physics\world_helpers.cpp" />

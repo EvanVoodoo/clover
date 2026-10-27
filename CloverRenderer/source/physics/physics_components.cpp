@@ -32,6 +32,7 @@ void RigidBody::Inspect() {
 void BoxCollider::Inspect() {
 	if (ImGui::TreeNode("Box Collider")) {
 		material.Inspect();
+		CollisionFilters::InspectCollisionCategory(category);
 		if (material.dirty) {
 			dirty = true;
 			material.dirty = false;
@@ -53,6 +54,7 @@ void BoxCollider::Inspect() {
 void CircleCollider::Inspect() {
 	if (ImGui::TreeNode("Circle Collider")) {
 		material.Inspect();
+		CollisionFilters::InspectCollisionCategory(category);
 		if (material.dirty) {
 			dirty = true;
 			material.dirty = false;
@@ -74,6 +76,7 @@ void CircleCollider::Inspect() {
 void PolygonCollider::Inspect() {
 	if (ImGui::TreeNode("Polygon Collider")) {
 		material.Inspect();
+		CollisionFilters::InspectCollisionCategory(category);
 		if (material.dirty) {
 			dirty = true;
 			material.dirty = false;

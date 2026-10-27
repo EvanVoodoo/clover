@@ -2,6 +2,7 @@
   "entities": [
     {
       "CircleCollider": {
+        "category": "Player",
         "isSensor": false,
         "material": {
           "density": 1.0,
@@ -89,6 +90,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           100.0,
           59.5
@@ -168,6 +170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           131.0,
           57.0
@@ -247,6 +250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           63.5,
           55.5
@@ -326,6 +330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           63.5,
           43.0
@@ -405,6 +410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           126.5,
           71.0
@@ -484,6 +490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           109.0,
           72.5
@@ -563,6 +570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           119.0,
           59.5
@@ -642,6 +650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           67.5,
           72.0
@@ -721,6 +730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           116.5,
           61.5
@@ -800,6 +810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           76.5,
           59.0
@@ -879,6 +890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           128.5,
           43.5
@@ -958,6 +970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           114.5,
           64.0
@@ -1037,6 +1050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           71.0,
           69.0
@@ -1116,6 +1130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           82.0,
           49.0
@@ -1195,6 +1210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           114.5,
           60.0
@@ -1274,6 +1290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           146.5,
           49.0
@@ -1353,6 +1370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           127.0,
           53.0
@@ -1432,6 +1450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           115.5,
           29.0
@@ -1511,6 +1530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           111.5,
           43.5
@@ -1590,6 +1610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           114.5,
           45.5
@@ -1669,6 +1690,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           79.0,
           27.0
@@ -1748,6 +1770,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           86.5,
           68.0
@@ -1827,6 +1850,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           86.0,
           60.0
@@ -1906,6 +1930,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           98.5,
           31.0
@@ -1985,6 +2010,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           68.0,
           52.5
@@ -2064,6 +2090,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           65.5,
           51.0
@@ -2143,6 +2170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           112.0,
           58.0
@@ -2222,6 +2250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           53.5,
           43.5
@@ -2301,6 +2330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           141.5,
           47.5
@@ -2380,6 +2410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           60.5,
           69.0
@@ -2459,6 +2490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           65.0,
           31.5
@@ -2538,6 +2570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           131.0,
           52.5
@@ -2617,6 +2650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           118.5,
           49.0
@@ -2696,6 +2730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           51.0,
           50.0
@@ -2775,6 +2810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           60.0,
           73.0
@@ -2854,6 +2890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           84.0,
           67.0
@@ -2933,6 +2970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           149.5,
           34.0
@@ -3012,6 +3050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           113.5,
           58.5
@@ -3091,6 +3130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           91.5,
           28.5
@@ -3170,6 +3210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           56.5,
           32.0
@@ -3249,6 +3290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           75.5,
           25.0
@@ -3328,6 +3370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           149.0,
           26.5
@@ -3407,6 +3450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           54.5,
           69.5
@@ -3486,6 +3530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           96.5,
           46.5
@@ -3565,6 +3610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           101.5,
           49.0
@@ -3644,6 +3690,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           140.0,
           73.0
@@ -3723,6 +3770,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           149.0,
           29.5
@@ -3802,6 +3850,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           119.0,
           71.0
@@ -3881,6 +3930,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           78.5,
           54.0
@@ -3960,6 +4010,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           128.0,
           30.5
@@ -4039,6 +4090,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           77.5,
           39.0
@@ -4118,6 +4170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           87.5,
           41.5
@@ -4197,6 +4250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           58.0,
           65.5
@@ -4276,6 +4330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           60.5,
           74.5
@@ -4355,6 +4410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           144.5,
           62.5
@@ -4434,6 +4490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           51.5,
           59.5
@@ -4513,6 +4570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           144.5,
           52.5
@@ -4592,6 +4650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           141.0,
           67.5
@@ -4671,6 +4730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           128.5,
           41.0
@@ -4750,6 +4810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           110.5,
           69.5
@@ -4829,6 +4890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           96.0,
           37.5
@@ -4908,6 +4970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           70.5,
           31.0
@@ -4987,6 +5050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           126.5,
           44.5
@@ -5066,6 +5130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           93.5,
           39.5
@@ -5145,6 +5210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           124.5,
           71.5
@@ -5224,6 +5290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           93.0,
           27.5
@@ -5303,6 +5370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           117.0,
           32.0
@@ -5382,6 +5450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           143.0,
           56.5
@@ -5461,6 +5530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           76.5,
           31.0
@@ -5540,6 +5610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           106.5,
           53.0
@@ -5619,6 +5690,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           141.0,
           65.5
@@ -5698,6 +5770,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           114.5,
           55.5
@@ -5777,6 +5850,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           83.0,
           47.0
@@ -5856,6 +5930,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           76.5,
           37.0
@@ -5935,6 +6010,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           74.5,
           68.0
@@ -6014,6 +6090,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           134.0,
           34.0
@@ -6093,6 +6170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           145.5,
           26.0
@@ -6172,6 +6250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           107.0,
           37.0
@@ -6251,6 +6330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           129.5,
           41.5
@@ -6330,6 +6410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           109.0,
           63.5
@@ -6409,6 +6490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           84.0,
           71.0
@@ -6488,6 +6570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           56.5,
           38.5
@@ -6567,6 +6650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           62.5,
           46.5
@@ -6646,6 +6730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           80.5,
           65.5
@@ -6725,6 +6810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           146.5,
           37.5
@@ -6804,6 +6890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           61.0,
           68.0
@@ -6883,6 +6970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           130.0,
           31.5
@@ -6962,6 +7050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           67.5,
           41.5
@@ -7041,6 +7130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           83.5,
           67.5
@@ -7120,6 +7210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           97.5,
           37.0
@@ -7199,6 +7290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           97.0,
           54.0
@@ -7278,6 +7370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           89.0,
           71.5
@@ -7357,6 +7450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           82.0,
           34.5
@@ -7436,6 +7530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           80.0,
           38.0
@@ -7515,6 +7610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           107.5,
           63.0
@@ -7594,6 +7690,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           132.0,
           29.5
@@ -7673,6 +7770,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           93.5,
           63.5
@@ -7752,6 +7850,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           64.5,
           39.0
@@ -7831,6 +7930,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           131.0,
           36.5
@@ -7910,6 +8010,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           147.5,
           37.5
@@ -7989,6 +8090,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           108.0,
           40.0
@@ -8068,6 +8170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           55.5,
           48.5
@@ -8147,6 +8250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           112.0,
           69.0
@@ -8226,6 +8330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           81.0,
           39.5
@@ -8305,6 +8410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           139.0,
           57.5
@@ -8384,6 +8490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           79.0,
           44.5
@@ -8463,6 +8570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           112.0,
           63.5
@@ -8542,6 +8650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           50.5,
           50.0
@@ -8621,6 +8730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           142.0,
           27.5
@@ -8700,6 +8810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           67.5,
           53.0
@@ -8779,6 +8890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           92.5,
           53.0
@@ -8858,6 +8970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           113.0,
           53.5
@@ -8937,6 +9050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           130.5,
           73.0
@@ -9016,6 +9130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           108.5,
           73.0
@@ -9095,6 +9210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           114.5,
           39.5
@@ -9174,6 +9290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           98.0,
           52.5
@@ -9253,6 +9370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           117.0,
           52.0
@@ -9332,6 +9450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           116.0,
           56.5
@@ -9411,6 +9530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           67.5,
           58.5
@@ -9490,6 +9610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           61.5,
           46.0
@@ -9569,6 +9690,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           137.5,
           54.5
@@ -9648,6 +9770,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           63.0,
           42.0
@@ -9727,6 +9850,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           149.0,
           64.5
@@ -9806,6 +9930,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           68.5,
           42.0
@@ -9885,6 +10010,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           102.5,
           56.0
@@ -9964,6 +10090,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           56.5,
           45.5
@@ -10043,6 +10170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           81.0,
           30.5
@@ -10122,6 +10250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           126.0,
           46.5
@@ -10201,6 +10330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           106.5,
           62.5
@@ -10280,6 +10410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           58.5,
           41.0
@@ -10359,6 +10490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           65.5,
           45.0
@@ -10438,6 +10570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           98.5,
           69.5
@@ -10517,6 +10650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           107.0,
           50.5
@@ -10596,6 +10730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           117.5,
           54.5
@@ -10675,6 +10810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           140.5,
           26.5
@@ -10754,6 +10890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           96.0,
           73.5
@@ -10833,6 +10970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           63.5,
           58.5
@@ -10912,6 +11050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           56.5,
           62.0
@@ -10991,6 +11130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           91.5,
           31.5
@@ -11070,6 +11210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           146.0,
           54.5
@@ -11149,6 +11290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           92.0,
           62.5
@@ -11228,6 +11370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           93.5,
           48.5
@@ -11307,6 +11450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           81.5,
           28.0
@@ -11386,6 +11530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           94.5,
           45.0
@@ -11465,6 +11610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           106.5,
           70.5
@@ -11544,6 +11690,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           125.0,
           27.5
@@ -11623,6 +11770,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           61.0,
           74.0
@@ -11702,6 +11850,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           135.5,
           57.0
@@ -11781,6 +11930,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           106.0,
           48.0
@@ -11860,6 +12010,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           109.5,
           67.5
@@ -11939,6 +12090,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           120.0,
           47.5
@@ -12018,6 +12170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           50.5,
           36.5
@@ -12097,6 +12250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           93.5,
           60.0
@@ -12176,6 +12330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           61.5,
           38.5
@@ -12255,6 +12410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           132.5,
           39.0
@@ -12334,6 +12490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           121.5,
           43.5
@@ -12413,6 +12570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           90.5,
           69.0
@@ -12492,6 +12650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           60.5,
           54.0
@@ -12571,6 +12730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           95.0,
           49.5
@@ -12650,6 +12810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           124.0,
           58.5
@@ -12729,6 +12890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           63.0,
           67.5
@@ -12808,6 +12970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           62.0,
           49.0
@@ -12887,6 +13050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           133.0,
           47.0
@@ -12966,6 +13130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           55.5,
           37.5
@@ -13045,6 +13210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           98.0,
           67.0
@@ -13124,6 +13290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           87.5,
           31.5
@@ -13203,6 +13370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           86.0,
           38.0
@@ -13282,6 +13450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           52.0,
           27.5
@@ -13361,6 +13530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           96.5,
           57.5
@@ -13440,6 +13610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           57.0,
           72.0
@@ -13519,6 +13690,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           69.0,
           66.0
@@ -13598,6 +13770,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           65.0,
           45.5
@@ -13677,6 +13850,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           143.0,
           70.0
@@ -13756,6 +13930,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           96.5,
           51.5
@@ -13835,6 +14010,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           81.0,
           41.5
@@ -13914,6 +14090,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           101.5,
           53.0
@@ -13993,6 +14170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           56.5,
           29.5
@@ -14072,6 +14250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           109.0,
           54.0
@@ -14151,6 +14330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           82.0,
           26.5
@@ -14230,6 +14410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           101.0,
           55.5
@@ -14309,6 +14490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           76.5,
           62.0
@@ -14388,6 +14570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           65.5,
           59.5
@@ -14467,6 +14650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           59.5,
           60.5
@@ -14546,6 +14730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           102.0,
           71.0
@@ -14625,6 +14810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           144.5,
           36.0
@@ -14704,6 +14890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           80.5,
           42.0
@@ -14783,6 +14970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           96.5,
           32.5
@@ -14862,6 +15050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           79.0,
           25.0
@@ -14941,6 +15130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           57.5,
           52.5
@@ -15020,6 +15210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           56.0,
           69.0
@@ -15099,6 +15290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           105.0,
           67.0
@@ -15178,6 +15370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           125.5,
           45.5
@@ -15257,6 +15450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           99.0,
           61.5
@@ -15336,6 +15530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           128.0,
           69.5
@@ -15415,6 +15610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           145.0,
           36.5
@@ -15494,6 +15690,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           139.0,
           25.0
@@ -15573,6 +15770,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           85.5,
           41.5
@@ -15652,6 +15850,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           134.0,
           37.5
@@ -15731,6 +15930,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           149.0,
           29.5
@@ -15810,6 +16010,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           108.0,
           49.5
@@ -15889,6 +16090,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           82.0,
           35.5
@@ -15968,6 +16170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           108.0,
           38.0
@@ -16047,6 +16250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           132.0,
           45.0
@@ -16126,6 +16330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           110.5,
           57.0
@@ -16205,6 +16410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           86.5,
           37.0
@@ -16284,6 +16490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           61.5,
           40.5
@@ -16363,6 +16570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           51.0,
           28.5
@@ -16442,6 +16650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           118.0,
           40.0
@@ -16521,6 +16730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           128.0,
           70.0
@@ -16600,6 +16810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           77.0,
           47.5
@@ -16679,6 +16890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           106.0,
           40.5
@@ -16758,6 +16970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           111.0,
           27.0
@@ -16837,6 +17050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           89.5,
           44.0
@@ -16916,6 +17130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           79.5,
           74.0
@@ -16995,6 +17210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           66.5,
           54.0
@@ -17074,6 +17290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           68.5,
           37.5
@@ -17153,6 +17370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           53.5,
           74.0
@@ -17232,6 +17450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           89.0,
           74.5
@@ -17311,6 +17530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           120.0,
           32.5
@@ -17390,6 +17610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           118.0,
           73.5
@@ -17469,6 +17690,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           75.5,
           33.0
@@ -17548,6 +17770,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           79.0,
           39.5
@@ -17627,6 +17850,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           123.5,
           56.0
@@ -17706,6 +17930,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           130.5,
           52.0
@@ -17785,6 +18010,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           123.0,
           69.0
@@ -17864,6 +18090,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           87.5,
           32.5
@@ -17943,6 +18170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           114.0,
           42.0
@@ -18022,6 +18250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           128.5,
           56.0
@@ -18101,6 +18330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           84.5,
           40.0
@@ -18180,6 +18410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           112.5,
           30.0
@@ -18259,6 +18490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           89.0,
           71.5
@@ -18338,6 +18570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           145.5,
           49.5
@@ -18417,6 +18650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           52.0,
           43.5
@@ -18496,6 +18730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           54.0,
           59.0
@@ -18575,6 +18810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           136.5,
           51.0
@@ -18654,6 +18890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           148.0,
           61.0
@@ -18733,6 +18970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           59.5,
           46.5
@@ -18812,6 +19050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           59.5,
           57.5
@@ -18891,6 +19130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           75.0,
           32.5
@@ -18970,6 +19210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           96.5,
           62.0
@@ -19049,6 +19290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           136.5,
           69.5
@@ -19128,6 +19370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           129.0,
           40.5
@@ -19207,6 +19450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           61.0,
           62.0
@@ -19286,6 +19530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           141.0,
           70.5
@@ -19365,6 +19610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           132.0,
           26.0
@@ -19444,6 +19690,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           136.0,
           35.5
@@ -19523,6 +19770,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           144.5,
           27.5
@@ -19602,6 +19850,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           121.5,
           52.0
@@ -19681,6 +19930,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           69.5,
           39.0
@@ -19760,6 +20010,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           54.0,
           32.5
@@ -19839,6 +20090,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           67.0,
           27.0
@@ -19918,6 +20170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           122.5,
           28.0
@@ -19997,6 +20250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           96.0,
           68.5
@@ -20076,6 +20330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           73.5,
           35.5
@@ -20155,6 +20410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           138.0,
           66.5
@@ -20234,6 +20490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           59.0,
           63.0
@@ -20313,6 +20570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           78.0,
           70.0
@@ -20392,6 +20650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           88.5,
           59.5
@@ -20471,6 +20730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           84.0,
           59.0
@@ -20550,6 +20810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           64.0,
           38.5
@@ -20629,6 +20890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           56.0,
           26.5
@@ -20708,6 +20970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           104.0,
           67.5
@@ -20787,6 +21050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           106.5,
           25.5
@@ -20866,6 +21130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           75.0,
           49.5
@@ -20945,6 +21210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           90.5,
           57.5
@@ -21024,6 +21290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           67.0,
           61.0
@@ -21103,6 +21370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           71.0,
           63.5
@@ -21182,6 +21450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           132.0,
           65.5
@@ -21261,6 +21530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           61.5,
           64.5
@@ -21340,6 +21610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           71.0,
           30.0
@@ -21419,6 +21690,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           93.5,
           60.0
@@ -21498,6 +21770,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           56.5,
           55.0
@@ -21577,6 +21850,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           55.0,
           61.0
@@ -21656,6 +21930,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           109.0,
           26.5
@@ -21735,6 +22010,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           90.5,
           53.5
@@ -21814,6 +22090,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           79.0,
           55.5
@@ -21893,6 +22170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           89.0,
           69.5
@@ -21972,6 +22250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           143.0,
           68.0
@@ -22051,6 +22330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           74.0,
           39.0
@@ -22130,6 +22410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           133.0,
           42.5
@@ -22209,6 +22490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           96.0,
           66.0
@@ -22288,6 +22570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           72.0,
           72.0
@@ -22367,6 +22650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           66.0,
           42.5
@@ -22446,6 +22730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           71.5,
           49.5
@@ -22525,6 +22810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           100.0,
           31.0
@@ -22604,6 +22890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           87.0,
           41.5
@@ -22683,6 +22970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           145.0,
           73.5
@@ -22762,6 +23050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           115.5,
           47.0
@@ -22841,6 +23130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           112.5,
           66.5
@@ -22920,6 +23210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           76.0,
           30.5
@@ -22999,6 +23290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           98.5,
           67.5
@@ -23078,6 +23370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           145.5,
           71.0
@@ -23157,6 +23450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           139.5,
           60.5
@@ -23236,6 +23530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           60.0,
           73.5
@@ -23315,6 +23610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           141.0,
           64.0
@@ -23394,6 +23690,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           129.5,
           49.5
@@ -23473,6 +23770,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           54.0,
           58.5
@@ -23552,6 +23850,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           135.0,
           28.5
@@ -23631,6 +23930,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           55.5,
           34.5
@@ -23710,6 +24010,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           131.5,
           66.5
@@ -23789,6 +24090,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           120.5,
           52.0
@@ -23868,6 +24170,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           80.0,
           32.5
@@ -23947,6 +24250,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           90.0,
           74.0
@@ -24026,6 +24330,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           70.0,
           33.5
@@ -24105,6 +24410,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           91.0,
           49.5
@@ -24184,6 +24490,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           60.5,
           72.5
@@ -24263,6 +24570,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           139.0,
           64.5
@@ -24342,6 +24650,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           53.5,
           39.5
@@ -24421,6 +24730,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           88.0,
           51.5
@@ -24500,6 +24810,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           96.5,
           29.0
@@ -24579,6 +24890,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           107.0,
           59.0
@@ -24658,6 +24970,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           111.0,
           49.0
@@ -24737,6 +25050,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           73.0,
           63.5
@@ -24816,6 +25130,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           87.0,
           70.5
@@ -24895,6 +25210,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           96.5,
           70.5
@@ -24974,6 +25290,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           70.0,
           51.0
@@ -25053,6 +25370,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           63.0,
           56.0
@@ -25132,6 +25450,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           140.0,
           73.5
@@ -25211,6 +25530,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           80.5,
           64.0
@@ -25290,6 +25610,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           55.5,
           48.5
@@ -25418,6 +25739,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Wall",
         "halfExtents": [
           8000.0,
           32.0
@@ -25655,6 +25977,7 @@
     },
     {
       "BoxCollider": {
+        "category": "Obstacle",
         "halfExtents": [
           350.0,
           150.0

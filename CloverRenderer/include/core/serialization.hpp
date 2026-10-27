@@ -46,9 +46,12 @@ namespace clvr {
     }
 }
 
-#define SAVEABLE_COMPONENT(Type, Key)                                              \
-    REGISTER_COMPONENT(Type, Key)                                                  \
+#define SAVEABLE_COMPONENT_ORDERED(Type, Key, Order)                               \
+    REGISTER_COMPONENT(Type, Key, Order)                                           \
     namespace {                                                                    \
         const bool CONCAT(_component_serializer_, __COUNTER__) =                   \
             clvr::RegisterSerializer<Type>(Key);                                   \
     }
+
+// Unordered components sort last in the inspector.
+#define SAVEABLE_COMPONENT(Type, Key) SAVEABLE_COMPONENT_ORDERED(Type, Key, 1000)

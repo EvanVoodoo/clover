@@ -5,6 +5,7 @@
 #include "physics_components.hpp"
 #include <core/transform.hpp>
 #include "debug_draw_2d.hpp"
+#include "collision_filters.hpp"
 
 namespace clvr
 {
@@ -33,7 +34,7 @@ namespace clvr
 		void SyncColliders();
 		void SyncBodies();
 		b2BodyId CreatePhysicsBody(const RigidBody& rb, const Transform& t);
-		void CreateShape(PhysicsMaterial mat, bool isSensor, b2ShapeDef& out);
+		void CreateShape(PhysicsMaterial mat, bool isSensor, b2ShapeDef& out, CollisionFilters::CC category = CollisionFilters::CC::Default);
         void CreateShapes(Entity e, b2BodyId body);
 		void UpdateShapeMaterial(b2ShapeId shape, const PhysicsMaterial& mat);
 

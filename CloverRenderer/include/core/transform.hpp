@@ -29,4 +29,4 @@ namespace clvr
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Transform, name, position, scale, rotation)
 }
 
-SAVEABLE_COMPONENT(clvr::Transform, "Transform")
+SAVEABLE_COMPONENT_ORDERED(clvr::Transform, "Transform", 0)

@@ -3,6 +3,7 @@
 #include "Box2D/types.h"
 #include "core/serialization.hpp"
 #include <memory>
+#include "collision_filters.hpp"
 
 inline void to_json(nlohmann::json& j, const b2Vec2& v) { j = nlohmann::json::array({ v.x, v.y }); }
 inline void from_json(const nlohmann::json& j, b2Vec2& v) { j.at(0).get_to(v.x); j.at(1).get_to(v.y); }
@@ -58,6 +59,7 @@ namespace clvr
 		bool isSensor = false;
 
 		PhysicsMaterial material;
+		CollisionFilters::CC category = CollisionFilters::CC::Default;
 
 		b2ShapeId shapeId = b2_nullShapeId;
 		std::unique_ptr<ShapeUserData> userData;
@@ -65,7 +67,7 @@ namespace clvr
 
 		void Inspect();
 	};
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BoxCollider, halfExtents, offset, isSensor, material)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BoxCollider, halfExtents, offset, isSensor, material, category)
 
 	struct CircleCollider
 	{
@@ -74,14 +76,15 @@ namespace clvr
 		bool isSensor = false;
 
 		PhysicsMaterial material;
-		
+		CollisionFilters::CC category = CollisionFilters::CC::Default;
+
 		b2ShapeId shapeId = b2_nullShapeId;
 		std::unique_ptr<ShapeUserData> userData;
 		bool dirty = true;
 
 		void Inspect();
 	};
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CircleCollider, radius, offset, isSensor, material)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CircleCollider, radius, offset, isSensor, material, category)
 
 	struct PolygonCollider
 	{
@@ -89,6 +92,7 @@ namespace clvr
 		bool isSensor = false;
 
 		PhysicsMaterial material;
+		CollisionFilters::CC category = CollisionFilters::CC::Default;
 
 		b2ShapeId shapeId = b2_nullShapeId;
 		std::unique_ptr<ShapeUserData> userData;
@@ -96,7 +100,7 @@ namespace clvr
 
 		void Inspect();
 	};
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PolygonCollider, vertices, isSensor, material)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PolygonCollider, vertices, isSensor, material, category)
 }
 
 SAVEABLE_COMPONENT(clvr::RigidBody, "RigidBody");
