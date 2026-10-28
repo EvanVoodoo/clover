@@ -90,6 +90,7 @@ bool EngineClass::Initialize(HINSTANCE hInstance, int nCmdShow)
 #else
     SetEngineMode(EngineMode::Playing);
 #endif
+
     return true;
 }
 

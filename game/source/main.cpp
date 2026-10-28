@@ -5,6 +5,7 @@
 #include <core/scene.hpp>
 #include <input/input_handler.hpp>
 #include <physics/world.hpp>
+#include <gameplay/damage.hpp>
 
 using namespace clvr;
 
@@ -60,7 +61,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	ecs->CreateSystem<World>();
 
 	ecs->CreateSystem<InputHandler>();
+
 	ecs->CreateSystem<SceneManager>();
+
+	ecs->CreateSystem<DamageSystem>();
+
 	ecs->CreateSystem<Game>();
 
 	Engine.Run();

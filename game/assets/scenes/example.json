@@ -20,6 +20,12 @@
         ],
         "radius": 71.0
       },
+      "Health Component": {
+        "alive": true,
+        "currentHealth": 100.0,
+        "invincible": false,
+        "maxHealth": 100.0
+      },
       "Player Component": {
         "acceleration": 3000.0,
         "crouchScale": 0.5,
@@ -26076,6 +26082,7 @@
   ],
   "systems": {
     "": null,
+    "Damage System": null,
     "GameSystem": null,
     "Physics World": {
       "debugDraw": false,

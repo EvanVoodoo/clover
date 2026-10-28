@@ -1,6 +1,8 @@
 #include "gravity_sensor.hpp"
 #include "physics/physics_components.hpp"
 #include <imgui.h>
+#include <core/engine.hpp>
+#include <gameplay/damage.hpp>
 
 void GravitySensorCommand::OnBegin(entt::registry& reg, const SensorContext& context)
 {
@@ -16,6 +18,9 @@ void GravitySensorCommand::OnBegin(entt::registry& reg, const SensorContext& con
 
 void GravitySensorCommand::OnStay(entt::registry& reg, const SensorContext& context)
 {
+	if (reg.valid(context.visitor)) {
+		Engine.GetECS()->GetSystem<DamageSystem>().QueueDamage(context.visitor, entt::null, 0.1f, DamageType::Physical);
+	}
 	return; // No action needed while staying in the sensor area
 }
 
