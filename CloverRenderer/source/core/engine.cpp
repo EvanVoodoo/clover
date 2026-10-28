@@ -2,6 +2,7 @@
 #include <chrono>
 #include <core/scene.hpp>
 #include <rendering/renderer.hpp>
+#include <core/imgui_helpers.hpp>
 
 namespace clvr {
 	bool IsMouseMoving() {
@@ -163,24 +164,151 @@ void EngineClass::Run()
     }
 }
 
+static std::string NormalizeSceneName(std::string name)
+{
+    name.erase(0, name.find_first_not_of(" \t"));      // trim left
+    name.erase(name.find_last_not_of(" \t") + 1);      // trim right
+
+    constexpr std::string_view ext = ".json";          // user typed the extension: strip it
+    if (name.size() >= ext.size()) {
+        const std::string_view tail = std::string_view(name).substr(name.size() - ext.size());
+        if (std::equal(tail.begin(), tail.end(), ext.begin(),
+                       [](char a, char b) { return std::tolower(static_cast<unsigned char>(a)) == b; }))
+            name.resize(name.size() - ext.size());
+    }
+    return name;
+}
+
+static bool IsValidSceneName(const std::string& name)
+{
+    if (name.empty() || name == "." || name == "..")
+        return false;
+    return name.find_first_of("\\/:*?\"<>|") == std::string::npos;   // characters Windows forbids in file names
+}
+
+bool EngineClass::SceneExists(const std::string& fileName) const
+{
+    return std::any_of(m_sceneFiles.begin(), m_sceneFiles.end(), [&](const FileInfo& f) {
+        return f.name.size() == fileName.size() &&
+            std::equal(f.name.begin(), f.name.end(), fileName.begin(), [](char a, char b) {
+            return std::tolower(static_cast<unsigned char>(a)) == std::tolower(static_cast<unsigned char>(b));
+        });
+    });
+}
+
 void EngineClass::MainMenuBar()
 {
     ImGui::DockSpaceOverViewport();
     if (ImGui::BeginMainMenuBar()) {
+        bool openLoadPopup = false;
+
         if (ImGui::BeginMenu("File")) {
             const bool canEditScene = GetEngineMode() == EngineMode::Editing;
-
-            // signature: MenuItem(label, shortcut, selected, enabled)
-            if (ImGui::MenuItem("Save Scene", "Ctrl+S", false, canEditScene)) {
-                GetECS()->GetSystem<SceneManager>().SaveSceneToFile(
-                    GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "scenes/example.json"));
+			if (ImGui::MenuItem("Save Scene", "Ctrl+S", false, canEditScene)) {
+				const std::string name = NormalizeSceneName(m_saveNameBuf);
+				if (IsValidSceneName(name)) {
+					const std::string fileName = name + ".json";
+					const std::string path = GetResourceManager()->GetPath(
+						ResourceManager::Directory::Assets, "scenes/" + fileName);
+					GetECS()->GetSystem<SceneManager>().SaveSceneToFile(path);
+				}
+			}
+            if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S", false, canEditScene)) {
+                m_sceneFiles = GetResourceManager()->GetFilesInDirectory(
+                    ResourceManager::Directory::Assets, "scenes", ".json");
+                m_openSceneSaver = true;
             }
             if (ImGui::MenuItem("Load Scene", "Ctrl+L", false, canEditScene)) {
-                GetECS()->GetSystem<SceneManager>().LoadSceneFromFile(
-                    GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "scenes/example.json"));
+                m_sceneFiles = GetResourceManager()->GetFilesInDirectory(
+                    ResourceManager::Directory::Assets, "scenes", ".json");   // scan the disk once on open, not every frame
+                m_openSceneLoader = true;
             }
             ImGui::EndMenu();
         }
+
+        ModalPopup("Save Scene", m_openSceneSaver, ImVec2(400, 330), [&] {
+            ImGui::TextUnformatted("Existing scenes (click to reuse a name):");
+            ImGui::BeginChild("##existing", ImVec2(0, 150), true);
+            for (const FileInfo& f : m_sceneFiles) {
+                if (ImGui::Selectable(f.name.c_str())) {
+                    const std::string stem = std::filesystem::path(f.name).stem().string();
+                    std::snprintf(m_saveNameBuf, sizeof(m_saveNameBuf), "%s", stem.c_str());   // fills the field, doesn't save
+                }
+            }
+            ImGui::EndChild();
+
+            ImGui::Separator();
+            ImGui::TextUnformatted("File name:");
+            if (ImGui::IsWindowAppearing())
+                ImGui::SetKeyboardFocusHere();
+            const bool enterPressed = ImGui::InputText("##saveName", m_saveNameBuf, sizeof(m_saveNameBuf),
+                                                       ImGuiInputTextFlags_EnterReturnsTrue);
+            ImGui::SameLine();
+            ImGui::TextUnformatted(".json");
+
+            const std::string name = NormalizeSceneName(m_saveNameBuf);
+            const bool valid = IsValidSceneName(name);
+            const std::string fileName = name + ".json";
+            const bool exists = valid && SceneExists(fileName);
+
+            if (!valid)
+                ImGui::TextColored(ImVec4(0.9f, 0.3f, 0.3f, 1.0f), "Invalid name");
+            else if (exists)
+                ImGui::TextColored(ImVec4(0.9f, 0.8f, 0.2f, 1.0f), "File exists, you'll be asked to confirm");
+
+            ImGui::BeginDisabled(!valid);
+            if (ImGui::Button("Save") || (enterPressed && valid)) {
+                const std::string path = GetResourceManager()->GetPath(
+                    ResourceManager::Directory::Assets, "scenes/" + fileName);
+                if (exists) {
+                    m_pendingSavePath = path;
+                    m_openOverwriteConfirm = true;
+                }
+                else {
+                    GetECS()->GetSystem<SceneManager>().SaveSceneToFile(path);
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+            ImGui::EndDisabled();
+
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel"))
+                ImGui::CloseCurrentPopup();
+
+            if (m_closeSceneSaver) {                       // after the nested popup ends, we're back in the saver's scope
+                m_closeSceneSaver = false;
+                ImGui::CloseCurrentPopup();                // closes the saver
+            }
+        });
+
+        ModalPopup("Overwrite?", m_openOverwriteConfirm, ImVec2(360, 110), [&] {
+			std::string fileName = NormalizeSceneName(m_saveNameBuf) + ".json";
+            ImGui::TextWrapped("%s already exists. Overwrite it?", fileName.c_str());
+            if (ImGui::Button("Overwrite")) {
+                GetECS()->GetSystem<SceneManager>().SaveSceneToFile(m_pendingSavePath);
+                m_closeSceneSaver = true;
+                ImGui::CloseCurrentPopup();            // closes the overwrite dialog
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Back"))
+                ImGui::CloseCurrentPopup();
+        });
+
+        ModalPopup("Scene Loader", m_openSceneLoader, ImVec2(400, 300), [&] {
+            ImGui::TextUnformatted("Which scene would you like to load?");
+            ImGui::Separator();
+
+            for (const FileInfo& sceneFile : m_sceneFiles) {
+                if (ImGui::Selectable(sceneFile.name.c_str())) {
+                    GetECS()->GetSystem<SceneManager>().LoadSceneFromFile(sceneFile.path);
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+
+            ImGui::Separator();
+            if (ImGui::Button("Cancel"))
+                ImGui::CloseCurrentPopup();
+        });
 
         if (GetEngineMode() == EngineMode::Editing) {
             if (ImGui::BeginMenu("Play")) {
@@ -212,8 +340,13 @@ void EngineClass::MainMenuBar()
 
         if (open)
         {
-            if (ImGui::MenuItem("Quit", "Alt+F4"))
-                running = false;
+            if (ImGui::MenuItem("Save & Quit")) {
+                GetECS()->GetSystem<SceneManager>().SaveSceneToFile(
+                    GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "scenes/example.json"));
+				running = false;
+            }
+            /*if (ImGui::MenuItem("Quit", "Alt+F4"))
+                running = false;*/
             ImGui::EndMenu();
         }
 

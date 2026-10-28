@@ -336,5 +336,8 @@ bool SceneManager::LoadSceneFromFile(const std::filesystem::path& path) {
 	if (scene.is_discarded()) return false;
 
 	LoadScene(scene);
+
+	m_loadedScenePath = path;
+
 	return true;
 }

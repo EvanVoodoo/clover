@@ -43,5 +43,6 @@ namespace clvr {
 		std::unique_ptr<SelectionGizmo> m_selectionGizmo = nullptr;
 
 		json m_snapshot;
+		std::filesystem::path m_loadedScenePath;
 	};
 }

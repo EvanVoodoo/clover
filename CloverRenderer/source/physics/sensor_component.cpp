@@ -44,44 +44,47 @@ namespace clvr
 
 		ImGui::Checkbox("Active", &active);
 
-		// Existing commands
-		int removeIndex = -1;
-		for (size_t i = 0; i < commands.size(); ++i)
+		if (ImGui::CollapsingHeader("Commands", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::PushID(static_cast<int>(i));
-			if (ImGui::TreeNode(commands[i]->GetTypeName()))
+			// Existing commands
+			int removeIndex = -1;
+			for (size_t i = 0; i < commands.size(); ++i)
 			{
-				commands[i]->Inspect();
-				if (ImGui::Button("Remove"))
-					removeIndex = static_cast<int>(i);
-				ImGui::TreePop();
+				ImGui::PushID(static_cast<int>(i));
+				if (ImGui::TreeNode(commands[i]->GetTypeName()))
+				{
+					commands[i]->Inspect();
+					if (ImGui::Button("Remove"))
+						removeIndex = static_cast<int>(i);
+					ImGui::TreePop();
+				}
+				ImGui::PopID();
 			}
-			ImGui::PopID();
-		}
-		if (removeIndex >= 0) // erase after the loop, not during it
-			commands.erase(commands.begin() + removeIndex);
+			if (removeIndex >= 0) // erase after the loop, not during it
+				commands.erase(commands.begin() + removeIndex);
 
-		// Add a command
-		static int selected = 0;
-		const auto names = SensorCommandFactory::Get().GetNames();
-		if (!names.empty())
-		{
-			selected = (std::min) (selected, static_cast<int>(names.size()) - 1);
-			if (ImGui::BeginCombo("##newCommand", names[selected].c_str()))
+			// Add a command
+			static int selected = 0;
+			const auto names = SensorCommandFactory::Get().GetNames();
+			if (!names.empty())
 			{
-				for (int n = 0; n < static_cast<int>(names.size()); ++n)
-					if (ImGui::Selectable(names[n].c_str(), n == selected))
-						selected = n;
-				ImGui::EndCombo();
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Add"))
-			{
-				if (auto cmd = SensorCommandFactory::Get().Create(names[selected]))
-					commands.push_back(std::move(cmd));
+				selected = (std::min) (selected, static_cast<int>(names.size()) - 1);
+				if (ImGui::BeginCombo("##newCommand", names[selected].c_str()))
+				{
+					for (int n = 0; n < static_cast<int>(names.size()); ++n)
+						if (ImGui::Selectable(names[n].c_str(), n == selected))
+							selected = n;
+					ImGui::EndCombo();
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Add"))
+				{
+					if (auto cmd = SensorCommandFactory::Get().Create(names[selected]))
+						commands.push_back(std::move(cmd));
+				}
 			}
 		}
-
+		
 		ImGui::Text("Overlapping Entities:");
 		for (Entity e : overlapping)
 			ImGui::Text("Entity ID: %u", static_cast<unsigned>(entt::to_integral(e)));

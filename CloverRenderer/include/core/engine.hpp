@@ -30,6 +30,7 @@ namespace clvr
 		void Shutdown();
 		void Run();
 
+		bool SceneExists(const std::string& fileName) const;
 		void MainMenuBar();
 
 		EntityComponentSystem* GetECS() { return m_ecs; }
@@ -55,6 +56,16 @@ namespace clvr
 		ResourceManager* m_resourceManager = nullptr;
 		EngineMode m_editorMode = EngineMode::Editing;
 		unsigned long long m_frameCount = 0;
+
+		std::vector<FileInfo> m_sceneFiles = {};
+
+		bool m_openSceneSaver = false;
+		bool m_openOverwriteConfirm = false;
+		bool m_closeSceneSaver = false;       // lets the overwrite dialog close its parent too
+		char m_saveNameBuf[128] = "untitled";
+		std::string m_pendingSavePath;
+
+		bool m_openSceneLoader = false;
 	};
 
 	extern EngineClass Engine;

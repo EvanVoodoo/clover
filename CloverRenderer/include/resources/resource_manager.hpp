@@ -7,6 +7,12 @@
 #include <filesystem>
 
 namespace clvr {
+	struct FileInfo {
+		std::string name;
+		std::string path;
+		std::uintmax_t size;
+	};
+
 	class Resource;
 
 	class ResourceManager
@@ -66,6 +72,8 @@ namespace clvr {
 			}
 			return "";
 		}
+
+		std::vector<FileInfo> GetFilesInDirectory(Directory dir, const std::string& relativePath = "", const std::string& extensionFilter = "");
 
 	private:
 		// Use shared_ptr and check if the ref count is 1 to determine if the resource is still in use. (must be 1 because the resource manager itself holds a ref to it)
