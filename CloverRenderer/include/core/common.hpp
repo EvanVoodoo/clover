@@ -1,6 +1,9 @@
 #pragma once
+#include <entt/entt.hpp>
 
 namespace clvr {
+	using Entity = entt::entity;
+
 	enum class EngineMode { Editing, Playing };
 
 	class Lifetime {

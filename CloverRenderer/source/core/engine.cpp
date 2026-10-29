@@ -3,6 +3,7 @@
 #include <core/scene.hpp>
 #include <rendering/renderer.hpp>
 #include <core/imgui_helpers.hpp>
+#include <gameplay/game_state_system.hpp>
 
 namespace clvr {
 	bool IsMouseMoving() {
@@ -90,6 +91,8 @@ bool EngineClass::Initialize(HINSTANCE hInstance, int nCmdShow)
 #else
     SetEngineMode(EngineMode::Playing);
 #endif
+
+	GetECS()->CreateSystem<GameStateSystem>();
 
     return true;
 }
@@ -207,12 +210,18 @@ void EngineClass::MainMenuBar()
             const bool canEditScene = GetEngineMode() == EngineMode::Editing;
 			if (ImGui::MenuItem("Save Scene", "Ctrl+S", false, canEditScene)) {
 				const std::string name = NormalizeSceneName(m_saveNameBuf);
-				if (IsValidSceneName(name)) {
+				if (IsValidSceneName(name) && name != "untitled") {
 					const std::string fileName = name + ".json";
 					const std::string path = GetResourceManager()->GetPath(
 						ResourceManager::Directory::Assets, "scenes/" + fileName);
 					GetECS()->GetSystem<SceneManager>().SaveSceneToFile(path);
 				}
+                else {
+					m_sceneFiles = GetResourceManager()->GetFilesInDirectory(
+						ResourceManager::Directory::Assets, "scenes", ".json");
+					m_openSceneSaver = true;
+
+                }
 			}
             if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S", false, canEditScene)) {
                 m_sceneFiles = GetResourceManager()->GetFilesInDirectory(
@@ -276,7 +285,7 @@ void EngineClass::MainMenuBar()
             if (ImGui::Button("Cancel"))
                 ImGui::CloseCurrentPopup();
 
-            if (m_closeSceneSaver) {                       // after the nested popup ends, we're back in the saver's scope
+            if (m_closeSceneSaver) {
                 m_closeSceneSaver = false;
                 ImGui::CloseCurrentPopup();                // closes the saver
             }
@@ -287,7 +296,7 @@ void EngineClass::MainMenuBar()
             ImGui::TextWrapped("%s already exists. Overwrite it?", fileName.c_str());
             if (ImGui::Button("Overwrite")) {
                 GetECS()->GetSystem<SceneManager>().SaveSceneToFile(m_pendingSavePath);
-                m_closeSceneSaver = true;
+                //m_closeSceneSaver = true;
                 ImGui::CloseCurrentPopup();            // closes the overwrite dialog
             }
             ImGui::SameLine();

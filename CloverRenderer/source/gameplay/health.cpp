@@ -2,6 +2,10 @@
 #include <imgui.h>
 
 namespace clvr {
+	struct EntityDied {
+		Entity entity;
+	};
+
 	void HealthComponent::Inspect()
 	{
 		if (ImGui::TreeNode("Health Component")) {

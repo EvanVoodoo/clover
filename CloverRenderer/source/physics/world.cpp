@@ -507,6 +507,22 @@ namespace clvr {
 		}
 	}
 
+	void World::DestroyBody(b2BodyId body)
+	{
+		if (b2Body_IsValid(body))
+		{
+			b2DestroyBody(body);
+		}
+	}
+
+	void World::DestroyShape(b2ShapeId shape)
+	{
+		if (b2Shape_IsValid(shape))
+		{
+			b2DestroyShape(shape, true);
+		}
+	}
+
 	void World::HandleContactEvents()
 	{
 		b2ContactEvents contactEvents = b2World_GetContactEvents(m_worldId);
@@ -569,21 +585,21 @@ namespace clvr {
 		{
 			if (!b2Shape_IsValid(box.shapeId))
 				continue;
-			sensor.OnStay(registry, entt::null);
+			sensor.OnStay(registry, entity);
 		}
 
 		for (auto [entity, sensor, circle] : registry.view<SensorComponent, CircleCollider>().each())
 		{
 			if (!b2Shape_IsValid(circle.shapeId))
 				continue;
-			sensor.OnStay(registry, entt::null);
+			sensor.OnStay(registry, entity);
 		}
 
 		for (auto [entity, sensor, poly] : registry.view<SensorComponent, PolygonCollider>().each())
 		{
 			if (!b2Shape_IsValid(poly.shapeId))
 				continue;
-			sensor.OnStay(registry, entt::null);
+			sensor.OnStay(registry, entity);
 		}
 
 		// then check for begin and end events in the current frame, if so, call OnBegin/OnEnd for the sensor component
@@ -619,7 +635,7 @@ namespace clvr {
 			auto* sensorComp = registry.try_get<SensorComponent>(sEntity);
 			if (sensorComp)
 			{
-				sensorComp->OnBegin(registry, vEntity);
+				sensorComp->OnBegin(registry, vEntity, sEntity);
 			}
 		}
 		for (int i = 0; i < events.endCount; ++i)
@@ -653,19 +669,19 @@ namespace clvr {
 			auto* sensorComp = registry.try_get<SensorComponent>(sEntity);
 			if (sensorComp)
 			{
-				sensorComp->OnEnd(registry, vEntity);
+				sensorComp->OnEnd(registry, vEntity, sEntity);
 			}
 		}
 	}
 
-	b2Vec2 World::GetVelocity(RigidBody rb) const
+	b2Vec2 World::GetVelocity(RigidBody& rb) const
 	{
 		if (!b2Body_IsValid(rb.bodyId) || !b2Body_IsAwake(rb.bodyId))
 			return { 0.0f, 0.0f };
 		return Units::ToPixels(b2Body_GetLinearVelocity(rb.bodyId));
 	}
 
-	b2Vec2 World::AddVelocity(RigidBody rb, const b2Vec2 velocity)
+	b2Vec2 World::AddVelocity(RigidBody& rb, const b2Vec2 velocity)
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return { 0.0f, 0.0f };
@@ -673,7 +689,7 @@ namespace clvr {
 		return b2Body_GetLinearVelocity(rb.bodyId);
 	}
 
-	b2Vec2 World::AddVelocityX(RigidBody rb, float velocityX)
+	b2Vec2 World::AddVelocityX(RigidBody& rb, float velocityX)
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return { 0.0f, 0.0f };
@@ -681,7 +697,7 @@ namespace clvr {
 		return b2Body_GetLinearVelocity(rb.bodyId);
 	}
 
-	b2Vec2 World::AddVelocityY(RigidBody rb, float velocityY)
+	b2Vec2 World::AddVelocityY(RigidBody& rb, float velocityY)
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return { 0.0f, 0.0f };
@@ -689,7 +705,7 @@ namespace clvr {
 		return b2Body_GetLinearVelocity(rb.bodyId);
 	}
 
-	b2Vec2 World::SetVelocity(RigidBody rb, const b2Vec2 velocity)
+	b2Vec2 World::SetVelocity(RigidBody& rb, const b2Vec2 velocity)
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return { 0.0f, 0.0f };
@@ -697,7 +713,7 @@ namespace clvr {
 		return b2Body_GetLinearVelocity(rb.bodyId);
 	}
 
-	b2Vec2 World::SetVelocityX(RigidBody rb, float velocityX)
+	b2Vec2 World::SetVelocityX(RigidBody& rb, float velocityX)
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return { 0.0f, 0.0f };
@@ -705,7 +721,7 @@ namespace clvr {
 		return b2Body_GetLinearVelocity(rb.bodyId);
 	}
 
-	b2Vec2 World::SetVelocityY(RigidBody rb, float velocityY)
+	b2Vec2 World::SetVelocityY(RigidBody& rb, float velocityY)
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return { 0.0f, 0.0f };
@@ -713,14 +729,14 @@ namespace clvr {
 		return b2Body_GetLinearVelocity(rb.bodyId);
 	}
 
-	void World::ApplyForce(RigidBody rb, const b2Vec2 force, const b2Vec2 point, bool wake)
+	void World::ApplyForce(RigidBody& rb, const b2Vec2 force, const b2Vec2 point, bool wake)
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return;
 		b2Body_ApplyForce(rb.bodyId, Units::ToMeters(force), Units::ToMeters(point), wake);
 	}
 
-	void World::ApplyImpulse(RigidBody rb, const b2Vec2 impulse, const b2Vec2 point, bool wake)
+	void World::ApplyImpulse(RigidBody& rb, const b2Vec2 impulse, const b2Vec2 point, bool wake)
 	{
 		if (!b2Body_IsValid(rb.bodyId))
 			return;

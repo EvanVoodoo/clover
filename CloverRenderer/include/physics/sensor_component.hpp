@@ -10,6 +10,7 @@ namespace clvr
 {
 	struct SensorContext {
 		Entity visitor;
+		Entity sensor;
 	};
 
 	class SensorCommand {
@@ -102,9 +103,9 @@ namespace clvr
 
 		void Inspect();
 
-		void OnBegin(entt::registry& reg, Entity visitor);
-		void OnStay(entt::registry& reg, Entity visitor);
-		void OnEnd(entt::registry& reg, Entity visitor);
+		void OnBegin(entt::registry& reg, Entity visitor, Entity sensor);
+		void OnStay(entt::registry& reg, Entity sensor);
+		void OnEnd(entt::registry& reg, Entity visitor, Entity sensor);
 
 		template<typename T, typename... Args>
 		T& AddCommand(Args&&... args)

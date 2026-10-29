@@ -42,6 +42,9 @@ namespace clvr
 
 		void UpdatePlayerMovement(float dt);
 
+		void DestroyBody(b2BodyId body);
+		void DestroyShape(b2ShapeId shape);
+
 		// Physics world events
 
 		void HandleContactEvents();
@@ -54,7 +57,7 @@ namespace clvr
 		/// </summary>
 		/// <param name="rb">Rigidbody</param>
 		/// <returns></returns>
-		b2Vec2 GetVelocity(RigidBody rb) const;
+		b2Vec2 GetVelocity(RigidBody& rb) const;
 
 		/// <summary>
 		/// Returns the new velocity of the body after adding the specified value to it.
@@ -62,11 +65,11 @@ namespace clvr
 		/// <param name="rb">Rigidbody</param>
 		/// <param name="velocity">Velocity to be added</param>
 		/// <returns></returns>
-		b2Vec2 AddVelocity(RigidBody rb, const b2Vec2 velocity);
+		b2Vec2 AddVelocity(RigidBody& rb, const b2Vec2 velocity);
 
-		b2Vec2 AddVelocityX(RigidBody rb, float velocityX);
+		b2Vec2 AddVelocityX(RigidBody& rb, float velocityX);
 
-		b2Vec2 AddVelocityY(RigidBody rb, float velocityY);
+		b2Vec2 AddVelocityY(RigidBody& rb, float velocityY);
 
 		/// <summary>
 		/// Returns the new velocity of the body after setting it to the specified value.
@@ -74,11 +77,11 @@ namespace clvr
 		/// <param name="rb">Rigidbody</param>
 		/// <param name="velocity">New velocity</param>
 		/// <returns></returns>
-		b2Vec2 SetVelocity(RigidBody rb, const b2Vec2 velocity);
+		b2Vec2 SetVelocity(RigidBody& rb, const b2Vec2 velocity);
 
-		b2Vec2 SetVelocityX(RigidBody rb, float velocityX);
+		b2Vec2 SetVelocityX(RigidBody& rb, float velocityX);
 
-		b2Vec2 SetVelocityY(RigidBody rb, float velocityY);
+		b2Vec2 SetVelocityY(RigidBody& rb, float velocityY);
 
 		/// <summary>
 		/// Applies a force to the body at a specific point. This will also wake up the body if it is sleeping.
@@ -87,7 +90,7 @@ namespace clvr
 		/// <param name="force"></param>
 		/// <param name="point"></param>
 		/// <param name="wake"></param>
-		void ApplyForce(RigidBody rb, const b2Vec2 force, const b2Vec2 point, bool wake);
+		void ApplyForce(RigidBody& rb, const b2Vec2 force, const b2Vec2 point, bool wake);
 
 		/// <summary>
 		/// Applies an impulse to the body at a specific point. This will also wake up the body if it is sleeping.
@@ -96,7 +99,7 @@ namespace clvr
 		/// <param name="impulse"></param>
 		/// <param name="point"></param>
 		/// <param name="wake"></param>
-		void ApplyImpulse(RigidBody rb, const b2Vec2 impulse, const b2Vec2 point, bool wake);
+		void ApplyImpulse(RigidBody& rb, const b2Vec2 impulse, const b2Vec2 point, bool wake);
 
 	private:
 		DebugDraw2D m_debugDraw;

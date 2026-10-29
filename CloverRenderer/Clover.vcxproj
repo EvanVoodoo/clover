@@ -402,7 +402,9 @@
     <ClInclude Include="include\core\imgui_helpers.hpp" />
     <ClInclude Include="include\core\imgui_layer.hpp" />
     <ClInclude Include="include\core\selection_gizmo.hpp" />
+    <ClInclude Include="include\gameplay\common.hpp" />
     <ClInclude Include="include\gameplay\damage.hpp" />
+    <ClInclude Include="include\gameplay\game_state_system.hpp" />
     <ClInclude Include="include\gameplay\health.hpp" />
     <ClInclude Include="include\input\input.hpp" />
     <ClInclude Include="include\core\scene.hpp" />
@@ -525,6 +527,7 @@
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\gameplay\game_state_system.cpp" />
     <ClCompile Include="source\gameplay\health.cpp" />
     <ClCompile Include="source\gameplay\damage.cpp" />
     <ClCompile Include="source\physics\collision_filters.cpp" />

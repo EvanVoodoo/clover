@@ -7,6 +7,30 @@
 
 using namespace clvr;
 
+RigidBody::~RigidBody() {
+	if (b2Body_IsValid(bodyId)) {
+		Engine.GetECS()->GetSystem<World>().DestroyBody(bodyId);
+	}
+}
+
+BoxCollider::~BoxCollider() {
+	if (b2Shape_IsValid(shapeId)) {
+		Engine.GetECS()->GetSystem<World>().DestroyShape(shapeId);
+	}
+}
+
+CircleCollider::~CircleCollider() {
+	if (b2Shape_IsValid(shapeId)) {
+		Engine.GetECS()->GetSystem<World>().DestroyShape(shapeId);
+	}
+}
+
+PolygonCollider::~PolygonCollider() {
+	if (b2Shape_IsValid(shapeId)) {
+		Engine.GetECS()->GetSystem<World>().DestroyShape(shapeId);
+	}
+}
+
 void RigidBody::Inspect() {
 	if (ImGui::TreeNode("RigidBody")) {
 		const char* bodyTypes[] = { "Static", "Kinematic", "Dynamic" };

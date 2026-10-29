@@ -602,14 +602,16 @@ void Renderer::UpdateGameCamera(float dt)
 	for (auto [e, c, t] : ecs->GetRegistry().view<CameraComponent, Transform>().each()) 
 	{
 		if (c.followTarget) {
-			auto& targetTransform = ecs->GetRegistry().get<Transform>(c.followEntity);
-			c.targetPosition = targetTransform.position;
+			if (ecs->GetRegistry().valid(c.followEntity)) {
+				auto& targetTransform = ecs->GetRegistry().get<Transform>(c.followEntity);
+				c.targetPosition = targetTransform.position;
 
-			// lerp the camera's position towards the target position based on the follow speed and delta time
-			t.position = XMFLOAT2(
-				t.position.x + (c.targetPosition.x - t.position.x) * c.followSpeed * dt,
-				t.position.y + (c.targetPosition.y - t.position.y) * c.followSpeed * dt
-			);
+				// lerp the camera's position towards the target position based on the follow speed and delta time
+				t.position = XMFLOAT2(
+					t.position.x + (c.targetPosition.x - t.position.x) * c.followSpeed * dt,
+					t.position.y + (c.targetPosition.y - t.position.y) * c.followSpeed * dt
+				);
+			}
 		}
 		GetActiveCamera().transform = t;
 		break; // just get the first camera for now

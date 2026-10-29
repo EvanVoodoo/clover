@@ -429,6 +429,12 @@
     <ClInclude Include="include\gameplay\damage.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\gameplay\game_state_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gameplay\common.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Clover.cpp">
@@ -546,6 +552,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\gameplay\health.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gameplay\game_state_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -4,6 +4,7 @@
 #include <string>
 #include "entt/entity/registry.hpp"
 #include "entt/meta/factory.hpp"
+#include "entt/signal/dispatcher.hpp"
 #include "core/common.hpp"
 #include "nlohmann/json.hpp"
 
@@ -11,8 +12,6 @@ using json = nlohmann::json;
 
 namespace clvr
 {
-	using Entity = entt::entity;
-
 	enum class RunMode : uint8_t { Editing, Playing, Always };
 
 	inline bool ShouldRun(RunMode rm, EngineMode mode);
@@ -63,6 +62,19 @@ namespace clvr
 		template <typename T>
 		std::vector<T*> GetSystems();
 
+		template<typename Event, auto Candidate, typename Instance>
+		void Listen(Instance& instance)
+		{
+			m_dispatcher.sink<Event>().template connect<Candidate>(instance);
+		}
+		template<typename Instance>
+		void StopListening(Instance& instance)
+		{
+			m_dispatcher.disconnect(instance); // removes all listeners bound to this instance
+		}
+
+		entt::dispatcher& GetDispatcher() { return m_dispatcher; }
+
 	private:
 		entt::registry m_editRegistry;
 		entt::registry m_playRegistry;
@@ -72,6 +84,8 @@ namespace clvr
 		{
 		};  // Tag component for entities to be deleted
 		std::vector<std::unique_ptr<System>> m_systems;
+
+		entt::dispatcher m_dispatcher;
 	};
 
 	template <typename T, typename... Args>

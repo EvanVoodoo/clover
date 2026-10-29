@@ -44,7 +44,7 @@ namespace clvr {
 
 		void ApplyDamage(HealthComponent& target, float amount, DamageType type);
 		void HealEntity(HealthComponent& target, float amount);
-		void KillEntity(HealthComponent& target);
+		void KillEntity(HealthComponent& target, Entity targetEntity);
 	private:
 		std::unordered_map<Entity, std::vector<DamageEvent>> m_damageQueue;
 		std::vector<Entity> m_deathQueue;

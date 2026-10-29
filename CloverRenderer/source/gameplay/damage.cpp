@@ -1,6 +1,7 @@
 #include "gameplay/damage.hpp"
 #include <core/engine.hpp>
 #include <gameplay/health.hpp>
+#include <gameplay/common.hpp>
 
 namespace clvr {
 
@@ -93,7 +94,7 @@ namespace clvr {
 				continue; // Skip if the target doesn't have a Health component
 			}
 			if (hComp->alive) {
-				KillEntity(*hComp);
+				KillEntity(*hComp, target);
 			}
 		}
 	}
@@ -120,7 +121,7 @@ namespace clvr {
 		}
 	}
 
-	void DamageSystem::KillEntity(HealthComponent& target)
+	void DamageSystem::KillEntity(HealthComponent& target, Entity targetEntity)
 	{
 		if (!target.alive) {
 			return;
@@ -129,5 +130,6 @@ namespace clvr {
 			return;
 		}
 		target.alive = false;
+		Engine.GetECS()->GetDispatcher().enqueue(EntityDied{ targetEntity });
 	}
 }

@@ -33,6 +33,7 @@ namespace clvr
 
 	struct RigidBody
 	{
+		~RigidBody();
 		b2BodyId bodyId = b2_nullBodyId; // shouldn't be serialized, as it is managed by the physics world
 		b2BodyType bodyType = b2_staticBody;
 		float linearDamping = 0.0f;
@@ -54,6 +55,15 @@ namespace clvr
 
 	struct BoxCollider
 	{
+		BoxCollider() = default;
+		~BoxCollider();
+
+		BoxCollider(const BoxCollider&) = delete;
+		BoxCollider& operator=(const BoxCollider&) = delete;
+
+		BoxCollider(BoxCollider&&) noexcept = default;
+		BoxCollider& operator=(BoxCollider&&) noexcept = default;
+
 		b2Vec2 halfExtents = { 0.5f, 0.5f };
 		b2Vec2 offset = { 0.0f, 0.0f };
 		bool isSensor = false;
@@ -71,6 +81,15 @@ namespace clvr
 
 	struct CircleCollider
 	{
+		CircleCollider() = default;
+		~CircleCollider();
+
+		CircleCollider(const CircleCollider&) = delete;
+		CircleCollider& operator=(const CircleCollider&) = delete;
+
+		CircleCollider(CircleCollider&&) noexcept = default;
+		CircleCollider& operator=(CircleCollider&&) noexcept = default;
+
 		float radius = 0.5f;
 		b2Vec2 offset = { 0.0f, 0.0f };
 		bool isSensor = false;
@@ -88,6 +107,15 @@ namespace clvr
 
 	struct PolygonCollider
 	{
+		PolygonCollider() = default;
+		~PolygonCollider();
+
+		PolygonCollider(const PolygonCollider&) = delete;
+		PolygonCollider& operator=(const PolygonCollider&) = delete;
+
+		PolygonCollider(PolygonCollider&&) noexcept = default;
+		PolygonCollider& operator=(PolygonCollider&&) noexcept = default;
+
 		std::vector<b2Vec2> vertices;  // convex, max 8
 		bool isSensor = false;
 

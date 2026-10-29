@@ -19,7 +19,7 @@ void GravitySensorCommand::OnBegin(entt::registry& reg, const SensorContext& con
 void GravitySensorCommand::OnStay(entt::registry& reg, const SensorContext& context)
 {
 	if (reg.valid(context.visitor)) {
-		Engine.GetECS()->GetSystem<DamageSystem>().QueueDamage(context.visitor, entt::null, 0.1f, DamageType::Physical);
+		Engine.GetECS()->GetSystem<DamageSystem>().QueueDamage(context.visitor, context.sensor, damagePerSecond, DamageType::Physical);
 	}
 	return; // No action needed while staying in the sensor area
 }
@@ -39,4 +39,5 @@ void GravitySensorCommand::OnEnd(entt::registry& reg, const SensorContext& conte
 void GravitySensorCommand::Inspect()
 {
 	ImGui::DragFloat("Modified Gravity Scale", &modifiedGravityScale, 0.1f, -10.0f, 10.0f);
+	ImGui::DragFloat("Damage Per Second", &damagePerSecond, 0.01f, 0.0f, 100.0f);
 }

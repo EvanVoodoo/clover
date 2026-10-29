@@ -26026,7 +26026,8 @@
             "type": "ColorSensorCommand"
           },
           {
-            "modifiedGravityScale": -10.0,
+            "damagePerSecond": 1.309999942779541,
+            "modifiedGravityScale": -2.0,
             "type": "GravitySensorCommand"
           }
         ]
@@ -26083,6 +26084,7 @@
   "systems": {
     "": null,
     "Damage System": null,
+    "Game State System": null,
     "GameSystem": null,
     "Physics World": {
       "debugDraw": false,

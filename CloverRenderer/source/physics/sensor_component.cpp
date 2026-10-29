@@ -92,16 +92,16 @@ namespace clvr
 		ImGui::TreePop();
 	}
 
-	void SensorComponent::OnBegin(entt::registry& reg, Entity visitor) {
+	void SensorComponent::OnBegin(entt::registry& reg, Entity visitor, Entity sensor) {
 		if (!active) return;
 
 		overlapping.push_back(visitor);
-		SensorContext context{ visitor };
+		SensorContext context{ visitor, sensor };
 		for (auto& command : commands) {
 			command->OnBegin(reg, context);
 		}
 	}
-	void SensorComponent::OnStay(entt::registry& reg, Entity visitor) {
+	void SensorComponent::OnStay(entt::registry& reg, Entity sensor) {
 		if (!active) return;
 
 		for (Entity overlappingEntity : overlapping) {
@@ -110,17 +110,17 @@ namespace clvr
 				overlapping.erase(std::remove(overlapping.begin(), overlapping.end(), overlappingEntity), overlapping.end());
 				continue;
 			}
-			SensorContext context{ overlappingEntity };
+			SensorContext context{ overlappingEntity, sensor };
 			for (auto& command : commands) {
 				command->OnStay(reg, context);
 			}
 		}
 	}
-	void SensorComponent::OnEnd(entt::registry& reg, Entity visitor) {
+	void SensorComponent::OnEnd(entt::registry& reg, Entity visitor, Entity sensor) {
 		if (!active) return;
 
 		overlapping.erase(std::remove(overlapping.begin(), overlapping.end(), visitor), overlapping.end());
-		SensorContext context{ visitor };
+		SensorContext context{ visitor, sensor };
 		for (auto& command : commands) {
 			command->OnEnd(reg, context);
 		}
