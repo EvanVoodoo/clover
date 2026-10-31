@@ -501,6 +501,9 @@
     <ClInclude Include="include\input\input_command.hpp" />
     <ClInclude Include="include\input\input_controller.hpp" />
     <ClInclude Include="include\input\input_handler.hpp" />
+    <ClInclude Include="include\level\common.hpp" />
+    <ClInclude Include="include\level\room.hpp" />
+    <ClInclude Include="include\level\tile.hpp" />
     <ClInclude Include="include\nlohmann\json.hpp" />
     <ClInclude Include="include\nlohmann\json_fwd.hpp" />
     <ClInclude Include="include\physics\collision_filters.hpp" />
@@ -527,6 +530,7 @@
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\level\tile.cpp" />
     <ClCompile Include="source\gameplay\game_state_system.cpp" />
     <ClCompile Include="source\gameplay\health.cpp" />
     <ClCompile Include="source\gameplay\damage.cpp" />
