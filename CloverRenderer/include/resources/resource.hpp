@@ -5,7 +5,7 @@
 namespace clvr {
 	enum class ResourceType {
 		Texture,
-		Shader
+		Shader,
 	};
 
 	class Resource {

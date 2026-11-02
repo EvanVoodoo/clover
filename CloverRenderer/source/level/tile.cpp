@@ -1,11 +1,12 @@
 #include "level/tile.hpp"
 #include "nlohmann/json.hpp"
 #include <fstream>
+#include "resources/json_io.hpp"
 
 using json = nlohmann::json;
 
 namespace clvr {
-    bool TileDatabase::LoadTileDatabase(const std::filesystem::path& path, TileDatabase& db)
+    bool TileDatabase::LoadFromFile(const std::filesystem::path& path)
     {
         std::ifstream file(path);
         if (!file)
@@ -13,10 +14,16 @@ namespace clvr {
 
         const json j = json::parse(file, nullptr, /*allow_exceptions=*/false);
         if (j.is_discarded())
-            return false; // not valid JSON at all
+            return false;
 
-        return db.FromJson(j);
+        return FromJson(j);
     }
+
+    bool TileDatabase::SaveToFile(const std::filesystem::path& path) const
+    {
+        return WriteJsonFile(path, ToJson());
+    }
+
     json TileDatabase::ToJson() const {
 		json tileDB;
 		tileDB["version"] = 1;

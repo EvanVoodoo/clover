@@ -3,11 +3,10 @@
 #include <string>
 #include "nlohmann/json.hpp"
 #include <map>
+#include "common.hpp"
 
 namespace clvr
 {
-	using TileID = std::uint16_t;
-
 	class Tile
 	{
 	public:
@@ -46,7 +45,9 @@ namespace clvr
 			return it != m_tileDefs.end() ? &it->second : nullptr;
 		}
 
-		bool LoadTileDatabase(const std::filesystem::path& path, TileDatabase& db);
+		bool LoadFromFile(const std::filesystem::path& path);
+
+		bool SaveToFile(const std::filesystem::path& path) const;
 
 		using json = nlohmann::json;
 

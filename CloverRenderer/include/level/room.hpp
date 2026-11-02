@@ -1,7 +1,8 @@
 #pragma once
 #include "level/common.hpp"
 #include <vector>
-#include "tile.hpp"
+#include <cstdint>
+#include "grid.hpp"
 
 namespace clvr
 {
@@ -18,53 +19,36 @@ namespace clvr
 
 	using DoorFlags = std::uint8_t; // bitmask of DoorType
 
-	class RoomMetadata
+	struct RoomData
 	{
-	public:
-		RoomMetadata() = default;
+		int id = -1;
+		int width = CLVR_ROOM_WIDTH;
+		int height = CLVR_ROOM_HEIGHT;
 
-		int GetId() const { return m_id; }
-		int GetWidth() const { return m_width; }
-		int GetHeight() const { return m_height; }
-		RoomType GetRoomType() const { return m_roomType; }
-		DoorFlags GetDoorFlags() const { return m_doorFlags; }
-		int GetDifficulty() const { return m_difficulty; }
-		int GetWeight() const { return m_weight; }
+		RoomType type = RoomType::Normal;
+		DoorFlags doors = 0;
 
-		void SetId(int id) { m_id = id; }
-		void SetWidth(int width) { m_width = width; }
-		void SetHeight(int height) { m_height = height; }
-		void SetRoomType(RoomType type) { m_roomType = type; }
-		void SetDoorFlags(DoorFlags flags) { m_doorFlags = flags; }
-		void SetDoorFlag(DoorType door, bool enabled) {
-			if (enabled)
-				m_doorFlags |= static_cast<DoorFlags>(door);
-			else
-				m_doorFlags &= ~static_cast<DoorFlags>(door);
-		}
-		void SetDifficulty(int difficulty) { m_difficulty = difficulty; }
-		void SetWeight(int weight) { m_weight = weight; }
+		int difficulty = 1;
+		int weight = 1;
 
-		Layer& GetVisualLayer(int index) { return m_visualLayers[index]; }
-		Layer& GetGameplayLayer() { return m_gameplayLayer; }
-		Layer& GetSpawnLayer() { return m_spawnLayer; }
+		std::vector<Grid<TileID>> visualLayers;
+		Grid<TileID> gameplayLayer;
+		Grid<SpawnID> spawnLayer;
 
-		void SetVisualLayer(int index, const Layer& layer) { m_visualLayers[index] = layer; }
-		void SetGameplayLayer(const Layer& layer) { m_gameplayLayer = layer; }
-		void SetSpawnLayer(const Layer& layer) { m_spawnLayer = layer; }
-	private:
-		int m_id = -1;
-		int m_width = CLVR_ROOM_WIDTH;
-		int m_height = CLVR_ROOM_HEIGHT;
+		RoomData() { Init(CLVR_ROOM_WIDTH, CLVR_ROOM_HEIGHT, 1); }
 
-		RoomType m_roomType = RoomType::Normal;
-		DoorFlags m_doorFlags : 4 = 0; // 4 bits for door flags
+		// Sets up empty layers of the given size (ID 0 = empty).
+		void Init(int w, int h, int visualLayerCount);
 
-		int m_difficulty = 1;
-		int m_weight = 1;
+		// For the editor: resizes every layer, keeping existing content.
+		void Resize(int w, int h);
 
-		Layer m_visualLayers[CLVR_MAX_VISUAL_LAYERS];
-		Layer m_gameplayLayer;
-		Layer m_spawnLayer;
+		bool AddVisualLayer();
+
+		int VisualLayerCount() const;
+
+		bool HasDoor(DoorType d) const;
+
+		void SetDoor(DoorType d, bool enabled);
 	};
 }

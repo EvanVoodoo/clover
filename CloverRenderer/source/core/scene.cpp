@@ -9,14 +9,17 @@
 #include <core/selection_gizmo.hpp>
 #include <core/translate_gizmo.hpp>
 
+using namespace entt::literals;
 using namespace clvr;
 
-SceneManager::SceneManager()
+SceneManager::SceneManager() : EditorWindow("Outliner", ImGuiWindowFlags_MenuBar)
 {
     // Create the selection gizmo
     m_selectionGizmo = std::make_unique<SelectionGizmo>();
     // Create the translate gizmo
     //m_translateGizmo = std::make_unique<TranslateGizmo>();
+
+    Open();
 }
 
 void SceneManager::Update(float dt)
@@ -52,103 +55,11 @@ void SceneManager::Draw()
 
 void SceneManager::Inspect(float dt)
 {
-    using namespace entt::literals;
-
     auto* ecs = Engine.GetECS();
+	auto& registry = ecs->GetRegistry();
 	auto& renderer = ecs->GetSystem<Renderer>();
 
-    ImGui::Begin("Outliner");
-
-    if (ImGui::Button("Add Entity")) { ImGui::OpenPopup("CreateEntityPopup"); }
-
-    if (ImGui::BeginPopup("CreateEntityPopup")) {
-        if (ImGui::MenuItem("Create New Entity")) {
-            Entity entity = ecs->CreateEntity();
-            ecs->CreateComponent<Transform>(entity);
-        }
-        ImGui::EndPopup();
-    }
-
-    ImGui::SameLine();
-    if (m_selectedEntity != entt::null && ImGui::Button("Delete Entity"))
-    { 
-        DeleteSelectedEntity();
-    }
-
-    ImGui::SameLine();
-    ImGui::SeparatorText("Entities");
-
-    ImGui::BeginChild("EntityList", ImVec2(0, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
-
-    auto& registry = ecs->GetRegistry();
-    auto view = ecs->GetRegistry().view<Transform>();
-
-    for (auto entity : view)
-    {
-        auto& transform = view.get<Transform>(entity);
-        std::string label = transform.name.empty()
-            ? "Entity " + std::to_string(entt::to_integral(entity))
-            : transform.name;
-
-        ImGui::PushID(static_cast<int>(entt::to_integral(entity)));
-
-        if (ImGui::Selectable(label.c_str(), m_selectedEntity == entity)) {
-            UpdateSelectedEntity(entity);
-        }
-
-        if (m_scrollEntity != entt::null && m_scrollEntity == entity) {
-			ImGui::SetScrollHereY();
-			m_scrollEntity = entt::null; // reset scroll entity after scrolling
-        }
-
-        if (ImGui::BeginPopupContextItem("EntityContextMenu")) {
-            UpdateSelectedEntity(entity); // right-click selects this row too
-
-			ImGui::Text("Entity: %s", label.c_str());
-
-			ImGui::Separator();
-
-            if (ImGui::BeginMenu("Add Component")) {
-				bool noComponentsToAdd = true;
-                for (auto&& [id, type] : entt::resolve()) {
-                    auto nameFunc = type.func("name"_hs);
-                    auto hasFunc = type.func("has"_hs);
-                    auto createFunc = type.func("create"_hs);
-
-                    if (!nameFunc || !hasFunc || !createFunc)
-                        continue; // skip meta types that aren't components (if you ever reflect anything else)
-
-                    const char* name = nameFunc.invoke(entt::meta_handle{}).cast<const char*>();
-
-                    bool has = hasFunc.invoke(entt::meta_handle{}, entt::forward_as_meta(registry),
-                                                entt::forward_as_meta(entity)).cast<bool>();
-                    
-                    noComponentsToAdd = has && noComponentsToAdd;
-
-                    if (!has && ImGui::MenuItem(name)) {
-                        createFunc.invoke(entt::meta_handle{}, entt::forward_as_meta(registry), entt::forward_as_meta(entity));
-                    }
-                }
-				if (noComponentsToAdd) {
-					ImGui::Text("No components available to add.");
-				}
-                ImGui::EndMenu();
-            }
-
-			ImGui::Separator();
-
-            if (ImGui::MenuItem("Delete")) {
-                DeleteSelectedEntity();
-            }
-            ImGui::EndPopup();
-        }
-
-        ImGui::PopID();
-    }
-
-    ImGui::EndChild();
-
-    ImGui::End();
+    EditorWindow::DrawWindow();
 
     ImGui::Begin("Inspector");
     if (registry.valid(m_selectedEntity))
@@ -158,8 +69,6 @@ void SceneManager::Inspect(float dt)
             entt::id_type id;
             entt::meta_type type;
         };
-
-        using namespace entt::literals;
 
         std::vector<Row> rows;
         for (auto&& [id, storage] : registry.storage())
@@ -179,7 +88,6 @@ void SceneManager::Inspect(float dt)
             return a.order != b.order ? a.order < b.order : a.id < b.id;   // id tie-break keeps the order stable between frames
         });
 
-        using namespace entt::literals;
         for (const Row& row : rows)
         {
             ImGui::PushID(static_cast<int>(row.id));
@@ -341,3 +249,103 @@ bool SceneManager::LoadSceneFromFile(const std::filesystem::path& path) {
 
 	return true;
 }
+
+void SceneManager::DrawContents()
+{
+    auto* ecs = Engine.GetECS();
+
+    if (ImGui::Button("Add Entity")) { ImGui::OpenPopup("CreateEntityPopup"); }
+
+    if (ImGui::BeginPopup("CreateEntityPopup")) {
+        if (ImGui::MenuItem("Create New Entity")) {
+            Entity entity = ecs->CreateEntity();
+            ecs->CreateComponent<Transform>(entity);
+        }
+        ImGui::EndPopup();
+    }
+
+    ImGui::SameLine();
+    if (m_selectedEntity != entt::null && ImGui::Button("Delete Entity"))
+    {
+        DeleteSelectedEntity();
+    }
+
+    ImGui::SameLine();
+    ImGui::SeparatorText("Entities");
+
+    ImGui::BeginChild("EntityList", ImVec2(0, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
+
+    auto& registry = ecs->GetRegistry();
+    auto view = ecs->GetRegistry().view<Transform>();
+
+    for (auto entity : view)
+    {
+        auto& transform = view.get<Transform>(entity);
+        std::string label = transform.name.empty()
+            ? "Entity " + std::to_string(entt::to_integral(entity))
+            : transform.name;
+
+        ImGui::PushID(static_cast<int>(entt::to_integral(entity)));
+
+        if (ImGui::Selectable(label.c_str(), m_selectedEntity == entity)) {
+            UpdateSelectedEntity(entity);
+        }
+
+        if (m_scrollEntity != entt::null && m_scrollEntity == entity) {
+            ImGui::SetScrollHereY();
+            m_scrollEntity = entt::null; // reset scroll entity after scrolling
+        }
+
+        if (ImGui::BeginPopupContextItem("EntityContextMenu")) {
+            UpdateSelectedEntity(entity); // right-click selects this row too
+
+            ImGui::Text("Entity: %s", label.c_str());
+
+            ImGui::Separator();
+
+            if (ImGui::BeginMenu("Add Component")) {
+                bool noComponentsToAdd = true;
+                for (auto&& [id, type] : entt::resolve()) {
+                    auto nameFunc = type.func("name"_hs);
+                    auto hasFunc = type.func("has"_hs);
+                    auto createFunc = type.func("create"_hs);
+
+                    if (!nameFunc || !hasFunc || !createFunc)
+                        continue; // skip meta types that aren't components (if you ever reflect anything else)
+
+                    const char* name = nameFunc.invoke(entt::meta_handle{}).cast<const char*>();
+
+                    bool has = hasFunc.invoke(entt::meta_handle{}, entt::forward_as_meta(registry),
+                                              entt::forward_as_meta(entity)).cast<bool>();
+
+                    noComponentsToAdd = has && noComponentsToAdd;
+
+                    if (!has && ImGui::MenuItem(name)) {
+                        createFunc.invoke(entt::meta_handle{}, entt::forward_as_meta(registry), entt::forward_as_meta(entity));
+                    }
+                }
+                if (noComponentsToAdd) {
+                    ImGui::Text("No components available to add.");
+                }
+                ImGui::EndMenu();
+            }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Delete")) {
+                DeleteSelectedEntity();
+            }
+            ImGui::EndPopup();
+        }
+
+        ImGui::PopID();
+    }
+
+    ImGui::EndChild();
+}
+
+void SceneManager::OnOpen()
+{}
+
+void SceneManager::OnClose()
+{}

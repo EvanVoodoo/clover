@@ -4,6 +4,8 @@
 #include <rendering/renderer.hpp>
 #include <core/imgui_helpers.hpp>
 #include <gameplay/game_state_system.hpp>
+#include <level/room_editor.hpp>
+#include <input/input_handler.hpp>
 
 namespace clvr {
 	bool IsMouseMoving() {
@@ -64,6 +66,39 @@ namespace clvr {
 		x = pos[0];
 		y = pos[1];
 	}
+
+    using Dir = ResourceManager::Directory;
+
+    void SetupRenderer()
+    {
+        auto ecs = Engine.GetECS();
+        auto& renderer = ecs->GetSystem<Renderer>();
+        ResourceManager* rMngr = Engine.GetResourceManager();
+
+        renderer.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        renderer.LoadShader("grayscale",
+                            rMngr->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+                            rMngr->GetPath(Dir::SharedAssets, "shaders/grayscale.ps.hlsl"));
+        renderer.LoadShader("inverted",
+                            rMngr->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+                            rMngr->GetPath(Dir::SharedAssets, "shaders/inverted.ps.hlsl"));
+        renderer.LoadShader("chromatic",
+                            rMngr->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+                            rMngr->GetPath(Dir::SharedAssets, "shaders/chromatic.ps.hlsl"));
+        renderer.LoadShader("wacky",
+                            rMngr->GetPath(Dir::SharedAssets, "shaders/color.vs.hlsl"),
+                            rMngr->GetPath(Dir::SharedAssets, "shaders/wacky.ps.hlsl"));
+        renderer.LoadShader("crt",
+                            rMngr->GetPath(Dir::SharedAssets, "shaders/post.vs.hlsl"),
+                            rMngr->GetPath(Dir::SharedAssets, "shaders/crt.ps.hlsl"));
+        //renderer.SetPostProcessShader(L"crt");
+
+        renderer.CreateSpriteLayer(3, 0.2f, "Further Background Layer");
+        renderer.CreateSpriteLayer(2, 0.5f, "Background Layer");
+        renderer.CreateSpriteLayer(1, 1.0f, "Sprite Layer");
+        renderer.CreateSpriteLayer(0, 1.0f, "Default Layer");
+    }
 }
 
 using namespace clvr;
@@ -86,19 +121,38 @@ bool EngineClass::Initialize(HINSTANCE hInstance, int nCmdShow)
     if (!m_resourceManager)
         return false;
 
+	m_editorWindowManager = new EditorWindowManager();
+	if (!m_editorWindowManager)
+		return false;
+
 #ifdef CLOVER_EDITOR
     m_imgui = new ImGuiLayer();
 #else
     SetEngineMode(EngineMode::Playing);
 #endif
 
-	GetECS()->CreateSystem<GameStateSystem>();
+	m_ecs->CreateSystem<Renderer>();
+	SetupRenderer();
+
+	m_ecs->CreateSystem<GameStateSystem>();
+
+    m_ecs->CreateSystem<RoomEditor>();
+
+    m_ecs->CreateSystem<InputHandler>();
+
+    m_ecs->CreateSystem<SceneManager>();
 
     return true;
 }
 
 void EngineClass::Shutdown()
 {
+    if (m_editorWindowManager) 
+    {
+        delete m_editorWindowManager;
+        m_editorWindowManager = nullptr;
+    }
+
     if (m_imgui)
     {
 		m_imgui->Shutdown();
@@ -319,6 +373,8 @@ void EngineClass::MainMenuBar()
             if (ImGui::Button("Cancel"))
                 ImGui::CloseCurrentPopup();
         });
+
+        GetEditorWindowManager()->DrawMenu();
 
         if (GetEngineMode() == EngineMode::Editing) {
             if (ImGui::BeginMenu("Play")) {

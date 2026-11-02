@@ -396,6 +396,7 @@
     <ClInclude Include="include\core\common.hpp" />
     <ClInclude Include="include\core\components.hpp" />
     <ClInclude Include="include\core\ecs.hpp" />
+    <ClInclude Include="include\core\editor_window.hpp" />
     <ClInclude Include="include\core\engine.hpp" />
     <ClInclude Include="include\Clover.h" />
     <ClInclude Include="include\core\gizmo.hpp" />
@@ -502,7 +503,10 @@
     <ClInclude Include="include\input\input_controller.hpp" />
     <ClInclude Include="include\input\input_handler.hpp" />
     <ClInclude Include="include\level\common.hpp" />
+    <ClInclude Include="include\level\grid.hpp" />
     <ClInclude Include="include\level\room.hpp" />
+    <ClInclude Include="include\level\room_editor.hpp" />
+    <ClInclude Include="include\level\room_serialization.hpp" />
     <ClInclude Include="include\level\tile.hpp" />
     <ClInclude Include="include\nlohmann\json.hpp" />
     <ClInclude Include="include\nlohmann\json_fwd.hpp" />
@@ -525,11 +529,17 @@
     <ClInclude Include="include\rendering\texture.hpp" />
     <ClInclude Include="include\rendering\texture_atlas.hpp" />
     <ClInclude Include="include\resource.h" />
+    <ClInclude Include="include\resources\json_io.hpp" />
     <ClInclude Include="include\resources\resource.hpp" />
     <ClInclude Include="include\resources\resource_manager.hpp" />
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\core\editor_window.cpp" />
+    <ClCompile Include="source\level\room_editor.cpp" />
+    <ClCompile Include="source\resources\json_io.cpp" />
+    <ClCompile Include="source\level\room_serialization.cpp" />
+    <ClCompile Include="source\level\room.cpp" />
     <ClCompile Include="source\level\tile.cpp" />
     <ClCompile Include="source\gameplay\game_state_system.cpp" />
     <ClCompile Include="source\gameplay\health.cpp" />

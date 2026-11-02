@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 #define CLVR_ROOM_WIDTH 13
 #define CLVR_ROOM_HEIGHT 7
@@ -6,6 +7,9 @@
 
 namespace clvr
 {
+	using TileID = std::uint16_t;
+	using SpawnID = std::uint16_t;
+
 	enum class RoomType
 	{
 		Normal = 0,

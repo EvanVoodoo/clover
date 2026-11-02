@@ -6,6 +6,7 @@
 #include "imgui_layer.hpp"
 #include "resources/resource_manager.hpp"
 #include "core/common.hpp"
+#include "editor_window.hpp"
 
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1080;
@@ -38,6 +39,7 @@ namespace clvr
 		Window* GetWindow() { return m_window; }
 		Input* GetInput() { return m_input; }
 		ResourceManager* GetResourceManager() { return m_resourceManager; }
+		EditorWindowManager* GetEditorWindowManager() { return m_editorWindowManager; }
 		ImGuiLayer* GetImGuiLayer() { return m_imgui; }
 
 		EngineMode GetEngineMode() const { return m_editorMode; }
@@ -54,6 +56,7 @@ namespace clvr
 		Window* m_window = nullptr;
 		ImGuiLayer* m_imgui = nullptr;
 		ResourceManager* m_resourceManager = nullptr;
+		EditorWindowManager* m_editorWindowManager = nullptr;
 		EngineMode m_editorMode = EngineMode::Editing;
 		unsigned long long m_frameCount = 0;
 

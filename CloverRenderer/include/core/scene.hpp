@@ -2,6 +2,7 @@
 
 #include "ecs.hpp"
 #include <nlohmann/json.hpp>
+#include "editor_window.hpp"
 
 using json = nlohmann::json;
 
@@ -10,7 +11,7 @@ namespace clvr {
 	class TranslateGizmo;
 	class SelectionGizmo;
 
-	class SceneManager : public System {
+	class SceneManager : public System, public EditorWindow {
 	public:
 		SceneManager();
 		~SceneManager() = default;
@@ -35,6 +36,11 @@ namespace clvr {
 		void LoadScene(const json& scene);
 		bool SaveSceneToFile(const std::filesystem::path& path);
 		bool LoadSceneFromFile(const std::filesystem::path& path);
+
+	protected:
+		void DrawContents() override;
+		void OnOpen() override;
+		void OnClose() override;
 
 	private:
 		Entity m_selectedEntity = entt::null;
