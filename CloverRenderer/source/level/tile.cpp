@@ -6,6 +6,12 @@
 using json = nlohmann::json;
 
 namespace clvr {
+    TileDatabase::TileDatabase(const char* filepath) : Resource(ResourceType::TileDatabase)
+    {
+        m_filename = std::filesystem::path(filepath).filename().string();
+        m_path = std::filesystem::path(filepath).string();
+    }
+
     bool TileDatabase::LoadFromFile(const std::filesystem::path& path)
     {
         std::ifstream file(path);
@@ -19,9 +25,9 @@ namespace clvr {
         return FromJson(j);
     }
 
-    bool TileDatabase::SaveToFile(const std::filesystem::path& path) const
+    bool TileDatabase::SaveToFile() const
     {
-        return WriteJsonFile(path, ToJson());
+        return WriteJsonFile(m_path, ToJson());
     }
 
     json TileDatabase::ToJson() const {

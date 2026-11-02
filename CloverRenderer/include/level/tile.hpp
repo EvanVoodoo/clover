@@ -3,6 +3,7 @@
 #include <string>
 #include "nlohmann/json.hpp"
 #include <map>
+#include "resources/resource.hpp"
 #include "common.hpp"
 
 namespace clvr
@@ -33,10 +34,11 @@ namespace clvr
 	};
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TileDef, name, spriteName, blocksMovement, blocksProjectiles, destructible, contactDamage)
 
-	class TileDatabase
+	class TileDatabase : public Resource
 	{
 	public:	
-		TileDatabase() = default;
+		TileDatabase(const char* filepath);
+		~TileDatabase() = default;
 
 		void Register(TileID id, TileDef def) { m_tileDefs[id] = def; }
 
@@ -45,9 +47,14 @@ namespace clvr
 			return it != m_tileDefs.end() ? &it->second : nullptr;
 		}
 
+		static std::string GetPath(const char* filepath) {
+			std::string path = "tile_database:" + std::filesystem::path(filepath).string();
+			return path;
+		}
+
 		bool LoadFromFile(const std::filesystem::path& path);
 
-		bool SaveToFile(const std::filesystem::path& path) const;
+		bool SaveToFile() const;
 
 		using json = nlohmann::json;
 

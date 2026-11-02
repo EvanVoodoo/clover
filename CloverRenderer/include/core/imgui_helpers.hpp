@@ -3,6 +3,12 @@
 #include "imgui/imgui.h"
 
 namespace clvr {
+
+	namespace ImGuiHelpers
+	{
+        constexpr ImVec2 POPUP_WINDOW_SIZE = ImVec2(960, 540);
+	}
+
 	static void Tooltip(const char* text)
 	{
 		if (ImGui::IsItemHovered())
