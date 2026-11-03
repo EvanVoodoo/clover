@@ -6,6 +6,7 @@
 #include <gameplay/game_state_system.hpp>
 #include <level/room_editor.hpp>
 #include <input/input_handler.hpp>
+#include <level/tile_editor.hpp>
 
 namespace clvr {
 	bool IsMouseMoving() {
@@ -137,6 +138,8 @@ bool EngineClass::Initialize(HINSTANCE hInstance, int nCmdShow)
 	m_ecs->CreateSystem<GameStateSystem>();
 
     m_ecs->CreateSystem<RoomEditor>();
+
+    m_ecs->CreateSystem<TilesEditor>();
 
     m_ecs->CreateSystem<InputHandler>();
 

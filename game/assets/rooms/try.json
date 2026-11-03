@@ -1,4 +1,5 @@
 {
+  "backdropId": 1,
   "difficulty": 1,
   "doors": 0,
   "gameplayLayer": [
@@ -218,7 +219,7 @@
     ]
   ],
   "type": 0,
-  "version": 1,
+  "version": 2,
   "visualLayers": [
     [
       [

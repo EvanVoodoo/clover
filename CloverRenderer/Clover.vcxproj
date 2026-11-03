@@ -502,12 +502,15 @@
     <ClInclude Include="include\input\input_command.hpp" />
     <ClInclude Include="include\input\input_controller.hpp" />
     <ClInclude Include="include\input\input_handler.hpp" />
+    <ClInclude Include="include\level\backdrop.hpp" />
+    <ClInclude Include="include\level\backdrop_sprites.hpp" />
     <ClInclude Include="include\level\common.hpp" />
     <ClInclude Include="include\level\grid.hpp" />
     <ClInclude Include="include\level\room.hpp" />
     <ClInclude Include="include\level\room_editor.hpp" />
     <ClInclude Include="include\level\room_serialization.hpp" />
     <ClInclude Include="include\level\tile.hpp" />
+    <ClInclude Include="include\level\tile_editor.hpp" />
     <ClInclude Include="include\nlohmann\json.hpp" />
     <ClInclude Include="include\nlohmann\json_fwd.hpp" />
     <ClInclude Include="include\physics\collision_filters.hpp" />
@@ -535,6 +538,9 @@
     <ClInclude Include="include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\level\backdrop_sprites.cpp" />
+    <ClCompile Include="source\level\backdrop.cpp" />
+    <ClCompile Include="source\level\tile_editor.cpp" />
     <ClCompile Include="source\core\editor_window.cpp" />
     <ClCompile Include="source\level\room_editor.cpp" />
     <ClCompile Include="source\resources\json_io.cpp" />

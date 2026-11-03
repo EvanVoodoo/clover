@@ -1,0 +1,1018 @@
+{
+  "tileDefinitions": [
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 1",
+        "spriteCol": 0,
+        "spriteRow": 0
+      },
+      "id": 1
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 2",
+        "spriteCol": 1,
+        "spriteRow": 0
+      },
+      "id": 2
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 3",
+        "spriteCol": 2,
+        "spriteRow": 0
+      },
+      "id": 3
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 4",
+        "spriteCol": 0,
+        "spriteRow": 1
+      },
+      "id": 4
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 5",
+        "spriteCol": 1,
+        "spriteRow": 1
+      },
+      "id": 5
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 6",
+        "spriteCol": 2,
+        "spriteRow": 1
+      },
+      "id": 6
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 7",
+        "spriteCol": 0,
+        "spriteRow": 2
+      },
+      "id": 7
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 8",
+        "spriteCol": 1,
+        "spriteRow": 2
+      },
+      "id": 8
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 9",
+        "spriteCol": 2,
+        "spriteRow": 2
+      },
+      "id": 9
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 10",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 10
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 11",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 11
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 12",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 12
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 13",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 13
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 14",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 14
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 15",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 15
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 16",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 16
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 17",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 17
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 18",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 18
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 19",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 19
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 20",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 20
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 21",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 21
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 22",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 22
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 23",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 23
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 24",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 24
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 25",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 25
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 26",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 26
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 27",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 27
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 28",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 28
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 29",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 29
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 30",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 30
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 31",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 31
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 32",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 32
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 33",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 33
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 34",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 34
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 35",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 35
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 36",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 36
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 37",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 37
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 38",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 38
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 39",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 39
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 40",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 40
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 41",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 41
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 42",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 42
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 43",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 43
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 44",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 44
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 45",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 45
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 46",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 46
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 47",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 47
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 48",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 48
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 49",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 49
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 50",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 50
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 51",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 51
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 52",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 52
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 53",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 53
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 54",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 54
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 55",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 55
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 56",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 56
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 57",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 57
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 58",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 58
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 59",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 59
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 60",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 60
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 61",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 61
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 62",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 62
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 63",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 63
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 64",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 64
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 65",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 65
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 66",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 66
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 67",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 67
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 68",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 68
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 69",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 69
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 70",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 70
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 71",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 71
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 72",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 72
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 73",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 73
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 74",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 74
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 75",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 75
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 76",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 76
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 77",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 77
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 78",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 78
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 79",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 79
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 80",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 80
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 81",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 81
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 82",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 82
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 83",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 83
+    },
+    {
+      "definition": {
+        "blocksMovement": false,
+        "blocksProjectiles": false,
+        "contactDamage": 0,
+        "destructible": false,
+        "name": "Tile 84",
+        "spriteCol": -1,
+        "spriteRow": -1
+      },
+      "id": 84
+    }
+  ],
+  "tileset": {
+    "cellSize": 18,
+    "padding": 1,
+    "path": "tiles/tileset.png"
+  },
+  "version": 2
+}

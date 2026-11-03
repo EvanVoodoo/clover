@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdint>
 #include "grid.hpp"
+#include "backdrop.hpp"
 
 namespace clvr
 {
@@ -22,6 +23,7 @@ namespace clvr
 	struct RoomData
 	{
 		int id = -1;
+		BackdropID backdropId = 0;
 		int width = CLVR_ROOM_WIDTH;
 		int height = CLVR_ROOM_HEIGHT;
 

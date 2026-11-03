@@ -12,7 +12,7 @@ namespace clvr
 
 	namespace
 	{
-		constexpr int kRoomFormatVersion = 1;
+		constexpr int kRoomFormatVersion = 2;
 		constexpr int kMaxRoomDimension = 64; // sanity limit against corrupt files
 
 		template <typename T>
@@ -60,7 +60,7 @@ namespace clvr
 					}
 
 					const std::int64_t v = row[x].get<std::int64_t>();
-					if (v < 0 || v > static_cast<std::int64_t>(std::numeric_limits<T>::max()))
+					if (v < 0 || v > static_cast<std::int64_t>((std::numeric_limits<T>::max)()))
 					{
 						error = std::string(name) + ": value out of range at (" +
 							std::to_string(x) + "," + std::to_string(y) + ")";
@@ -80,6 +80,7 @@ namespace clvr
 		json j;
 		j["version"] = kRoomFormatVersion;
 		j["id"] = room.id;
+		j["backdropId"] = room.backdropId;
 		j["width"] = room.width;
 		j["height"] = room.height;
 		j["type"] = static_cast<int>(room.type);
@@ -125,6 +126,13 @@ namespace clvr
 			}
 
 			room.id = j.value("id", -1);
+			const int backdrop = j.value("backdropId", 0); // version 1 rooms don't have it
+			if (backdrop < 0 || backdrop >(std::numeric_limits<BackdropID>::max)())
+			{
+				error = "backdropId out of range";
+				return false;
+			}
+			room.backdropId = static_cast<BackdropID>(backdrop);
 			room.type = static_cast<RoomType>(j.at("type").get<int>());
 			room.difficulty = j.value("difficulty", 1);
 			room.weight = j.value("weight", 1);

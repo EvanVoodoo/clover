@@ -459,6 +459,15 @@
     <ClInclude Include="include\core\editor_window.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\level\tile_editor.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\level\backdrop.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\level\backdrop_sprites.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Clover.cpp">
@@ -597,6 +606,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\core\editor_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\level\tile_editor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\level\backdrop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\level\backdrop_sprites.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

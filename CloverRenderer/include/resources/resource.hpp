@@ -7,6 +7,7 @@ namespace clvr {
 		Texture,
 		Shader,
 		TileDatabase,
+		BackdropDatabase,
 	};
 
 	class Resource {

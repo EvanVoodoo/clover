@@ -449,6 +449,9 @@
     <ClInclude Include="include\gravity_sensor.hpp" />
     <ClInclude Include="include\player_controller.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\backdrops\backdrops.json" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

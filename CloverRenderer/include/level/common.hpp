@@ -9,6 +9,7 @@ namespace clvr
 {
 	using TileID = std::uint16_t;
 	using SpawnID = std::uint16_t;
+	using BackdropID = std::uint16_t;
 
 	enum class RoomType
 	{

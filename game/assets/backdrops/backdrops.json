@@ -1,0 +1,15 @@
+{
+    "version": 1,
+    "backdrops": [
+        {
+            "id": 1,
+            "definition": {
+                "name": "Basement",
+                "image": "backdrops/backdrop.png",
+                "wallThickness": 1,
+                "widthTiles": 15,
+                "heightTiles": 9
+            }
+        }
+    ]
+}

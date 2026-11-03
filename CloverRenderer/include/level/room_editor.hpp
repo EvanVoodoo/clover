@@ -65,7 +65,12 @@ namespace clvr
 		bool RoomExists(const std::string& name) const;
 		void StatusText();
 
+		void RoomProperties();
+		void BackdropPicker();
+		void SetBackdrop(BackdropID id);
+
 		std::shared_ptr<TileDatabase> m_tileDatabase = nullptr;
+		std::shared_ptr<BackdropDatabase> m_backdropDatabase = nullptr;
 
 		RoomData m_currentRoom;
 		LayerSelection m_activeLayer;
@@ -74,7 +79,7 @@ namespace clvr
 		bool m_showSpawns = true;
 		int m_hoverX = -1;
 		int m_hoverY = -1;
-
+		bool m_showBackdrop = true;
 		int m_zoom = 1; // 1-6, where 1 is 1:1 and 6 is 6:1
 
 		std::vector<FileInfo> m_roomFiles = {};
@@ -89,5 +94,28 @@ namespace clvr
 		bool m_discardPrompt = false;
 		bool m_discardConfirmed = false;
 		std::function<void()> m_pendingAction;
+
+		enum class PaintTool { Draw, Erase, Fill, Rectangle };
+
+		// methods
+		void ToolBar();
+		void TilePalette();
+		void CanvasInput(const ImVec2& origin, float cell);
+		const char* PaintBlockedReason() const;
+		void CancelStroke();
+
+		void SetCell(Grid<TileID>& g, int x, int y, TileID id);
+		void PaintLine(Grid<TileID>& g, int x0, int y0, int x1, int y1, TileID id);
+		void FloodFill(Grid<TileID>& g, int x, int y, TileID id);
+		void FillRect(Grid<TileID>& g, int x0, int y0, int x1, int y1, TileID id);
+
+		PaintTool m_tool = PaintTool::Draw;
+		TileID m_brushTile = 1;          // 0 = eraser
+
+		bool m_stroking = false;         // draw/erase drag in progress
+		int  m_lastX = 0, m_lastY = 0;   // last cell painted during the drag
+
+		bool m_rectDragging = false;     // rectangle drag in progress
+		int  m_rectX0 = 0, m_rectY0 = 0; // rectangle start cell
 	};
 }
