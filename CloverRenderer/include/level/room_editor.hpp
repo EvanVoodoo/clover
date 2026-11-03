@@ -11,6 +11,14 @@
 
 namespace clvr
 {
+	enum class LayerKind { Visual, Gameplay, Spawn };
+
+	struct LayerSelection
+	{
+		LayerKind kind = LayerKind::Visual;
+		int index = 0; // only meaningful for Visual
+	};
+
 	class RoomEditor : public System, public EditorWindow
 	{
 	public:
@@ -43,8 +51,12 @@ namespace clvr
 		void OnOpen() override;
 		void OnClose() override;
 
+		Grid<TileID>* ActiveTileGrid();
+
 	private:
 		void MenuBar();
+		void DrawCanvas();
+		void LayerPanel();
 
 		// helpers
 		void RefreshRoomList();
@@ -56,6 +68,14 @@ namespace clvr
 		std::shared_ptr<TileDatabase> m_tileDatabase = nullptr;
 
 		RoomData m_currentRoom;
+		LayerSelection m_activeLayer;
+		std::vector<bool> m_visualLayerVisible; // one per visual layer
+		bool m_showGameplay = true;
+		bool m_showSpawns = true;
+		int m_hoverX = -1;
+		int m_hoverY = -1;
+
+		int m_zoom = 1; // 1-6, where 1 is 1:1 and 6 is 6:1
 
 		std::vector<FileInfo> m_roomFiles = {};
 		bool m_openRoomSaver = false;
@@ -65,7 +85,6 @@ namespace clvr
 		std::string m_currentRoomName;  // empty = no room open
 		bool m_dirty = false;
 		std::string m_status;
-
 		bool m_confirmOverwrite = false;
 		bool m_discardPrompt = false;
 		bool m_discardConfirmed = false;

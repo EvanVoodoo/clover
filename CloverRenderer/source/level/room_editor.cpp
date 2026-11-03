@@ -3,6 +3,7 @@
 #include "level/room_serialization.hpp"
 
 #include <core/engine.hpp>
+#include <cmath>
 
 namespace clvr
 {
@@ -10,6 +11,9 @@ namespace clvr
 	{
 		title = Title();
 		priority = 25;
+
+		// init variables
+		m_visualLayerVisible.assign(CLVR_MAX_VISUAL_LAYERS, true);
 
 		m_tileDatabase = Engine.GetResourceManager()->Load<TileDatabase>(
 			Engine.GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "tiles/tiles.json").c_str());
@@ -121,6 +125,30 @@ namespace clvr
 	{
 		// create a room editor window with a menu bar and a button to create a new room
 		MenuBar();
+
+		// If no room is open, show a message instead of the editor.
+		if (m_currentRoomName.empty())
+		{
+			ImVec2 size = ImGui::GetWindowSize();
+			std::string message = "No room open. Use File > New Room or File > Open Room to get started.";
+			ImGui::SetCursorPosY(size.y / 2 - ImGui::GetTextLineHeight() / 2);
+			ImGui::SetCursorPosX(size.x / 2 - ImGui::CalcTextSize(message.c_str()).x / 2);
+			ImGui::TextUnformatted(message.c_str());
+			return;
+		}
+
+		ImGui::SetNextItemWidth(120.0f);
+		ImGui::SliderInt("Zoom", &m_zoom, 1, 6);
+
+		// Left panel: layers (the tile palette will go below it later)
+		ImGui::BeginChild("LeftPanel", ImVec2(180.0f, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX);
+		LayerPanel();
+		ImGui::EndChild();
+
+		ImGui::SameLine();
+
+		
+		DrawCanvas();
 	}
 
 	void RoomEditor::OnOpen()
@@ -128,6 +156,22 @@ namespace clvr
 
 	void RoomEditor::OnClose()
 	{}
+
+	Grid<TileID>* RoomEditor::ActiveTileGrid()
+	{
+		switch (m_activeLayer.kind)
+		{
+			case LayerKind::Visual:
+				if (m_activeLayer.index >= 0 && m_activeLayer.index < m_currentRoom.VisualLayerCount())
+					return &m_currentRoom.visualLayers[m_activeLayer.index];
+				return nullptr;
+			case LayerKind::Gameplay:
+				return &m_currentRoom.gameplayLayer;
+			case LayerKind::Spawn:
+				return nullptr; // handled by the spawn tool, different ID type
+		}
+		return nullptr;
+	}
 
 	void RoomEditor::MenuBar()
 	{
@@ -313,6 +357,189 @@ namespace clvr
 				ImGui::CloseCurrentPopup();
 			}
 		});
+	}
+
+	namespace
+	{
+		ImU32 IdColor(unsigned id, int alpha)
+		{
+			return IM_COL32((id * 37) % 200 + 40, (id * 59) % 200 + 40, (id * 83) % 200 + 40, alpha);
+		}
+	}
+
+	void RoomEditor::DrawCanvas() 
+	{
+		const float cell = 16.0f * m_zoom; // 16 should be a constant somewhere
+		const int w = m_currentRoom.width;
+		const int h = m_currentRoom.height;
+		const ImVec2 canvasSize(w * cell, h * cell);
+
+		ImGui::BeginChild("Canvas", ImVec2(0, 0), ImGuiChildFlags_Borders,
+						  ImGuiWindowFlags_HorizontalScrollbar);
+
+		const ImVec2 origin = ImGui::GetCursorScreenPos(); // already accounts for scroll
+		ImGui::InvisibleButton("##canvas", canvasSize,
+							   ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+		const bool hovered = ImGui::IsItemHovered();
+
+		ImDrawList* dl = ImGui::GetWindowDrawList();
+		auto cellMin = [&](int x, int y) { return ImVec2(origin.x + x * cell, origin.y + y * cell); };
+		auto cellMax = [&](int x, int y) { return ImVec2(origin.x + (x + 1) * cell, origin.y + (y + 1) * cell); };
+
+		// Room background
+		dl->AddRectFilled(origin, ImVec2(origin.x + canvasSize.x, origin.y + canvasSize.y),
+						  IM_COL32(25, 25, 30, 255));
+
+		// Visual layers, bottom to top. The active one is full strength, the rest dimmed.
+		for (int i = 0; i < m_currentRoom.VisualLayerCount(); ++i)
+		{
+			if (i < static_cast<int>(m_visualLayerVisible.size()) && !m_visualLayerVisible[i])
+				continue;
+
+			const bool active = m_activeLayer.kind == LayerKind::Visual && m_activeLayer.index == i;
+			const int alpha = active ? 255 : 90;
+			const Grid<TileID>& layer = m_currentRoom.visualLayers[i];
+
+			for (int y = 0; y < h; ++y)
+				for (int x = 0; x < w; ++x)
+				{
+					const TileID id = layer.At(x, y);
+					if (id != 0)
+						dl->AddRectFilled(cellMin(x, y), cellMax(x, y), IdColor(id, alpha));
+				}
+		}
+
+		// Gameplay layer: inset squares so they read differently from the art
+		if (m_showGameplay)
+		{
+			const bool active = m_activeLayer.kind == LayerKind::Gameplay;
+			const int alpha = active ? 220 : 100;
+			const float inset = cell * 0.2f;
+
+			for (int y = 0; y < h; ++y)
+				for (int x = 0; x < w; ++x)
+				{
+					const TileID id = m_currentRoom.gameplayLayer.At(x, y);
+					if (id == 0)
+						continue;
+					const ImVec2 a = cellMin(x, y), b = cellMax(x, y);
+					dl->AddRectFilled(ImVec2(a.x + inset, a.y + inset), ImVec2(b.x - inset, b.y - inset),
+									  IdColor(id + 100, alpha));
+				}
+		}
+
+		// Spawn layer: circles with the ID drawn on top
+		if (m_showSpawns)
+		{
+			const bool active = m_activeLayer.kind == LayerKind::Spawn;
+			const int alpha = active ? 255 : 120;
+
+			for (int y = 0; y < h; ++y)
+				for (int x = 0; x < w; ++x)
+				{
+					const auto id = m_currentRoom.spawnLayer.At(x, y);
+					if (id == 0)
+						continue;
+					const ImVec2 a = cellMin(x, y);
+					const ImVec2 center(a.x + cell * 0.5f, a.y + cell * 0.5f);
+					dl->AddCircleFilled(center, cell * 0.3f, IdColor(static_cast<unsigned>(id) + 200, alpha));
+					if (cell >= 32.0f)
+					{
+						const std::string text = std::to_string(static_cast<unsigned>(id));
+						const ImVec2 ts = ImGui::CalcTextSize(text.c_str());
+						dl->AddText(ImVec2(center.x - ts.x * 0.5f, center.y - ts.y * 0.5f),
+									IM_COL32(255, 255, 255, alpha), text.c_str());
+					}
+				}
+		}
+
+		// Grid lines and room border
+		const ImU32 gridColor = IM_COL32(255, 255, 255, 30);
+		for (int x = 0; x <= w; ++x)
+			dl->AddLine(ImVec2(origin.x + x * cell, origin.y),
+						ImVec2(origin.x + x * cell, origin.y + canvasSize.y), gridColor);
+		for (int y = 0; y <= h; ++y)
+			dl->AddLine(ImVec2(origin.x, origin.y + y * cell),
+						ImVec2(origin.x + canvasSize.x, origin.y + y * cell), gridColor);
+		dl->AddRect(origin, ImVec2(origin.x + canvasSize.x, origin.y + canvasSize.y),
+					IM_COL32(255, 255, 255, 120));
+
+		// Hovered cell: screen position -> grid cell
+		m_hoverX = m_hoverY = -1;
+		if (hovered)
+		{
+			const ImVec2 mouse = ImGui::GetMousePos();
+			const int cx = static_cast<int>(std::floor((mouse.x - origin.x) / cell));
+			const int cy = static_cast<int>(std::floor((mouse.y - origin.y) / cell));
+
+			if (cx >= 0 && cy >= 0 && cx < w && cy < h)
+			{
+				m_hoverX = cx;
+				m_hoverY = cy;
+				dl->AddRect(cellMin(cx, cy), cellMax(cx, cy), IM_COL32(255, 220, 60, 255), 0.0f, 0, 2.0f);
+				ImGui::SetTooltip("(%d, %d)", cx, cy);
+			}
+		}
+
+		ImGui::EndChild();
+	}
+
+	void RoomEditor::LayerPanel()
+	{
+		// Visual layers, topmost first
+		for (int i = m_currentRoom.VisualLayerCount() - 1; i >= 0; --i)
+		{
+			ImGui::PushID(i);
+
+			bool visible = m_visualLayerVisible[i];
+			if (ImGui::Checkbox("##vis", &visible))
+				m_visualLayerVisible[i] = visible;
+			ImGui::SameLine();
+
+			const std::string label = "Visual " + std::to_string(i);
+			const bool selected = m_activeLayer.kind == LayerKind::Visual && m_activeLayer.index == i;
+			if (ImGui::Selectable(label.c_str(), selected))
+				m_activeLayer = { LayerKind::Visual, i };
+
+			ImGui::PopID();
+		}
+
+		ImGui::Separator();
+
+		ImGui::Checkbox("##gp", &m_showGameplay);
+		ImGui::SameLine();
+		if (ImGui::Selectable("Gameplay", m_activeLayer.kind == LayerKind::Gameplay))
+			m_activeLayer = { LayerKind::Gameplay, 0 };
+
+		ImGui::Checkbox("##sp", &m_showSpawns);
+		ImGui::SameLine();
+		if (ImGui::Selectable("Spawns", m_activeLayer.kind == LayerKind::Spawn))
+			m_activeLayer = { LayerKind::Spawn, 0 };
+
+		if (ImGui::Button("Add Visual Layer") && m_currentRoom.AddVisualLayer())
+		{
+			m_visualLayerVisible.push_back(true);
+			m_activeLayer = { LayerKind::Visual, m_currentRoom.VisualLayerCount() - 1 };
+			m_dirty = true;
+		}
+
+		const bool onVisual = m_activeLayer.kind == LayerKind::Visual;
+		const bool canRemove = onVisual && m_currentRoom.VisualLayerCount() > 1;
+
+		ImGui::BeginDisabled(!canRemove);
+		if (ImGui::Button("Remove Visual Layer"))
+		{
+			const int index = m_activeLayer.index;
+			if (m_currentRoom.RemoveVisualLayer(index))
+			{
+				if (index < static_cast<int>(m_visualLayerVisible.size()))
+					m_visualLayerVisible.erase(m_visualLayerVisible.begin() + index);
+
+				m_activeLayer = { LayerKind::Visual, (std::max) (0, index - 1) };
+				m_dirty = true;
+			}
+		}
+		ImGui::EndDisabled();
 	}
 
 	void RoomEditor::RefreshRoomList()

@@ -40,4 +40,13 @@ namespace clvr {
 		else
 			doors = static_cast<DoorFlags>(doors & ~static_cast<DoorFlags>(d));
 	}
+
+	bool RoomData::RemoveVisualLayer(int index)
+	{
+		if (index < 0 || index >= VisualLayerCount() || VisualLayerCount() <= 1)
+			return false; // always keep at least one visual layer
+
+		visualLayers.erase(visualLayers.begin() + index);
+		return true;
+	}
 }

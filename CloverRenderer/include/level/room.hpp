@@ -50,5 +50,7 @@ namespace clvr
 		bool HasDoor(DoorType d) const;
 
 		void SetDoor(DoorType d, bool enabled);
+
+		bool RemoveVisualLayer(int index);
 	};
 }
