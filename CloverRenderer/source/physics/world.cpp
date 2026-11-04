@@ -390,8 +390,9 @@ namespace clvr {
 	{
 		b2BodyDef bodyDef = b2DefaultBodyDef();
 		bodyDef.type = rb.bodyType;
-		bodyDef.position = Units::ToMeters({ t.position.x, t.position.y });
-		bodyDef.rotation = b2MakeRot(t.rotation);
+		XMFLOAT2 pos = t.GetWorldPosition();
+		bodyDef.position = Units::ToMeters({ pos.x, pos.y });
+		bodyDef.rotation = b2MakeRot(t.GetWorldRotation());
 		bodyDef.linearDamping = rb.linearDamping;
 		bodyDef.angularDamping = rb.angularDamping;
 		bodyDef.gravityScale = rb.gravityScale;

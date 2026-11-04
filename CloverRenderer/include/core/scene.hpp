@@ -3,6 +3,8 @@
 #include "ecs.hpp"
 #include <nlohmann/json.hpp>
 #include "editor_window.hpp"
+#include <unordered_map>
+#include <vector>
 
 using json = nlohmann::json;
 
@@ -10,6 +12,8 @@ namespace clvr {
 
 	class TranslateGizmo;
 	class SelectionGizmo;
+
+	using ChildMap = std::unordered_map<entt::entity, std::vector<entt::entity>>;
 
 	class SceneManager : public System, public EditorWindow {
 	public:
@@ -41,6 +45,7 @@ namespace clvr {
 		void DrawContents() override;
 		void OnOpen() override;
 		void OnClose() override;
+		void DrawEntityNode(entt::entity entity, const ChildMap& children, bool& deleteRequested);
 
 	private:
 		Entity m_selectedEntity = entt::null;

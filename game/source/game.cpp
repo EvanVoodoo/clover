@@ -60,7 +60,7 @@ void Game::SetupScene()
 		t.name = "Player";
 
 		clvr::Sprite cs = Sprite(rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png"), true);
-		cs.position = t.position;
+		cs.position = t.GetWorldPosition();
 		cs.size = { 200.0f, 200.0f };
 		SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(1);
 		cs.layer = renderer.FindOrCreateSpriteLayer(1);
@@ -87,7 +87,7 @@ void Game::SetupScene()
 			t.rotation = (float) (rand() % 360) * 3.1415927f / 180.0f;
 			t.name = "Occluder " + std::to_string(i);
 			clvr::Sprite s;
-			s.position = t.position;
+			s.position = t.GetWorldPosition();
 			s.size = { (float) (rand() % 200 + 100), (float) (rand() % 100 + 50) };
 			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg")).uvRect;
 			s.textureName = "textures/white.jpg";
@@ -108,7 +108,7 @@ void Game::SetupScene()
 			t.position = { (float) (rand() % 3200 - 1600), (float) (rand() % 1600 - 800) };
 			t.name = "Sensor " + std::to_string(i);
 			clvr::Sprite s;
-			s.position = t.position;
+			s.position = t.GetWorldPosition();
 			s.size = { (float) (rand() % 80 + 40), (float) (rand() % 40 + 20) };
 			s.color = { 1.0f, 0.0f, 0.0f, 0.5f };
 			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg")).uvRect;
@@ -129,7 +129,7 @@ void Game::SetupScene()
 			t.position = { 0, 0 };
 			t.name = "Background";
 			clvr::Sprite s;
-			s.position = t.position;
+			s.position = t.GetWorldPosition();
 			s.size = { 3000, 3000 };
 			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/shrew1.jpg")).uvRect;
 			s.textureName = "textures/shrew1.jpg";
@@ -145,7 +145,7 @@ void Game::SetupScene()
 			t.position = { 0.0f, -400.0f };
 			t.name = "Ground Occluder";
 			clvr::Sprite s;
-			s.position = t.position;
+			s.position = t.GetWorldPosition();
 			s.size = { 16000.0f, 64.0f };
 			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg")).uvRect;
 			s.textureName = "textures/white.jpg";
@@ -192,7 +192,7 @@ void Game::SetupScene()
 			float baseY = fmodf(seedY, 1.0f) * 800.0f - 400.0f;
 
 			transform.position = { baseX, baseY };
-			light.direction = { transform.position.x, transform.position.y, 0.0f };
+			light.direction = { transform.GetWorldPosition().x, transform.GetWorldPosition().y, 0.0f };
 
 			float angle = t * 2.0f * 3.1415927f;
 			light.color = {

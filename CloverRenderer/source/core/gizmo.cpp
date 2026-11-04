@@ -118,10 +118,10 @@ namespace clvr {
 		const auto& xAxisTransform = m_xAxisParams->transform;
 		auto& xAxisSprite = m_xAxisParams->sprite;
 
-		if (mousePos.x >= xAxisTransform.position.x &&
-			mousePos.x <= xAxisTransform.position.x + (xAxisSprite.size.x * xAxisTransform.scale.x) &&
-			mousePos.y >= xAxisTransform.position.y &&
-			mousePos.y <= xAxisTransform.position.y + (xAxisSprite.size.y * xAxisTransform.scale.y))
+		if (mousePos.x >= xAxisTransform.GetWorldPosition().x &&
+			mousePos.x <= xAxisTransform.GetWorldPosition().x + (xAxisSprite.size.x * xAxisTransform.GetWorldScale().x) &&
+			mousePos.y >= xAxisTransform.GetWorldPosition().y &&
+			mousePos.y <= xAxisTransform.GetWorldPosition().y + (xAxisSprite.size.y * xAxisTransform.GetWorldScale().y))
 		{
 			xAxisSprite.color = m_xAxisParams->hoverColor; // Highlight color
 			m_overXAxis = true;
@@ -243,10 +243,7 @@ namespace clvr {
 
 		// TODO: Needs to take the camera's position into account
 		// TODO: Shadow bug with the parallax
-		const XMFLOAT2 center = {
-			transform->position.x,
-			transform->position.y
-		};
+		const XMFLOAT2 center = transform->GetWorldPosition();
 
 		// Half the on-screen size of an axis handle
 		auto halfSize = [](const auto& axis)

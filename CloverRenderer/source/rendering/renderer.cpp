@@ -274,7 +274,7 @@ void Renderer::UpdateLights()
 		Light l = light;
 		if (l.type != 0.0f)   // Directional lights need a direction, while point lights use position
 		{
-			l.direction = XMFLOAT3(transform.position.x, transform.position.y, 0.5f);   // For point lights, use position instead of direction
+			l.direction = XMFLOAT3(transform.GetWorldPosition().x, transform.GetWorldPosition().y, 0.5f);   // For point lights, use position instead of direction
 		}
 		lightData.lights[count] = l;
 		++count;
@@ -604,7 +604,7 @@ void Renderer::UpdateGameCamera(float dt)
 		if (c.followTarget) {
 			if (ecs->GetRegistry().valid(c.followEntity)) {
 				auto& targetTransform = ecs->GetRegistry().get<Transform>(c.followEntity);
-				c.targetPosition = targetTransform.position;
+				c.targetPosition = targetTransform.GetWorldPosition();
 
 				// lerp the camera's position towards the target position based on the follow speed and delta time
 				t.position = XMFLOAT2(

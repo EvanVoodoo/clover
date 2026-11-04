@@ -771,7 +771,7 @@ void* DirectX2D::RenderScene()
 										  static_cast<float>(LIGHT_SIZE) * invZoom,
 										  invZoom,
 										  static_cast<float>(LIGHT_SIZE) * invZoom,
-										  GetActiveCamera().transform.position,
+										  GetActiveCamera().transform.GetWorldPosition(),
 										  0.0f
 	};
 	ConstantBuffer<M> invVPCB;
@@ -1199,8 +1199,8 @@ XMMATRIX DirectX2D::GetLayerViewMatrix(const SpriteLayer& layer)
 	}
 	Transform newTransform = GetActiveCamera().transform;
 	newTransform.position = {
-		newTransform.position.x * layer.parallaxFactor,
-		newTransform.position.y * layer.parallaxFactor
+		newTransform.GetWorldPosition().x * layer.parallaxFactor,
+		newTransform.GetWorldPosition().y * layer.parallaxFactor
 	};
 	return XMMatrixInverse(nullptr, newTransform.GetWorld());
 }

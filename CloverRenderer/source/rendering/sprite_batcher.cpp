@@ -221,7 +221,7 @@ void SpriteBatcher::DrawSprite(const Sprite& sprite, const Transform& transform,
 	// Mirror occluder-flagged sprites into the separate occluder batch
 	if (sprite.isOccluder && m_occluderIndexCount < MAX_INDICES)
 	{
-		const XMFLOAT2 cameraPos = cameraTransform.position; // <-- replace with your actual camera accessor
+		const XMFLOAT2 cameraPos = cameraTransform.GetWorldPosition(); // <-- replace with your actual camera accessor
 
 		// Constant offset — identical for every corner, so it translates
 		// the occluder without touching its size.
