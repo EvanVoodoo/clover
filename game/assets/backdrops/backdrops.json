@@ -10,6 +10,16 @@
                 "widthTiles": 15,
                 "heightTiles": 9
             }
+        },
+        {
+            "id": 2,
+            "definition": {
+                "name": "Cave",
+                "image": "backdrops/cave.png",
+                "wallThickness": 1,
+                "widthTiles": 15,
+                "heightTiles": 9
+            }
         }
     ]
 }

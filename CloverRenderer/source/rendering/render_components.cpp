@@ -16,6 +16,7 @@ bool Sprite::LoadSpriteTexture(const std::shared_ptr<Texture> texture)
 	if (texture) {
 		this->texture = texture;
 		useLinkedTexture = true;
+		texturePath = texture->GetPath();
 	}
 	return useLinkedTexture;
 }
@@ -23,8 +24,9 @@ bool Sprite::LoadSpriteTexture(const std::shared_ptr<Texture> texture)
 SpriteComponent::SpriteComponent()
 {
 	sprite.layer = Engine.GetECS()->GetSystem<Renderer>().FindOrCreateSpriteLayer(0);
-	sprite.textureName = "textures/white.jpg";
-	sprite.uvRect = Engine.GetECS()->GetSystem<Renderer>().GetAtlasRegion(Engine.GetResourceManager()->GetPath(Dir::SharedAssets, sprite.textureName)).uvRect;
+	sprite.textureName = "white.jpg";
+	sprite.texturePath = "textures/white.jpg";
+	sprite.uvRect = Engine.GetECS()->GetSystem<Renderer>().GetAtlasRegion(Engine.GetResourceManager()->GetPath(Dir::SharedAssets, sprite.texturePath)).uvRect;
 	sprite.isOccluder = false;
 	sprite.size = { 100.0f, 100.0f };
 }
@@ -70,7 +72,7 @@ void SpriteComponent::Inspect()
 
 		if (sprite.texture)
 		{
-			ImGui::Text("Texture: %s", std::string(sprite.textureName).c_str());
+			ImGui::Text("Texture: %s", std::string(sprite.texturePath).c_str());
 
 			// Fixed-size thumbnail, aspect-corrected so square textures don't get stretched into a square box
 			// when they aren't actually square.
@@ -134,4 +136,21 @@ void Light::Inspect()
 
 		ImGui::TreePop();
 	}
+}
+
+void clvr::from_json(const nlohmann::json& j, Sprite& s) {
+	j.at("position").get_to(s.position);
+	j.at("size").get_to(s.size);
+	j.at("color").get_to(s.color);
+	j.at("uvRect").get_to(s.uvRect);
+	j.at("pivot").get_to(s.pivot);
+	s.layerId = j.value("layerId", -1);
+	s.layer = nullptr; // will be set later by the renderer based on layerId
+	s.rotation = j.value("rotation", 0.0f);
+	s.isOccluder = j.value("isOccluder", true);
+	s.flipX = j.value("flipX", false);
+	s.flipY = j.value("flipY", false);
+	s.textureName = j.value("textureName", "");
+	s.useLinkedTexture = j.value("useLinkedTexture", false);
+	s.texturePath = j.value("texturePath", "");
 }

@@ -76,3 +76,4 @@ CloverRenderer/shader-error.txt
 game/shader-error.txt
 game/imgui.ini
 /.vs/CopilotSnapshots
+game/timing.csv

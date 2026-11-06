@@ -441,6 +441,7 @@ void Renderer::Load(const json& j)
 	for (auto entity : view)
 	{
 		auto& sc = view.get<SpriteComponent>(entity);
+
 		SpriteLayer* layer = FindSpriteLayer(sc.sprite.layerId);
 		if (layer)
 			sc.sprite.layer = layer;
@@ -450,6 +451,11 @@ void Renderer::Load(const json& j)
 		if (sc.sprite.useLinkedTexture && !sc.sprite.texture)
 		{
 			sc.sprite.texture = LoadTexture(sc.sprite.texturePath);
+		}
+
+		if (!sc.sprite.texturePath.empty()) {
+			if (!sc.sprite.useLinkedTexture)
+				sc.sprite.uvRect = GetTextureAtlas()->GetRegion(sc.sprite.texturePath).uvRect;
 		}
 	}
 }

@@ -8,6 +8,8 @@
 #include <rendering/render_components.hpp>
 #include <physics/sensor_component.hpp>
 
+#include "core/timing.hpp"
+
 namespace clvr {
 	World::World()
 	{
@@ -45,7 +47,10 @@ namespace clvr {
 				b2World_Step(m_worldId, fixedStep, m_substeps);
 				m_accumulator -= fixedStep;
 				HandleContactEvents();
+
+				//TIMING_START("OnStay");
 				HandleSensorEvents();
+				//TIMING_END("OnStay");
 			}
 			else if (Engine.GetEngineMode() == EngineMode::Editing)
 			{
@@ -107,6 +112,33 @@ namespace clvr {
 				m_debugDraw.End();
 			}
 		}
+
+		//// create N sensors
+		//static int sensorCount = 0;
+		//ImGui::DragInt("Sensor Count", &sensorCount, 1, 0, 1000);
+
+		//if (ImGui::Button("Create Sensors")) {
+		//	for (int i = 0; i < sensorCount; ++i) {
+		//		auto entity = Engine.GetECS()->CreateEntity();
+		//		auto& t = Engine.GetECS()->CreateComponent<Transform>(entity);
+		//		t.name = "Sensor " + std::to_string(static_cast<int>(entity));
+		//		t.position = { static_cast<float>(rand() % 800), static_cast<float>(rand() % 600) };
+		//		t.scale = { 50.0f, 50.0f };
+		//		Engine.GetECS()->CreateComponent<RigidBody>(entity).bodyType = b2BodyType::b2_staticBody;
+		//		Engine.GetECS()->CreateComponent<BoxCollider>(entity).isSensor = true;
+		//		auto& s = Engine.GetECS()->CreateComponent<SensorComponent>(entity);
+		//		s.AddCommand<ColorSensorCommand>();
+		//	}
+		//}
+
+		//// Dump timing data
+		//static char testName[64];
+
+		//ImGui::InputText("Test Name", testName, sizeof(testName));
+
+		//if (ImGui::Button("Dump Timing Data")) {
+		//	TIMING_DUMP("OnStay", testName);
+		//}
 
 		ImGui::End();
 	}

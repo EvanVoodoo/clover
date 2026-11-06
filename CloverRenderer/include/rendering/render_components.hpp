@@ -31,8 +31,11 @@ namespace clvr
 				LoadSpriteTexture(filename);
 				textureName = texture->GetFilename();
 			}
-			else textureName = filename;
-
+			else
+			{
+				textureName = filename;
+				texturePath = filename;
+			}
 			color = { 1.0f, 1.0f, 1.0f, 1.0f };
 			uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
 		}
@@ -71,30 +74,11 @@ namespace clvr
 			{"flipX", s.flipX},
 			{"flipY", s.flipY},
 			{"textureName", s.textureName},
-			{"useLinkedTexture", s.useLinkedTexture}
+			{"useLinkedTexture", s.useLinkedTexture},
+			{"texturePath", s.texturePath}
 		};
-		if (s.useLinkedTexture && s.texture) {
-			j["texturePath"] = s.texture->GetPath();
-		}
 	}
-	inline void from_json(const nlohmann::json& j, Sprite& s) {
-		j.at("position").get_to(s.position);
-		j.at("size").get_to(s.size);
-		j.at("color").get_to(s.color);
-		j.at("uvRect").get_to(s.uvRect);
-		j.at("pivot").get_to(s.pivot);
-		s.layerId = j.value("layerId", -1);
-		s.layer = nullptr; // will be set later by the renderer based on layerId
-		s.rotation = j.value("rotation", 0.0f);
-		s.isOccluder = j.value("isOccluder", true);
-		s.flipX = j.value("flipX", false);
-		s.flipY = j.value("flipY", false);
-		s.textureName = j.value("textureName", "");
-		s.useLinkedTexture = j.value("useLinkedTexture", false);
-		if (s.useLinkedTexture) {
-			s.texturePath = j.value("texturePath", "");
-		}
-	}
+	inline void from_json(const nlohmann::json& j, Sprite& s);
 
 	struct SpriteComponent
 	{
