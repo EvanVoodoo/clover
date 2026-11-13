@@ -7,6 +7,7 @@
 #include <level/room_editor.hpp>
 #include <input/input_handler.hpp>
 #include <level/tile_editor.hpp>
+#include <level/dungeon.hpp>
 
 namespace clvr {
 	bool IsMouseMoving() {
@@ -140,6 +141,8 @@ bool EngineClass::Initialize(HINSTANCE hInstance, int nCmdShow)
     m_ecs->CreateSystem<RoomEditor>();
 
     m_ecs->CreateSystem<TilesEditor>();
+
+    m_ecs->CreateSystem<DungeonGenerator>();
 
     m_ecs->CreateSystem<InputHandler>();
 

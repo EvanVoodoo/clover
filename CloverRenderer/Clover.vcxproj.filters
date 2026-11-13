@@ -471,6 +471,12 @@
     <ClInclude Include="include\core\timing.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\level\room_loader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\level\dungeon.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Clover.cpp">
@@ -618,6 +624,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\level\backdrop_sprites.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\level\room_loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\level\dungeon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -509,6 +509,7 @@
     <ClInclude Include="include\level\grid.hpp" />
     <ClInclude Include="include\level\room.hpp" />
     <ClInclude Include="include\level\room_editor.hpp" />
+    <ClInclude Include="include\level\room_loader.hpp" />
     <ClInclude Include="include\level\room_serialization.hpp" />
     <ClInclude Include="include\level\tile.hpp" />
     <ClInclude Include="include\level\tile_editor.hpp" />
@@ -537,8 +538,11 @@
     <ClInclude Include="include\resources\resource.hpp" />
     <ClInclude Include="include\resources\resource_manager.hpp" />
     <ClInclude Include="include\targetver.h" />
+    <ClInclude Include="include\level\dungeon.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\level\dungeon.cpp" />
+    <ClCompile Include="source\level\room_loader.cpp" />
     <ClCompile Include="source\level\backdrop_sprites.cpp" />
     <ClCompile Include="source\level\backdrop.cpp" />
     <ClCompile Include="source\level\tile_editor.cpp" />
