@@ -7,6 +7,7 @@
 #include <memory>
 #include <random>
 #include <queue>
+#include <cstdint>
 
 namespace clvr
 {
@@ -17,6 +18,17 @@ namespace clvr
 	{
 		int x = -1;
 		int y = -1;
+
+		bool operator==(const CellCoord& other) const = default;
+	};
+
+	struct DungeonCell
+	{
+		int id = -1;                 // -1 = empty
+		RoomType type = RoomType::Normal;
+		DoorFlags connections = 0;   // doors actually linked to neighbors
+		int templateIndex = -1;      // which RoomData in the loader, picked after layout
+		int distanceFromSpawn = INT16_MAX; // for pathfinding, etc.
 	};
 
 	class Dungeon
@@ -28,14 +40,26 @@ namespace clvr
 		CellCoord PickSpawnCell(std::mt19937& rng, int edgeMargin) const;
 
 		CellCoord GetSpawnCell() const { return m_spawnCell; }
-		void SetSpawnCell(CellCoord coord) { m_spawnCell = coord; }
+		void SetSpawnCell(CellCoord coord) 
+		{ 
+			m_spawnCell = coord; 
+			DungeonCell& cell = m_roomGrid.At(coord.x, coord.y);
+			cell.type = RoomType::Spawn;
+			cell.id = 0;
+			cell.distanceFromSpawn = 0;
+		}
 
-		Grid<RoomData>& GetRoomGrid() { return m_roomGrid; }
+		Grid<DungeonCell>& GetRoomGrid() { return m_roomGrid; }
 		std::vector<CellCoord> GetNeighboringRooms(const CellCoord cell);
+		std::vector<CellCoord> floorCells;
+		std::vector<CellCoord> deadEnds;
+
 	protected:
-		Grid<RoomData> m_roomGrid;
+		Grid<DungeonCell> m_roomGrid;
 		CellCoord m_spawnCell;
 	};
+
+	enum class CellValueMode { RoomId, DistanceFromSpawn };
 	
 	class DungeonGenerator : public System, public EditorWindow
 	{
@@ -57,7 +81,10 @@ namespace clvr
 		bool Generate();
 		bool GenerateRooms(int numberOfRooms);
 		void RoomGenCrawl(int& roomsPlaced, int numberOfRooms, std::vector<clvr::CellCoord>& cardinalDirs, std::queue<clvr::CellCoord>& roomQueue);
-		int CountDeadEnds() const;
+		int FindDeadEnds() const;
+		void DijkstraMap();
+		void SpecialRoomSpawn();
+
 	private:
 		std::unique_ptr<Dungeon> m_dungeon;
 		std::unique_ptr<RoomLoader> m_roomLoader;
@@ -69,5 +96,9 @@ namespace clvr
 		int m_maxRandAdditionalRooms = 2;
 		int m_minDeadEnds = 5;
 		int m_maxFilledNeighbors = 1;
+		bool m_showCellValues = true;
+		CellValueMode m_cellValueMode = CellValueMode::RoomId;
+
+		std::vector<RoomType> m_guaranteedSpecialRooms;
 	};
 }

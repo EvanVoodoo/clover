@@ -14,8 +14,12 @@ namespace clvr
 	enum class RoomType
 	{
 		Normal = 0,
-		Boss = 1,
-		Treasure = 2,
-		Shop = 3,
+		Spawn = 1,	
+		Boss = 2,
+		Treasure = 3,
+		Shop = 4,
+		SuperSecret = 5,
+		Curse = 6,
+		Vault = 7,
 	};
 }
