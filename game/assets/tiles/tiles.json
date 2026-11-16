@@ -50,7 +50,7 @@
     },
     {
       "definition": {
-        "blocksMovement": false,
+        "blocksMovement": true,
         "blocksProjectiles": false,
         "contactDamage": 0,
         "destructible": false,

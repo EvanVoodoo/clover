@@ -1,13 +1,13 @@
 #pragma once
 
 #include "room.hpp"
-#include "room_loader.hpp"
 #include <core/ecs.hpp>
 #include <core/editor_window.hpp>
 #include <memory>
 #include <random>
 #include <queue>
 #include <cstdint>
+#include <utility>
 
 namespace clvr
 {
@@ -59,7 +59,7 @@ namespace clvr
 		CellCoord m_spawnCell;
 	};
 
-	enum class CellValueMode { RoomId, DistanceFromSpawn };
+	enum class CellValueMode { RoomId, DistanceFromSpawn, Doors };
 	
 	class DungeonGenerator : public System, public EditorWindow
 	{
@@ -80,14 +80,13 @@ namespace clvr
 
 		bool Generate();
 		bool GenerateRooms(int numberOfRooms);
-		void RoomGenCrawl(int& roomsPlaced, int numberOfRooms, std::vector<clvr::CellCoord>& cardinalDirs, std::queue<clvr::CellCoord>& roomQueue);
+		void RoomGenCrawl(int& roomsPlaced, int numberOfRooms, std::vector<std::pair<CellCoord, DoorType>>& cardinalDirs, std::queue<clvr::CellCoord>& roomQueue);
 		int FindDeadEnds() const;
 		void DijkstraMap();
 		void SpecialRoomSpawn();
 
 	private:
 		std::unique_ptr<Dungeon> m_dungeon;
-		std::unique_ptr<RoomLoader> m_roomLoader;
 
 		std::mt19937 m_rng;
 		int m_seed = 12345;

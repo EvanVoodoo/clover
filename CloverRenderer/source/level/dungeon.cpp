@@ -40,7 +40,6 @@ namespace clvr
 	DungeonGenerator::DungeonGenerator() : EditorWindow("Dungeon Generator", ImGuiWindowFlags_MenuBar)
 	{
 		m_dungeon = nullptr;
-		m_roomLoader = std::make_unique<RoomLoader>();
 
 		m_guaranteedSpecialRooms = 
 		{ 
@@ -57,7 +56,6 @@ namespace clvr
 	DungeonGenerator::~DungeonGenerator()
 	{
 		m_dungeon.reset();
-		m_roomLoader.reset();
 	}
 
 	void DungeonGenerator::Inspect(float dt)
@@ -116,7 +114,7 @@ namespace clvr
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(120.f);
 			int mode = static_cast<int>(m_cellValueMode);
-			if (ImGui::Combo("##cellValueMode", &mode, "Room ID\0Neighbor count\0"))
+			if (ImGui::Combo("##cellValueMode", &mode, "Room ID\0Distance from Spawn\0Doors\0"))
 				m_cellValueMode = static_cast<CellValueMode>(mode);
 		}
 
@@ -183,6 +181,10 @@ namespace clvr
 					{
 						value = room.distanceFromSpawn;
 					}
+					else if (m_cellValueMode == CellValueMode::Doors)
+					{
+						value = static_cast<int>(room.connections);
+					}
 
 					char buf[16];
 					snprintf(buf, sizeof(buf), "%d", value);
@@ -245,7 +247,13 @@ namespace clvr
 			return false;
 
 		// Start from the spawn cell and randomly walk to place rooms until we reach the desired count.
-		std::vector<CellCoord> cardinalDirs = { {0, -1}, {1, 0}, {0, 1}, {-1, 0} }; // N, E, S, W
+		std::vector<std::pair<CellCoord, DoorType>> cardinalDirs = 
+		{ 
+			{{0, -1}, DoorType::North},
+			{{1, 0}, DoorType::East},
+			{{0, 1}, DoorType::South}, 
+			{{-1, 0}, DoorType::West} 
+		};
 		std::queue<CellCoord> roomQueue;
 		CellCoord spawn = m_dungeon->GetSpawnCell();
 		roomQueue.push(spawn);
@@ -259,14 +267,14 @@ namespace clvr
 		return roomsPlaced == numberOfRooms; // false = caller regenerates with the next seed
 	}
 
-	void DungeonGenerator::RoomGenCrawl(int& roomsPlaced, int numberOfRooms, std::vector<clvr::CellCoord>& cardinalDirs, std::queue<clvr::CellCoord>& roomQueue)
+	void DungeonGenerator::RoomGenCrawl(int& roomsPlaced, int numberOfRooms, std::vector<std::pair<CellCoord, DoorType>>& cardinalDirs, std::queue<clvr::CellCoord>& roomQueue)
 	{
 		std::shuffle(cardinalDirs.begin(), cardinalDirs.end(), m_rng);
 
 		CellCoord current = roomQueue.front();
 		roomQueue.pop();
 
-		for (const auto& dir : cardinalDirs)
+		for (const auto& [dir, door] : cardinalDirs)
 		{
 			// If we already have enough rooms, give up
 			if (roomsPlaced >= numberOfRooms)
@@ -349,6 +357,24 @@ namespace clvr
 		auto it = std::unique(m_dungeon->floorCells.begin(), m_dungeon->floorCells.end());
 		m_dungeon->floorCells.resize(std::distance(m_dungeon->floorCells.begin(), it));
 
+		// First assign all connections based on adjacency
+		for (const auto& cell : m_dungeon->floorCells)
+		{
+			DungeonCell& room = m_dungeon->GetRoomGrid().At(cell.x, cell.y);
+			room.connections = 0;
+			for (const auto& neighbor : m_dungeon->GetNeighboringRooms(cell))
+			{
+				if (m_dungeon->GetRoomGrid().At(neighbor.x, neighbor.y).id != -1)
+				{
+					if (neighbor.x < cell.x) room.connections |= static_cast<int>(DoorType::West);
+					else if (neighbor.x > cell.x) room.connections |= static_cast<int>(DoorType::East);
+					else if (neighbor.y < cell.y) room.connections |= static_cast<int>(DoorType::North);
+					else if (neighbor.y > cell.y) room.connections |= static_cast<int>(DoorType::South);
+				}
+			}
+		}
+
+		// Now perform a breadth-first search to assign distances from the spawn cell
 		bool changed = false;
 		do {
 			changed = false;

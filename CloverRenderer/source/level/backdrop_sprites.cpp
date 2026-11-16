@@ -52,6 +52,7 @@ namespace clvr
 			return ref;
 
 		ref.texture = m_texture;
+		ref.name = it->second.path;
 		ref.uv0 = it->second.uv0;
 		ref.uv1 = it->second.uv1;
 		ref.valid = true;

@@ -54,6 +54,7 @@ namespace clvr
 	struct SpriteRef
 	{
 		ImTextureID texture = 0;
+		std::string name;
 		ImVec2 uv0{ 0, 0 }, uv1{ 1, 1 };
 		bool valid = false;
 	};

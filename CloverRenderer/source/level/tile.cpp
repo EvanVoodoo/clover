@@ -59,6 +59,7 @@ namespace clvr {
 
 		// pixel inside the tileset -> fraction of the tileset -> UV inside the atlas
 		ref.texture = m_texture;
+		ref.name = TilesetInfo().path;
 		ref.uv0 = ImVec2(m_u + m_uw * (px / m_pixelW), m_v + m_vh * (py / m_pixelH));
 		ref.uv1 = ImVec2(m_u + m_uw * ((px + art) / m_pixelW), m_v + m_vh * ((py + art) / m_pixelH));
 		ref.valid = true;
@@ -72,6 +73,7 @@ namespace clvr {
 			return ref;
 
 		ref.texture = m_texture;
+		ref.name = m_path;
 		ref.uv0 = ImVec2(m_u, m_v);
 		ref.uv1 = ImVec2(m_u + m_uw, m_v + m_vh);
 		ref.valid = true;

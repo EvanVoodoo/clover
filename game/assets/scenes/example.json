@@ -82,7 +82,7 @@
         "name": "Player",
         "position": [
           0.0,
-          -210.0
+          -264.5
         ],
         "rotation": 0.0,
         "scale": [
@@ -26302,110 +26302,9 @@
           1.0
         ]
       }
-    },
-    {
-      "BoxCollider": {
-        "category": "Obstacle",
-        "halfExtents": [
-          350.0,
-          150.0
-        ],
-        "isSensor": true,
-        "material": {
-          "density": 1.0,
-          "enableContactEvents": true,
-          "enableHitEvents": false,
-          "enableSensorEvents": true,
-          "friction": 0.6000000238418579,
-          "restitution": 0.0,
-          "rollingResistance": 0.0,
-          "tangentSpeed": 0.0
-        },
-        "offset": [
-          0.0,
-          0.0
-        ]
-      },
-      "RigidBody": {
-        "angularDamping": 0.0,
-        "bodyType": 0,
-        "enableSleep": true,
-        "fixedRotation": false,
-        "gravityScale": 1.0,
-        "isBullet": false,
-        "linearDamping": 0.0
-      },
-      "SensorComponent": {
-        "active": true,
-        "commands": [
-          {
-            "modifiedColor": [
-              0.0,
-              0.6745098233222961,
-              1.0,
-              1.0
-            ],
-            "type": "ColorSensorCommand"
-          },
-          {
-            "damagePerSecond": 1.309999942779541,
-            "modifiedGravityScale": -2.0,
-            "type": "GravitySensorCommand"
-          }
-        ]
-      },
-      "Sprite": {
-        "sprite": {
-          "color": [
-            0.0,
-            0.6745098233222961,
-            1.0,
-            0.6784313917160034
-          ],
-          "flipX": false,
-          "flipY": false,
-          "isOccluder": false,
-          "layerId": 0,
-          "pivot": [
-            -431602080.0,
-            -431602080.0
-          ],
-          "position": [
-            -431602080.0,
-            -431602080.0
-          ],
-          "rotation": -431602080.0,
-          "size": [
-            700.0,
-            300.0
-          ],
-          "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
-          "useLinkedTexture": false,
-          "uvRect": [
-            0.657958984375,
-            0.000244140625,
-            0.00390625,
-            0.00390625
-          ]
-        }
-      },
-      "Transform": {
-        "name": "Water",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "rotation": 0.0,
-        "scale": [
-          1.0,
-          1.0
-        ]
-      }
     }
   ],
   "parents": [
-    -1,
     -1,
     -1,
     -1,
@@ -26742,7 +26641,7 @@
     "Game State System": null,
     "GameSystem": null,
     "Physics World": {
-      "debugDraw": false,
+      "debugDraw": true,
       "gravity": [
         0.0,
         -20.0
@@ -26769,6 +26668,16 @@
         {
           "id": 0,
           "layerName": "Default Layer",
+          "parallaxFactor": 1.0
+        },
+        {
+          "id": 9,
+          "layerName": "Sprite Layer 9",
+          "parallaxFactor": 1.0
+        },
+        {
+          "id": 8,
+          "layerName": "Sprite Layer 8",
           "parallaxFactor": 1.0
         }
       ]
