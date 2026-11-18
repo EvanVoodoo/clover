@@ -11,6 +11,7 @@
 #include "texture.hpp"
 #include "texture_atlas.hpp"
 #include "render_common.hpp"
+#include <resources/resource_manager.hpp>
 
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
@@ -46,8 +47,12 @@ namespace clvr
 		void Inspect(float dt);
 		json Save();
 		void Load(const json& j);
+		void ResolveSprite(Sprite& s);
 
 		void* GetNativeDeviceHandle() override;
+
+		int AddTexture(ResourceManager::Directory dir, const std::string& relativeName);
+		std::shared_ptr<Texture> LoadTexture(ResourceManager::Directory dir, const std::string& relativeName);
 
 		void DrawSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const Transform& cameraTransform);
 		void DrawUnbatchedSprite(const Sprite& sprite, const Transform& transform, const SpriteLayer& layer, const bool UISprite = false);
@@ -65,10 +70,8 @@ namespace clvr
 		void UpdateLights();
 		void SubmitDebugLines(const std::vector<DebugLine>& lines);
 
-		int AddTexture(const std::string filename);
-		std::shared_ptr<Texture> LoadTexture(std::string filename);
 		bool BuildAtlas();
-		AtlasRegion GetAtlasRegion(const std::string filename);
+		AtlasRegion GetAtlasRegion(const ResourceManager::Directory dir, const std::string filename);
 		TextureAtlas* GetTextureAtlas();
 
 		SpriteLayer* CreateSpriteLayer(const unsigned int id, float parallaxFactor = 1.0f, const std::string& layerName = "");
@@ -91,5 +94,8 @@ namespace clvr
 		bool m_gameWindowFocused = false;
 		XMFLOAT2 m_viewportPosition = { 0.0f, 0.0f };
 		XMFLOAT2 m_viewportSize = { 0.0f, 0.0f };
+
+		float m_ambientIntensity = 1.0f;
+		XMFLOAT3 m_ambientColor = { 1.0f, 1.0f, 1.0f };
 	};
 }

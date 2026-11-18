@@ -27,7 +27,8 @@ namespace clvr {
 	RoomLoader::~RoomLoader() {}
 
 	void RoomLoader::Update(float)
-	{}
+	{
+	}
 
 	void RoomLoader::Render()
 	{}
@@ -86,6 +87,18 @@ namespace clvr {
 		ImGui::EndDisabled();
 	}
 
+	void RoomLoader::OnPlayStart()
+	{
+		auto rm = Engine.GetResourceManager();
+		const auto tilesPath = rm->GetPath(ResourceManager::Directory::Assets, "tiles/tiles.json");
+		auto tileDb = rm->Load<TileDatabase>(tilesPath.c_str());
+		tileDb->Sprites().Refresh();
+		
+		const auto backdropPath = rm->GetPath(ResourceManager::Directory::Assets, "backdrops/backdrops.json");
+		auto backdropDb = rm->Load<BackdropDatabase>(backdropPath.c_str());
+		backdropDb->Sprites().Refresh();
+	}
+
 	std::vector<RoomData> RoomLoader::GetAllRooms()
 	{
 		std::vector<RoomData> rooms;
@@ -116,6 +129,10 @@ namespace clvr {
 		if (!ref.valid)
 			return false;
 
+		XMFLOAT4 sub;
+		if (!tileDb->Sprites().GetSubRect(tileDef, tileDb->Tileset(), sub))
+			return false;
+
 		auto& ecs = Engine.GetECSRef();
 		Entity tileEntity = ecs.CreateEntity();
 
@@ -128,9 +145,9 @@ namespace clvr {
 		s.position = { 0.0f, 0.0f };
 		s.size = { tileSize, tileSize };
 		s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		s.SetTextureParams(ResourceManager::Directory::Assets, tileDb->Tileset().path);
+		s.subRect = sub;
 		s.uvRect = { ref.uv0.x, ref.uv0.y, ref.uv1.x - ref.uv0.x, ref.uv1.y - ref.uv0.y };
-		s.textureName = "tileset.png";
-		s.texturePath = ref.name;
 		s.pivot = { 0.5f, 0.5f };
 		s.rotation = 0.0f;
 		s.isOccluder = false;
@@ -235,6 +252,7 @@ namespace clvr {
 		s.pivot = { 0.5f, 0.5f };
 		s.rotation = 0.0f;
 		s.isOccluder = false;
+		s.SetTextureParams(ResourceManager::Directory::Assets, def->image);
 
 		auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
 		s.layer = renderer.FindOrCreateSpriteLayer(layerId);

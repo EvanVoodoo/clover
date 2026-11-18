@@ -15,6 +15,7 @@
 
 #include <string>
 #include <gravity_sensor.hpp>
+#include <utility>
 
 using namespace clvr;
 using Dir = ResourceManager::Directory;
@@ -24,14 +25,14 @@ Game::Game() {
 	title = "GameSystem";
 	auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
 	ResourceManager* rMngr = Engine.GetResourceManager();
-	std::string textures[] = {
-		rMngr->GetPath(Dir::SharedAssets, "textures/shrew1.jpg"),
-		rMngr->GetPath(Dir::SharedAssets, "textures/shrew2.jpg"),
-		rMngr->GetPath(Dir::SharedAssets, "textures/hamper.jpeg"),
-		rMngr->GetPath(Dir::SharedAssets, "textures/white.jpg"),
+	std::pair<Dir, std::string> textures[] = {
+		{ Dir::SharedAssets, "textures/shrew1.jpg"},
+		{ Dir::SharedAssets, "textures/shrew2.jpg" },
+		{ Dir::SharedAssets, "textures/hamper.jpeg" },
+		{ Dir::SharedAssets, "textures/white.jpg" },
 	};
-	for (auto t : textures)
-		renderer.AddTexture(t);
+	for (auto [d, t] : textures)
+		renderer.AddTexture(d, t);
 	renderer.BuildAtlas();   // built ONCE, after all textures added, before first frame
 	
 	SensorCommandFactory::Get().Register<ColorSensorCommand>("ColorSensorCommand");
@@ -59,7 +60,7 @@ void Game::SetupScene()
 		t.position = { 0.0f, -300.0f };
 		t.name = "Player";
 
-		clvr::Sprite cs = Sprite(rMngr->GetPath(Dir::SharedAssets, "textures/saturn.png"), true);
+		clvr::Sprite cs = Sprite("textures/saturn.png", Dir::SharedAssets, true);
 		cs.position = t.GetWorldPosition();
 		cs.size = { 200.0f, 200.0f };
 		SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(1);
@@ -89,7 +90,7 @@ void Game::SetupScene()
 			clvr::Sprite s = Sprite("textures/white.jpg");
 			s.position = t.GetWorldPosition();
 			s.size = { (float) (rand() % 200 + 100), (float) (rand() % 100 + 50) };
-			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, s.texturePath)).uvRect;
+			s.uvRect = renderer.GetAtlasRegion(Dir::SharedAssets, s.textureName).uvRect;
 			s.layer = renderer.FindOrCreateSpriteLayer(0);
 			s.isOccluder = true;
 			ecs->CreateComponent<SpriteComponent>(entity, s);
@@ -110,7 +111,7 @@ void Game::SetupScene()
 			s.position = t.GetWorldPosition();
 			s.size = { (float) (rand() % 80 + 40), (float) (rand() % 40 + 20) };
 			s.color = { 1.0f, 0.0f, 0.0f, 0.5f };
-			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, s.texturePath)).uvRect;
+			s.uvRect = renderer.GetAtlasRegion(Dir::SharedAssets, s.textureName).uvRect;
 			s.layer = renderer.FindOrCreateSpriteLayer(0);
 			s.isOccluder = false;
 			ecs->CreateComponent<SpriteComponent>(entity, s);
@@ -129,7 +130,7 @@ void Game::SetupScene()
 			clvr::Sprite s = Sprite("textures/shrew1.jpg");
 			s.position = t.GetWorldPosition();
 			s.size = { 3000, 3000 };
-			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, s.texturePath)).uvRect;
+			s.uvRect = renderer.GetAtlasRegion(Dir::SharedAssets, s.textureName).uvRect;
 			SpriteLayer* layer = renderer.FindOrCreateSpriteLayer(3);
 			s.layer = layer;
 			s.isOccluder = false;
@@ -144,7 +145,7 @@ void Game::SetupScene()
 			clvr::Sprite s = Sprite("textures/white.jpg");
 			s.position = t.GetWorldPosition();
 			s.size = { 16000.0f, 64.0f };
-			s.uvRect = renderer.GetAtlasRegion(rMngr->GetPath(Dir::SharedAssets, s.texturePath)).uvRect;
+			s.uvRect = renderer.GetAtlasRegion(Dir::SharedAssets, s.textureName).uvRect;
 			s.layer = renderer.FindOrCreateSpriteLayer(0);
 			s.isOccluder = true;
 			ecs->CreateComponent<SpriteComponent>(entity, s);

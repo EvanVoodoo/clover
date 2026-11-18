@@ -25,7 +25,7 @@ struct TextureAtlas::Impl
 
     std::vector<PendingImage> pendingImages;
     std::vector<AtlasRegion> regions;
-    std::map<std::wstring, int> filenameToIndex;
+    std::unordered_map<std::string, int> nameToIndex;
 
     std::vector<uint8_t> atlasData;
     ID3D11Texture2D* texture = nullptr;
@@ -62,30 +62,46 @@ void TextureAtlas::Shutdown()
     }
 }
 
-int TextureAtlas::AddTexture(const std::string filename)
+int TextureAtlas::AddTexture(const ResourceManager::Directory dir, const std::string& relativeName)
 {
-    Impl::PendingImage pendingImage;
-    HRESULT result = LoadFromWICFile(ToWString(filename).c_str(), WIC_FLAGS_NONE, nullptr, pendingImage.image);
-    if (FAILED(result))
+    const std::string key = MakeKey(dir, relativeName);
+
+    if (auto it = m_impl->nameToIndex.find(key); it != m_impl->nameToIndex.end())
+        return it->second;                       // already added, avoids duplicate packing
+
+    // The only place that touches the dev/shipped directory split
+    const std::string fullPath = Engine.GetResourceManager()->GetPath(dir, relativeName);
+
+    Impl::PendingImage pending;
+    if (FAILED(LoadFromWICFile(ToWString(fullPath).c_str(), WIC_FLAGS_NONE, nullptr, pending.image)))
         return -1;
 
-    const Image* img = pendingImage.image.GetImage(0, 0, 0);
-    pendingImage.width = static_cast<int>(img->width);
-    pendingImage.height = static_cast<int>(img->height);
+    const Image* img = pending.image.GetImage(0, 0, 0);
+    pending.width = static_cast<int>(img->width);
+    pending.height = static_cast<int>(img->height);
 
-    int index = static_cast<int>(m_impl->pendingImages.size());
-    m_impl->pendingImages.push_back(std::move(pendingImage));
+    const int index = static_cast<int>(m_impl->pendingImages.size());
+    m_impl->pendingImages.push_back(std::move(pending));
     m_impl->regions.push_back(AtlasRegion{ XMFLOAT4(0, 0, 0, 0) });
-    m_impl->filenameToIndex[ToWString(filename).c_str()] = index;
+    m_impl->nameToIndex[key] = index;
     return index;
 }
 
-AtlasRegion TextureAtlas::GetRegion(const std::string filename) const
+bool TextureAtlas::TryGetRegion(const ResourceManager::Directory dir, const std::string& relativeName, AtlasRegion& out) const
 {
-    auto it = m_impl->filenameToIndex.find(ToWString(filename).c_str());
-    if (it == m_impl->filenameToIndex.end())
-        return AtlasRegion{ XMFLOAT4(0, 0, 0, 0) };
-    return m_impl->regions[it->second];
+    auto it = m_impl->nameToIndex.find(MakeKey(dir, relativeName));
+    if (it == m_impl->nameToIndex.end())
+        return false;
+    out = m_impl->regions[it->second];
+    return true;
+}
+
+AtlasRegion TextureAtlas::GetRegion(const ResourceManager::Directory dir, const std::string& relativeName) const
+{
+    AtlasRegion r{ XMFLOAT4(0, 0, 0, 0) };
+    if (!TryGetRegion(dir, relativeName, r))
+        OutputDebugStringA(("Atlas miss: " + relativeName + "\n").c_str()); // or your logger
+    return r;
 }
 
 // Helper function to extend the padding of a sprite in the atlas by copying edge pixels and setting alpha to 0
@@ -159,7 +175,9 @@ bool TextureAtlas::Build()
             (float)(rects[i].y + 1) / height,
             (float)pendingImages[i].width / width,
             (float)pendingImages[i].height / height
-        );
+        ); 
+        regions[i].pixelW = pendingImages[i].width;
+        regions[i].pixelH = pendingImages[i].height;
     }
 
     m_impl->atlasData.resize(width * height * 4, 0);

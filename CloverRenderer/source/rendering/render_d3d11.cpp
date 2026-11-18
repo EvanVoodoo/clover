@@ -1318,14 +1318,16 @@ bool DirectX2D::LoadShader(const std::string& name, const std::string& vsFilenam
 
 bool DirectX2D::ReloadShaders() { return m_shaderManager.get() ? m_shaderManager.get()->ReloadAll() : false; }
 
-int DirectX2D::AddTexture(const std::string filename)
+int DirectX2D::AddTexture(ResourceManager::Directory dir, const std::string& relativeName)
 {
-	return m_textureAtlas->AddTexture(filename);
+	return m_textureAtlas->AddTexture(dir, relativeName);
 }
 
-std::shared_ptr<Texture> DirectX2D::LoadTexture(std::string filename)
+std::shared_ptr<Texture> DirectX2D::LoadTexture(ResourceManager::Directory dir, const std::string& relativeName)
 {
-	return Engine.GetResourceManager()->Load<Texture>(m_device, ToWString(filename).c_str());;
+	auto* rm = Engine.GetResourceManager();
+	const std::string fullPath = rm->GetPath(dir, relativeName);
+	return rm->Load<Texture>(m_device, ToWString(fullPath).c_str());
 }
 
 bool DirectX2D::BuildAtlas()

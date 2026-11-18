@@ -42,12 +42,9 @@ namespace clvr
 		}
 
 		auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
-		auto* resources = Engine.GetResourceManager();
 
 		m_backdropDatabase->Sprites().Init(*renderer.GetTextureAtlas(), *m_backdropDatabase,
-										   [resources](const std::string& relative) {
-			return resources->GetPath(ResourceManager::Directory::Assets, relative);
-		});
+										   ResourceManager::Directory::Assets);
 	}
 
 	RoomEditor::~RoomEditor()

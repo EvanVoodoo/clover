@@ -8,62 +8,65 @@
 using json = nlohmann::json;
 
 namespace clvr {
-	bool TileSprites::Init(TextureAtlas& atlas, const std::string& absolutePath, int tilesetW, int tilesetH)
+	bool TileSprites::Init(TextureAtlas& atlas, ResourceManager::Directory dir, const std::string& name)
 	{
-		if (tilesetW <= 0 || tilesetH <= 0)
-			return false;
-
 		m_atlas = &atlas;
-		m_path = absolutePath;
-		m_pixelW = static_cast<float>(tilesetW);
-		m_pixelH = static_cast<float>(tilesetH);
-
-		return atlas.AddTexture(absolutePath) >= 0; // assumes a negative return means failure
+		m_dir = dir;
+		m_name = name;
+		return !name.empty() && atlas.AddTexture(dir, name) >= 0;
 	}
 
 	void TileSprites::Refresh()
 	{
 		m_ready = false;
-		if (!m_atlas)
-			return;
+		if (!m_atlas) return;
 
 		ID3D11ShaderResourceView* srv = m_atlas->GetSRV();
-		if (!srv)
-			return; // atlas not built yet
+		if (!srv) return;                       // atlas not built yet
 
-		const AtlasRegion r = m_atlas->GetRegion(m_path);
-		if (r.uvRect.z <= 0.0f || r.uvRect.w <= 0.0f)
-			return; // not found, or not built yet
+		AtlasRegion r;
+		if (!m_atlas->TryGetRegion(m_dir, m_name, r) || r.pixelW <= 0 || r.pixelH <= 0)
+			return;
 
 		m_texture = reinterpret_cast<ImTextureID>(srv);
-		m_u = r.uvRect.x;
-		m_v = r.uvRect.y;
-		m_uw = r.uvRect.z; // width in UV space
-		m_vh = r.uvRect.w; // height in UV space
+		m_u = r.uvRect.x;  m_v = r.uvRect.y;
+		m_uw = r.uvRect.z; m_vh = r.uvRect.w;
+		m_pixelW = static_cast<float>(r.pixelW);
+		m_pixelH = static_cast<float>(r.pixelH);
 		m_ready = true;
 	}
 
 	SpriteRef TileSprites::Get(const TileDef& def, const TilesetInfo& info) const
 	{
 		SpriteRef ref;
-		if (!m_ready || def.spriteCol < 0 || def.spriteRow < 0 ||
-			info.cellSize <= 0 || info.padding * 2 >= info.cellSize)
+
+		XMFLOAT4 sub;
+		if (!GetSubRect(def, info, sub))   // handles m_ready, bad indices, bad cell size, out-of-bounds
 			return ref;
 
-		const float art = static_cast<float>(info.cellSize - 2 * info.padding);
-		const float px = static_cast<float>(def.spriteCol * info.cellSize + info.padding);
-		const float py = static_cast<float>(def.spriteRow * info.cellSize + info.padding);
-
-		if (px + art > m_pixelW || py + art > m_pixelH)
-			return ref; // cell lies outside the image
-
-		// pixel inside the tileset -> fraction of the tileset -> UV inside the atlas
+		// sub-rect inside the tileset image -> UV inside the atlas region
 		ref.texture = m_texture;
-		ref.name = TilesetInfo().path;
-		ref.uv0 = ImVec2(m_u + m_uw * (px / m_pixelW), m_v + m_vh * (py / m_pixelH));
-		ref.uv1 = ImVec2(m_u + m_uw * ((px + art) / m_pixelW), m_v + m_vh * ((py + art) / m_pixelH));
+		ref.name = m_name;
+		ref.uv0 = ImVec2(m_u + m_uw * sub.x, m_v + m_vh * sub.y);
+		ref.uv1 = ImVec2(m_u + m_uw * (sub.x + sub.z), m_v + m_vh * (sub.y + sub.w));
 		ref.valid = true;
 		return ref;
+	}
+
+	bool TileSprites::GetSubRect(const TileDef& def, const TilesetInfo& info, XMFLOAT4& out) const
+	{
+		if (!m_ready || def.spriteCol < 0 || def.spriteRow < 0 ||
+			info.cellSize <= 0 || info.padding * 2 >= info.cellSize)
+			return false;
+
+		const float art = float(info.cellSize - 2 * info.padding);
+		const float px = float(def.spriteCol * info.cellSize + info.padding);
+		const float py = float(def.spriteRow * info.cellSize + info.padding);
+		if (px + art > m_pixelW || py + art > m_pixelH)
+			return false;
+
+		out = { px / m_pixelW, py / m_pixelH, art / m_pixelW, art / m_pixelH };
+		return true;
 	}
 
 	SpriteRef TileSprites::WholeTileset() const
@@ -73,7 +76,7 @@ namespace clvr {
 			return ref;
 
 		ref.texture = m_texture;
-		ref.name = m_path;
+		ref.name = m_name;
 		ref.uv0 = ImVec2(m_u, m_v);
 		ref.uv1 = ImVec2(m_u + m_uw, m_v + m_vh);
 		ref.valid = true;
@@ -87,10 +90,8 @@ namespace clvr {
 		LoadFromFile(filepath);
 
 		auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
-		const std::string path = Engine.GetResourceManager()->GetPath(
-			ResourceManager::Directory::Assets, Tileset().path);
-		auto texture = Engine.GetResourceManager()->Load<Texture>(static_cast<ID3D11Device*>(renderer.GetNativeDeviceHandle()), path);
-		m_sprites.Init(*renderer.GetTextureAtlas(), path, texture->GetWidth(), texture->GetHeight()); // your Texture's size getters
+		m_sprites.Init(*renderer.GetTextureAtlas(),
+					   ResourceManager::Directory::Assets, Tileset().path);
     }
 
     bool TileDatabase::LoadFromFile(const std::filesystem::path& path)
@@ -162,6 +163,7 @@ namespace clvr {
         }
 
         m_tileDefs = std::move(parsed);
+		m_tileset = tileset;
         return true;
 	}
 

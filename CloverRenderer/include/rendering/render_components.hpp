@@ -8,6 +8,7 @@
 #include <memory>
 #include <core/ecs.hpp>
 #include "core/serialization.hpp"
+#include <resources/resource_manager.hpp>
 
 #define MAX_LIGHTS 16
 
@@ -26,26 +27,28 @@ namespace clvr
 
 	struct Sprite
 	{
-		Sprite(const std::string& filename = "", bool loadTexture = false) {
+		Sprite(const std::string& filename = "", const ResourceManager::Directory dir = ResourceManager::Directory::SharedAssets, bool loadTexture = false) {
 			if (loadTexture) {
-				LoadSpriteTexture(filename);
+				LoadSpriteTexture(dir, filename);
 				textureName = texture->GetFilename();
 			}
 			else
 			{
-				textureName = filename;
-				texturePath = filename;
+				SetTextureParams(dir, filename);
 			}
 			color = { 1.0f, 1.0f, 1.0f, 1.0f };
 			uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
 		}
-		bool LoadSpriteTexture(const std::string& filename);
+		bool LoadSpriteTexture(const ResourceManager::Directory dir, const std::string& filename);
 		bool LoadSpriteTexture(const std::shared_ptr<Texture> texture);
+
+		std::string GetTexturePath(const ResourceManager::Directory dir, const std::string texName = "") const;
 
 		XMFLOAT2 position;
 		XMFLOAT2 size;
 		XMFLOAT4 color;
-		XMFLOAT4 uvRect; // x, y = top-left in UV space; z, w = width, height in UV space
+		XMFLOAT4 uvRect{ 0.0f, 0.0f, 1.0f, 1.0f }; // x, y = top-left in UV space; z, w = width, height in UV space
+		XMFLOAT4 subRect{ 0.0f, 0.0f, 1.0f, 1.0f };
 		XMFLOAT2 pivot;
 		SpriteLayer* layer = nullptr;
 		float rotation;
@@ -55,8 +58,16 @@ namespace clvr
 
 		bool useLinkedTexture = false;
 		std::shared_ptr<Texture> texture = nullptr; // set once, e.g. via LoadTexture function
-		std::string textureName = "";
-		std::string texturePath = "";
+
+		ResourceManager::Directory textureDir = ResourceManager::Directory::SharedAssets;
+		std::string textureName;   // relative to textureDir, e.g. "sprites/tree.png". The ONLY thing saved.
+
+		void SetTextureParams(ResourceManager::Directory dir, const std::string& filename)
+		{
+			if (filename.empty()) return;
+			textureDir = dir;
+			textureName = filename;
+		}
 
 		int layerId = -1; // used ONLY for loading from file to store the layer ID
 	};
@@ -73,10 +84,13 @@ namespace clvr
 			{"isOccluder", s.isOccluder},
 			{"flipX", s.flipX},
 			{"flipY", s.flipY},
-			{"textureName", s.textureName},
 			{"useLinkedTexture", s.useLinkedTexture},
-			{"texturePath", s.texturePath}
+			{"textureDir", static_cast<int>(s.textureDir)},
+			{"textureName", s.textureName},
+			{"subRect", s.subRect},
 		};
+		if (s.useLinkedTexture)
+			j["uvRect"] = s.uvRect;
 	}
 	inline void from_json(const nlohmann::json& j, Sprite& s);
 
@@ -122,7 +136,7 @@ namespace clvr
 		{
 			Light lights[MAX_LIGHTS];
 			int lightCount;
-			XMFLOAT3 _pad;
+			XMFLOAT3 ambient;
 		};
 		struct IDBufferType
 		{

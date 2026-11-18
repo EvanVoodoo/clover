@@ -65,10 +65,16 @@ namespace clvr
 		bool m_openSceneSaver = false;
 		bool m_openOverwriteConfirm = false;
 		bool m_closeSceneSaver = false;       // lets the overwrite dialog close its parent too
+		bool m_openSceneLoader = false;
 		char m_saveNameBuf[128] = "untitled";
 		std::string m_pendingSavePath;
+		std::string m_currentScene = "untitled";   // stem only, no ".json"
+		std::string m_pendingSaveName;             // stem for the overwrite confirm
+		bool m_openNewSceneConfirm = false;
 
-		bool m_openSceneLoader = false;
+		bool HasSceneName() const;
+		void SaveScene(const std::string& name);
+		void OpenSaveAs();
 	};
 
 	extern EngineClass Engine;

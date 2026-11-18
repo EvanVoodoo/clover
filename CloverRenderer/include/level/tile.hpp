@@ -63,7 +63,7 @@ namespace clvr
 	{
 	public:
 		// Call once, before the atlas is built. tilesetW/H are the tileset image's size in pixels.
-		bool Init(TextureAtlas& atlas, const std::string& absolutePath, int tilesetW, int tilesetH);
+		bool Init(TextureAtlas& atlas, ResourceManager::Directory dir, const std::string& name);
 
 		// Call once per frame (cheap). Re-reads the SRV and region in case the atlas was rebuilt.
 		void Refresh();
@@ -71,6 +71,7 @@ namespace clvr
 		bool Ready() const { return m_ready; }
 
 		SpriteRef Get(const TileDef& def, const TilesetInfo& info) const;
+		bool GetSubRect(const TileDef& def, const TilesetInfo& info, XMFLOAT4& out) const;
 		SpriteRef WholeTileset() const;
 
 		float TilesetW() const { return m_pixelW; }
@@ -78,7 +79,8 @@ namespace clvr
 
 	private:
 		TextureAtlas* m_atlas = nullptr; // non-owning
-		std::string m_path;
+		std::string m_name = "";
+		ResourceManager::Directory m_dir = ResourceManager::Directory::SharedAssets;
 		float m_pixelW = 0, m_pixelH = 0;
 
 		ImTextureID m_texture = 0;

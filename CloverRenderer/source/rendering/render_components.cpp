@@ -6,9 +6,15 @@ using namespace clvr;
 
 using Dir = ResourceManager::Directory;
 
-bool Sprite::LoadSpriteTexture(const std::string& filename) {
-	std::shared_ptr<Texture> tex = Engine.GetECS()->GetSystem<Renderer>().LoadTexture(filename);
-	return LoadSpriteTexture(tex);
+bool Sprite::LoadSpriteTexture(const ResourceManager::Directory dir, const std::string& filename) {
+	std::shared_ptr<Texture> tex = Engine.GetECS()->GetSystem<Renderer>().LoadTexture(dir, filename);
+	if (LoadSpriteTexture(tex))
+	{
+		textureDir = dir;
+		textureName = filename;
+		return true;
+	}
+	return false;
 }
 
 bool Sprite::LoadSpriteTexture(const std::shared_ptr<Texture> texture)
@@ -16,17 +22,23 @@ bool Sprite::LoadSpriteTexture(const std::shared_ptr<Texture> texture)
 	if (texture) {
 		this->texture = texture;
 		useLinkedTexture = true;
-		texturePath = texture->GetPath();
 	}
 	return useLinkedTexture;
+}
+
+std::string clvr::Sprite::GetTexturePath(const ResourceManager::Directory dir, const std::string texName) const 
+{ 
+	if (texName.empty()) {
+		return Engine.GetResourceManager()->GetPath(dir, textureName);
+	}
+	return Engine.GetResourceManager()->GetPath(dir, texName);
 }
 
 SpriteComponent::SpriteComponent()
 {
 	sprite.layer = Engine.GetECS()->GetSystem<Renderer>().FindOrCreateSpriteLayer(0);
-	sprite.textureName = "white.jpg";
-	sprite.texturePath = "textures/white.jpg";
-	sprite.uvRect = Engine.GetECS()->GetSystem<Renderer>().GetAtlasRegion(Engine.GetResourceManager()->GetPath(Dir::SharedAssets, sprite.texturePath)).uvRect;
+	sprite.SetTextureParams(Dir::SharedAssets, "textures/white.jpg");
+	sprite.uvRect = Engine.GetECS()->GetSystem<Renderer>().GetAtlasRegion(sprite.textureDir, sprite.textureName).uvRect;
 	sprite.isOccluder = false;
 	sprite.size = { 100.0f, 100.0f };
 }
@@ -72,7 +84,7 @@ void SpriteComponent::Inspect()
 
 		if (sprite.texture)
 		{
-			ImGui::Text("Texture: %s", std::string(sprite.texturePath).c_str());
+			ImGui::Text("Texture: %s", std::string(sprite.textureName).c_str());
 
 			// Fixed-size thumbnail, aspect-corrected so square textures don't get stretched into a square box
 			// when they aren't actually square.
@@ -144,13 +156,23 @@ void clvr::from_json(const nlohmann::json& j, Sprite& s) {
 	j.at("color").get_to(s.color);
 	j.at("uvRect").get_to(s.uvRect);
 	j.at("pivot").get_to(s.pivot);
+	s.subRect = j.value("subRect", XMFLOAT4{ 0, 0, 1, 1 });
 	s.layerId = j.value("layerId", -1);
 	s.layer = nullptr; // will be set later by the renderer based on layerId
 	s.rotation = j.value("rotation", 0.0f);
 	s.isOccluder = j.value("isOccluder", true);
 	s.flipX = j.value("flipX", false);
 	s.flipY = j.value("flipY", false);
-	s.textureName = j.value("textureName", "");
 	s.useLinkedTexture = j.value("useLinkedTexture", false);
-	s.texturePath = j.value("texturePath", "");
+	s.textureDir = static_cast<ResourceManager::Directory>(
+		j.value("textureDir", static_cast<int>(ResourceManager::Directory::SharedAssets)));
+	s.textureName = j.value("textureName", "");
+
+	// Migration for old saves that only have a baked "texturePath"
+	if (s.textureName.empty() && j.contains("texturePath")) {
+		std::string p = j["texturePath"];
+		for (const char* prefix : { "../CloverRenderer/assets/", "CloverRenderer/assets/" })
+			if (p.rfind(prefix, 0) == 0) { p.erase(0, std::strlen(prefix)); break; }
+		s.textureName = p;
+	}
 }

@@ -280,6 +280,7 @@ void Renderer::UpdateLights()
 		++count;
 	}
 	lightData.lightCount = count;
+	lightData.ambient = { m_ambientColor.x * m_ambientIntensity, m_ambientColor.y * m_ambientIntensity, m_ambientColor.z * m_ambientIntensity };
 
 	m_DX2D->UpdateLights(lightData);   // forwards to m_lightCb.Update
 }
@@ -297,6 +298,17 @@ void Renderer::Inspect(float dt)
 	if (ImGui::Checkbox("Fullscreen", &fullscreen))
 	{
 		SetFullscreen(fullscreen);
+	}
+
+	ImGui::Separator();
+
+	if (ImGui::ColorEdit3("Ambient Color", reinterpret_cast<float*>(&m_ambientColor)))
+	{
+		UpdateLights();
+	}
+	if (ImGui::SliderFloat("Ambient Intensity", &m_ambientIntensity, 0.0f, 1.0f))
+	{
+		UpdateLights();
 	}
 
 	ImGui::Separator();
@@ -418,6 +430,8 @@ json Renderer::Save()
 		layerJson["layerName"] = layer->layerName;
 		j["spriteLayers"].push_back(layerJson);
 	}
+	j["ambientColor"] = { m_ambientColor.x, m_ambientColor.y, m_ambientColor.z };
+	j["ambientIntensity"] = m_ambientIntensity;
 	return j;
 }
 
@@ -434,44 +448,67 @@ void Renderer::Load(const json& j)
 			CreateSpriteLayer(id, parallaxFactor, layerName);
 		}
 	}
+	if (j.contains("ambientColor"))
+	{
+		auto colorArray = j["ambientColor"];
+		if (colorArray.is_array() && colorArray.size() == 3)
+		{
+			m_ambientColor.x = colorArray[0];
+			m_ambientColor.y = colorArray[1];
+			m_ambientColor.z = colorArray[2];
+		}
+	}
+	if (j.contains("ambientIntensity"))
+	{
+		m_ambientIntensity = j["ambientIntensity"];
+	}
 
 	// Give entities their sprite layers after loading, since the layers are now created
 	auto& registry = Engine.GetECS()->GetRegistry();
 	auto view = registry.view<SpriteComponent>();
 	for (auto entity : view)
-	{
-		auto& sc = view.get<SpriteComponent>(entity);
+		ResolveSprite(view.get<SpriteComponent>(entity).sprite);
+}
 
-		SpriteLayer* layer = FindSpriteLayer(sc.sprite.layerId);
-		if (layer)
-			sc.sprite.layer = layer;
-		else
-			sc.sprite.layer = FindOrCreateSpriteLayer(0); // default to layer 0 if not found
+void Renderer::ResolveSprite(Sprite& s)
+{
+	s.layer = FindSpriteLayer(s.layerId);
+	if (!s.layer)
+		s.layer = FindOrCreateSpriteLayer(0);
 
-		if (sc.sprite.useLinkedTexture && !sc.sprite.texture)
-		{
-			sc.sprite.texture = LoadTexture(sc.sprite.texturePath);
-		}
+	if (s.textureName.empty()) return;
 
-		if (!sc.sprite.texturePath.empty()) {
-			if (!sc.sprite.useLinkedTexture)
-				sc.sprite.uvRect = GetTextureAtlas()->GetRegion(sc.sprite.texturePath).uvRect;
+	if (s.useLinkedTexture) {
+		if (!s.texture) s.texture = LoadTexture(s.textureDir, s.textureName);
+		s.uvRect = s.subRect;
+	}
+	else {
+		AtlasRegion r;
+		if (GetTextureAtlas()->TryGetRegion(s.textureDir, s.textureName, r)) {
+			s.uvRect = XMFLOAT4(
+				r.uvRect.x + r.uvRect.z * s.subRect.x,
+				r.uvRect.y + r.uvRect.w * s.subRect.y,
+				r.uvRect.z * s.subRect.z,
+				r.uvRect.w * s.subRect.w);
 		}
 	}
 }
 
 void* Renderer::GetNativeDeviceHandle() { return static_cast<void*>(m_DX2D->GetDevice()); }
 
-int Renderer::AddTexture(const std::string filename) { return m_DX2D->AddTexture(filename); }
-
-std::shared_ptr<Texture> Renderer::LoadTexture(std::string filename)
+int Renderer::AddTexture(ResourceManager::Directory dir, const std::string& relativeName)
 {
-	return m_DX2D->LoadTexture(filename);
+	return m_DX2D->AddTexture(dir, relativeName);
+}
+
+std::shared_ptr<Texture> Renderer::LoadTexture(ResourceManager::Directory dir, const std::string& relativeName)
+{
+	return m_DX2D->LoadTexture(dir, relativeName);
 }
 
 bool Renderer::BuildAtlas() { return m_DX2D->BuildAtlas(); }
 
-AtlasRegion Renderer::GetAtlasRegion(const std::string f) { return m_DX2D->GetAtlasRegion(f); }
+AtlasRegion Renderer::GetAtlasRegion(const ResourceManager::Directory dir, const std::string f) { return m_DX2D->GetAtlasRegion(dir, f); }
 
 TextureAtlas* clvr::Renderer::GetTextureAtlas()
 {

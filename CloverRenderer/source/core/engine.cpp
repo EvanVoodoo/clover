@@ -271,33 +271,37 @@ void EngineClass::MainMenuBar()
 
         if (ImGui::BeginMenu("File")) {
             const bool canEditScene = GetEngineMode() == EngineMode::Editing;
-			if (ImGui::MenuItem("Save Scene", "Ctrl+S", false, canEditScene)) {
-				const std::string name = NormalizeSceneName(m_saveNameBuf);
-				if (IsValidSceneName(name) && name != "untitled") {
-					const std::string fileName = name + ".json";
-					const std::string path = GetResourceManager()->GetPath(
-						ResourceManager::Directory::Assets, "scenes/" + fileName);
-					GetECS()->GetSystem<SceneManager>().SaveSceneToFile(path);
-				}
-                else {
-					m_sceneFiles = GetResourceManager()->GetFilesInDirectory(
-						ResourceManager::Directory::Assets, "scenes", ".json");
-					m_openSceneSaver = true;
 
-                }
-			}
-            if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S", false, canEditScene)) {
-                m_sceneFiles = GetResourceManager()->GetFilesInDirectory(
-                    ResourceManager::Directory::Assets, "scenes", ".json");
-                m_openSceneSaver = true;
+            if (ImGui::MenuItem("New Scene", "Ctrl+N", false, canEditScene))
+                m_openNewSceneConfirm = true;
+
+            if (ImGui::MenuItem("Save Scene", "Ctrl+S", false, canEditScene)) {
+                if (HasSceneName()) SaveScene(m_currentScene);   // no popup for an already-named scene
+                else                OpenSaveAs();
             }
+            if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S", false, canEditScene))
+                OpenSaveAs();
+
             if (ImGui::MenuItem("Load Scene", "Ctrl+L", false, canEditScene)) {
                 m_sceneFiles = GetResourceManager()->GetFilesInDirectory(
-                    ResourceManager::Directory::Assets, "scenes", ".json");   // scan the disk once on open, not every frame
+                    ResourceManager::Directory::Assets, "scenes", ".json");
                 m_openSceneLoader = true;
             }
             ImGui::EndMenu();
         }
+
+        ModalPopup("New Scene", m_openNewSceneConfirm, ImVec2(360, 110), [&] {
+            ImGui::TextWrapped("Start a new scene? Unsaved changes to \"%s\" will be lost.",
+                               m_currentScene.c_str());
+            if (ImGui::Button("New Scene")) {
+                m_currentScene = "untitled";
+				SaveScene(m_currentScene);
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel"))
+                ImGui::CloseCurrentPopup();
+        });
 
         ModalPopup("Save Scene", m_openSceneSaver, ImVec2(400, 330), [&] {
             ImGui::TextUnformatted("Existing scenes (click to reuse a name):");
@@ -331,14 +335,12 @@ void EngineClass::MainMenuBar()
 
             ImGui::BeginDisabled(!valid);
             if (ImGui::Button("Save") || (enterPressed && valid)) {
-                const std::string path = GetResourceManager()->GetPath(
-                    ResourceManager::Directory::Assets, "scenes/" + fileName);
                 if (exists) {
-                    m_pendingSavePath = path;
+                    m_pendingSaveName = name;
                     m_openOverwriteConfirm = true;
                 }
                 else {
-                    GetECS()->GetSystem<SceneManager>().SaveSceneToFile(path);
+                    SaveScene(name);
                     ImGui::CloseCurrentPopup();
                 }
             }
@@ -355,12 +357,10 @@ void EngineClass::MainMenuBar()
         });
 
         ModalPopup("Overwrite?", m_openOverwriteConfirm, ImVec2(360, 110), [&] {
-			std::string fileName = NormalizeSceneName(m_saveNameBuf) + ".json";
-            ImGui::TextWrapped("%s already exists. Overwrite it?", fileName.c_str());
+            ImGui::TextWrapped("%s.json already exists. Overwrite it?", m_pendingSaveName.c_str());
             if (ImGui::Button("Overwrite")) {
-                GetECS()->GetSystem<SceneManager>().SaveSceneToFile(m_pendingSavePath);
-                //m_closeSceneSaver = true;
-                ImGui::CloseCurrentPopup();            // closes the overwrite dialog
+                SaveScene(m_pendingSaveName);
+                ImGui::CloseCurrentPopup();
             }
             ImGui::SameLine();
             if (ImGui::Button("Back"))
@@ -374,6 +374,7 @@ void EngineClass::MainMenuBar()
             for (const FileInfo& sceneFile : m_sceneFiles) {
                 if (ImGui::Selectable(sceneFile.name.c_str())) {
                     GetECS()->GetSystem<SceneManager>().LoadSceneFromFile(sceneFile.path);
+                    m_currentScene = std::filesystem::path(sceneFile.name).stem().string();
                     ImGui::CloseCurrentPopup();
                 }
             }
@@ -416,17 +417,37 @@ void EngineClass::MainMenuBar()
         if (open)
         {
             if (ImGui::MenuItem("Save & Quit")) {
-                GetECS()->GetSystem<SceneManager>().SaveSceneToFile(
-                    GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "scenes/example.json"));
-				running = false;
+                SaveScene(HasSceneName() ? m_currentScene : "example");
+                running = false;
             }
-            /*if (ImGui::MenuItem("Quit", "Alt+F4"))
-                running = false;*/
             ImGui::EndMenu();
         }
 
         ImGui::EndMainMenuBar();
     }
+}
+
+bool EngineClass::HasSceneName() const
+{
+    return m_currentScene != "untitled" && IsValidSceneName(m_currentScene);
+}
+
+void EngineClass::SaveScene(const std::string& name)
+{
+    const std::string path = GetResourceManager()->GetPath(
+        ResourceManager::Directory::Assets, "scenes/" + name + ".json");
+    GetECS()->GetSystem<SceneManager>().SaveSceneToFile(path);
+    m_currentScene = name;
+}
+
+void EngineClass::OpenSaveAs()
+{
+    m_sceneFiles = GetResourceManager()->GetFilesInDirectory(
+        ResourceManager::Directory::Assets, "scenes", ".json");
+    // Pre-fill the field with the current scene, so "Save As" starts from it
+    std::snprintf(m_saveNameBuf, sizeof(m_saveNameBuf), "%s",
+                  HasSceneName() ? m_currentScene.c_str() : "");
+    m_openSceneSaver = true;
 }
 
 void EngineClass::SetEngineMode(EngineMode mode) { 

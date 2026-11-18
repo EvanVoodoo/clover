@@ -15,6 +15,7 @@
 #include "framebuffer.hpp"
 #include "texture.hpp"
 #include "render_common.hpp"
+#include <resources/resource_manager.hpp>
 
 using namespace DirectX;
 
@@ -60,11 +61,10 @@ namespace clvr
 
 		bool ReloadShaders();
 
-		int AddTexture(const std::string filename);
-		std::shared_ptr<Texture> LoadTexture(std::string filename);
-
+		int AddTexture(ResourceManager::Directory dir, const std::string& relativeName);
+		std::shared_ptr<Texture> LoadTexture(ResourceManager::Directory dir, const std::string& relativeName);
 		bool BuildAtlas();
-		AtlasRegion GetAtlasRegion(const std::string filename) { return m_textureAtlas->GetRegion(filename); }
+		AtlasRegion GetAtlasRegion(const ResourceManager::Directory dir, const std::string filename) { return m_textureAtlas->GetRegion(dir, filename); }
 		TextureAtlas* GetTextureAtlas() { return m_textureAtlas; }
 
 		ID3D11Device* GetDevice();

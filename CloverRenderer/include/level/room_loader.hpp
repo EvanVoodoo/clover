@@ -22,6 +22,8 @@ namespace clvr {
 
 		RunMode GetRunMode() const { return RunMode::Always; }
 
+		void OnPlayStart();
+
 		std::vector<RoomData> GetAllRooms();
 
 		bool SpawnTile(const TileDef& tileDef, std::shared_ptr<TileDatabase> tileDb, Entity roomTransform, XMFLOAT2 localPos, float tileSize, unsigned int spriteLayerId);

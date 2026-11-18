@@ -3,7 +3,8 @@
 
 namespace clvr
 {
-	void BackdropSprites::Init(TextureAtlas& atlas, const BackdropDatabase& db, const PathResolver& resolve)
+	void BackdropSprites::Init(TextureAtlas& atlas, const BackdropDatabase& db,
+							   ResourceManager::Directory dir)
 	{
 		m_atlas = &atlas;
 		m_entries.clear();
@@ -11,9 +12,11 @@ namespace clvr
 		for (const auto& [id, def] : db.All())
 		{
 			Entry e;
-			e.path = resolve(def.image);
-			if (atlas.AddTexture(e.path) >= 0) // assumes a negative return means failure
+			e.dir = dir;
+			e.name = def.image;                       // already a relative name
+			if (atlas.AddTexture(dir, e.name) >= 0)   // atlas resolves the full path internally
 				m_entries.emplace(id, std::move(e));
+			// else: consider logging, a missing backdrop file is otherwise silent
 		}
 	}
 
@@ -34,8 +37,9 @@ namespace clvr
 
 		for (auto& [id, e] : m_entries)
 		{
-			const AtlasRegion r = m_atlas->GetRegion(e.path);
-			e.ready = r.uvRect.z > 0.0f && r.uvRect.w > 0.0f;
+			AtlasRegion r;
+			e.ready = m_atlas->TryGetRegion(e.dir, e.name, r)
+				&& r.uvRect.z > 0.0f && r.uvRect.w > 0.0f;
 			if (e.ready)
 			{
 				e.uv0 = ImVec2(r.uvRect.x, r.uvRect.y);
@@ -52,7 +56,7 @@ namespace clvr
 			return ref;
 
 		ref.texture = m_texture;
-		ref.name = it->second.path;
+		ref.name = it->second.name;
 		ref.uv0 = it->second.uv0;
 		ref.uv1 = it->second.uv1;
 		ref.valid = true;

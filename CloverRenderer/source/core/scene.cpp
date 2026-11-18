@@ -313,7 +313,7 @@ void SceneManager::DrawContents()
     }
 
     ImGui::SameLine();
-    if (m_selectedEntity != entt::null && ImGui::Button("Delete Entity"))
+    if (m_selectedEntity != entt::null && (ImGui::Button("Delete Entity") || (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::IsKeyPressed(ImGuiKey_Delete, false))))
     {
         DeleteSelectedEntity();
     }

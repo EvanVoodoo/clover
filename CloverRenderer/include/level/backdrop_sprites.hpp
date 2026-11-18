@@ -14,10 +14,9 @@ namespace clvr
 	class BackdropSprites
 	{
 	public:
-		using PathResolver = std::function<std::string(const std::string&)>; // relative -> absolute
-
 		// Once at startup, before the atlas is built.
-		void Init(TextureAtlas& atlas, const BackdropDatabase& db, const PathResolver& resolve);
+		void Init(TextureAtlas& atlas, const BackdropDatabase& db,
+				  ResourceManager::Directory dir = ResourceManager::Directory::SharedAssets);
 
 		// Once per frame. Cheap: one region lookup per backdrop.
 		void Refresh();
@@ -27,7 +26,8 @@ namespace clvr
 	private:
 		struct Entry
 		{
-			std::string path;
+			ResourceManager::Directory dir;
+			std::string name;   // relative to the asset directory, e.g. "backdrops/forest.png"
 			ImVec2 uv0{ 0, 0 }, uv1{ 1, 1 };
 			bool ready = false;
 		};

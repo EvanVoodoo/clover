@@ -13,7 +13,7 @@ cbuffer LightBuffer : register(b1)
 {
     Light lights[MAX_LIGHTS];
     int lightCount;
-    float3 _pad;
+    float3 ambient;
 };
 
 cbuffer M : register(b2)
@@ -54,8 +54,7 @@ struct PixelInputType
 
 float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 {
-    float3 amb = float3(0.05, 0.05, 0.05);
-    float4 pixel = float4(amb.rgb, 1); // ambient light
+    float4 pixel = float4(ambient.rgb, 1); // ambient light
     bool isOccluder = occluderMask.Sample(sampler0, input.uv).a > 0.5;
     const float SHADOW_BIAS = 0.002;
     
