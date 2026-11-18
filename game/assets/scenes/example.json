@@ -67,8 +67,14 @@
             200.0,
             200.0
           ],
-          "textureName": "saturn.png",
-          "texturePath": "../CloverRenderer/assets/textures/saturn.png",
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
+          "textureName": "textures/saturn.png",
           "useLinkedTexture": true,
           "uvRect": [
             0.0,
@@ -151,8 +157,14 @@
             200.0,
             119.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -232,8 +244,14 @@
             262.0,
             114.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -313,8 +331,14 @@
             127.0,
             111.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -394,8 +418,14 @@
             127.0,
             86.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -475,8 +505,14 @@
             253.0,
             142.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -556,8 +592,14 @@
             218.0,
             145.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -637,8 +679,14 @@
             238.0,
             119.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -718,8 +766,14 @@
             135.0,
             144.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -799,8 +853,14 @@
             233.0,
             123.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -880,8 +940,14 @@
             153.0,
             118.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -961,8 +1027,14 @@
             257.0,
             87.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -1042,8 +1114,14 @@
             229.0,
             128.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -1123,8 +1201,14 @@
             142.0,
             138.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -1204,8 +1288,14 @@
             164.0,
             98.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -1285,8 +1375,14 @@
             229.0,
             120.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -1366,8 +1462,14 @@
             293.0,
             98.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -1447,8 +1549,14 @@
             254.0,
             106.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -1528,8 +1636,14 @@
             231.0,
             58.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -1609,8 +1723,14 @@
             223.0,
             87.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -1690,8 +1810,14 @@
             229.0,
             91.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -1771,8 +1897,14 @@
             158.0,
             54.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -1852,8 +1984,14 @@
             173.0,
             136.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -1933,8 +2071,14 @@
             172.0,
             120.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2014,8 +2158,14 @@
             197.0,
             62.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2095,8 +2245,14 @@
             136.0,
             105.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2176,8 +2332,14 @@
             131.0,
             102.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2257,8 +2419,14 @@
             224.0,
             116.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2338,8 +2506,14 @@
             107.0,
             87.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2419,8 +2593,14 @@
             283.0,
             95.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2500,8 +2680,14 @@
             121.0,
             138.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2581,8 +2767,14 @@
             130.0,
             63.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2662,8 +2854,14 @@
             262.0,
             105.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2743,8 +2941,14 @@
             237.0,
             98.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2824,8 +3028,14 @@
             102.0,
             100.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2905,8 +3115,14 @@
             120.0,
             146.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -2986,8 +3202,14 @@
             168.0,
             134.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -3067,8 +3289,14 @@
             299.0,
             68.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -3148,8 +3376,14 @@
             227.0,
             117.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -3229,8 +3463,14 @@
             183.0,
             57.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -3310,8 +3550,14 @@
             113.0,
             64.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -3391,8 +3637,14 @@
             151.0,
             50.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -3472,8 +3724,14 @@
             298.0,
             53.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -3553,8 +3811,14 @@
             109.0,
             139.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -3634,8 +3898,14 @@
             193.0,
             93.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -3715,8 +3985,14 @@
             203.0,
             98.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -3796,8 +4072,14 @@
             280.0,
             146.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -3877,8 +4159,14 @@
             298.0,
             59.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -3958,8 +4246,14 @@
             238.0,
             142.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -4039,8 +4333,14 @@
             157.0,
             108.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -4120,8 +4420,14 @@
             256.0,
             61.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -4201,8 +4507,14 @@
             155.0,
             78.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -4282,8 +4594,14 @@
             175.0,
             83.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -4363,8 +4681,14 @@
             116.0,
             131.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -4444,8 +4768,14 @@
             121.0,
             149.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -4525,8 +4855,14 @@
             289.0,
             125.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -4606,8 +4942,14 @@
             103.0,
             119.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -4687,8 +5029,14 @@
             289.0,
             105.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -4768,8 +5116,14 @@
             282.0,
             135.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -4849,8 +5203,14 @@
             257.0,
             82.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -4930,8 +5290,14 @@
             221.0,
             139.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5011,8 +5377,14 @@
             192.0,
             75.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5092,8 +5464,14 @@
             141.0,
             62.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5173,8 +5551,14 @@
             253.0,
             89.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5254,8 +5638,14 @@
             187.0,
             79.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5335,8 +5725,14 @@
             249.0,
             143.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5416,8 +5812,14 @@
             186.0,
             55.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5497,8 +5899,14 @@
             234.0,
             64.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5578,8 +5986,14 @@
             286.0,
             113.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5659,8 +6073,14 @@
             153.0,
             62.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5740,8 +6160,14 @@
             213.0,
             106.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5821,8 +6247,14 @@
             282.0,
             131.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5902,8 +6334,14 @@
             229.0,
             111.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -5983,8 +6421,14 @@
             166.0,
             94.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -6064,8 +6508,14 @@
             153.0,
             74.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -6145,8 +6595,14 @@
             149.0,
             136.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -6226,8 +6682,14 @@
             268.0,
             68.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -6307,8 +6769,14 @@
             291.0,
             52.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -6388,8 +6856,14 @@
             214.0,
             74.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -6469,8 +6943,14 @@
             259.0,
             83.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -6550,8 +7030,14 @@
             218.0,
             127.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -6631,8 +7117,14 @@
             168.0,
             142.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -6712,8 +7204,14 @@
             113.0,
             77.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -6793,8 +7291,14 @@
             125.0,
             93.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -6874,8 +7378,14 @@
             161.0,
             131.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -6955,8 +7465,14 @@
             293.0,
             75.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -7036,8 +7552,14 @@
             122.0,
             136.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -7117,8 +7639,14 @@
             260.0,
             63.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -7198,8 +7726,14 @@
             135.0,
             83.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -7279,8 +7813,14 @@
             167.0,
             135.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -7360,8 +7900,14 @@
             195.0,
             74.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -7441,8 +7987,14 @@
             194.0,
             108.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -7522,8 +8074,14 @@
             178.0,
             143.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -7603,8 +8161,14 @@
             164.0,
             69.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -7684,8 +8248,14 @@
             160.0,
             76.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -7765,8 +8335,14 @@
             215.0,
             126.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -7846,8 +8422,14 @@
             264.0,
             59.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -7927,8 +8509,14 @@
             187.0,
             127.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8008,8 +8596,14 @@
             129.0,
             78.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8089,8 +8683,14 @@
             262.0,
             73.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8170,8 +8770,14 @@
             295.0,
             75.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8251,8 +8857,14 @@
             216.0,
             80.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8332,8 +8944,14 @@
             111.0,
             97.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8413,8 +9031,14 @@
             224.0,
             138.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8494,8 +9118,14 @@
             162.0,
             79.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8575,8 +9205,14 @@
             278.0,
             115.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8656,8 +9292,14 @@
             158.0,
             89.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8737,8 +9379,14 @@
             224.0,
             127.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8818,8 +9466,14 @@
             101.0,
             100.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8899,8 +9553,14 @@
             284.0,
             55.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -8980,8 +9640,14 @@
             135.0,
             106.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -9061,8 +9727,14 @@
             185.0,
             106.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -9142,8 +9814,14 @@
             226.0,
             107.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -9223,8 +9901,14 @@
             261.0,
             146.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -9304,8 +9988,14 @@
             217.0,
             146.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -9385,8 +10075,14 @@
             229.0,
             79.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -9466,8 +10162,14 @@
             196.0,
             105.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -9547,8 +10249,14 @@
             234.0,
             104.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -9628,8 +10336,14 @@
             232.0,
             113.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -9709,8 +10423,14 @@
             135.0,
             117.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -9790,8 +10510,14 @@
             123.0,
             92.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -9871,8 +10597,14 @@
             275.0,
             109.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -9952,8 +10684,14 @@
             126.0,
             84.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -10033,8 +10771,14 @@
             298.0,
             129.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -10114,8 +10858,14 @@
             137.0,
             84.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -10195,8 +10945,14 @@
             205.0,
             112.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -10276,8 +11032,14 @@
             113.0,
             91.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -10357,8 +11119,14 @@
             162.0,
             61.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -10438,8 +11206,14 @@
             252.0,
             93.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -10519,8 +11293,14 @@
             213.0,
             125.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -10600,8 +11380,14 @@
             117.0,
             82.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -10681,8 +11467,14 @@
             131.0,
             90.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -10762,8 +11554,14 @@
             197.0,
             139.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -10843,8 +11641,14 @@
             214.0,
             101.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -10924,8 +11728,14 @@
             235.0,
             109.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11005,8 +11815,14 @@
             281.0,
             53.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11086,8 +11902,14 @@
             192.0,
             147.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11167,8 +11989,14 @@
             127.0,
             117.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11248,8 +12076,14 @@
             113.0,
             124.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11329,8 +12163,14 @@
             183.0,
             63.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11410,8 +12250,14 @@
             292.0,
             109.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11491,8 +12337,14 @@
             184.0,
             125.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11572,8 +12424,14 @@
             187.0,
             97.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11653,8 +12511,14 @@
             163.0,
             56.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11734,8 +12598,14 @@
             189.0,
             90.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11815,8 +12685,14 @@
             213.0,
             141.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11896,8 +12772,14 @@
             250.0,
             55.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -11977,8 +12859,14 @@
             122.0,
             148.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -12058,8 +12946,14 @@
             271.0,
             114.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -12139,8 +13033,14 @@
             212.0,
             96.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -12220,8 +13120,14 @@
             219.0,
             135.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -12301,8 +13207,14 @@
             240.0,
             95.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -12382,8 +13294,14 @@
             101.0,
             73.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -12463,8 +13381,14 @@
             187.0,
             120.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -12544,8 +13468,14 @@
             123.0,
             77.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -12625,8 +13555,14 @@
             265.0,
             78.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -12706,8 +13642,14 @@
             243.0,
             87.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -12787,8 +13729,14 @@
             181.0,
             138.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -12868,8 +13816,14 @@
             121.0,
             108.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -12949,8 +13903,14 @@
             190.0,
             99.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -13030,8 +13990,14 @@
             248.0,
             117.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -13111,8 +14077,14 @@
             126.0,
             135.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -13192,8 +14164,14 @@
             124.0,
             98.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -13273,8 +14251,14 @@
             266.0,
             94.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -13354,8 +14338,14 @@
             111.0,
             75.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -13435,8 +14425,14 @@
             196.0,
             134.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -13516,8 +14512,14 @@
             175.0,
             63.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -13597,8 +14599,14 @@
             172.0,
             76.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -13678,8 +14686,14 @@
             104.0,
             55.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -13759,8 +14773,14 @@
             193.0,
             115.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -13840,8 +14860,14 @@
             114.0,
             144.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -13921,8 +14947,14 @@
             138.0,
             132.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14002,8 +15034,14 @@
             130.0,
             91.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14083,8 +15121,14 @@
             286.0,
             140.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14164,8 +15208,14 @@
             193.0,
             103.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14245,8 +15295,14 @@
             162.0,
             83.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14326,8 +15382,14 @@
             203.0,
             106.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14407,8 +15469,14 @@
             113.0,
             59.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14488,8 +15556,14 @@
             218.0,
             108.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14569,8 +15643,14 @@
             164.0,
             53.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14650,8 +15730,14 @@
             202.0,
             111.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14731,8 +15817,14 @@
             153.0,
             124.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14812,8 +15904,14 @@
             131.0,
             119.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14893,8 +15991,14 @@
             119.0,
             121.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -14974,8 +16078,14 @@
             204.0,
             142.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -15055,8 +16165,14 @@
             289.0,
             72.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -15136,8 +16252,14 @@
             161.0,
             84.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -15217,8 +16339,14 @@
             193.0,
             65.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -15298,8 +16426,14 @@
             158.0,
             50.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -15379,8 +16513,14 @@
             115.0,
             105.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -15460,8 +16600,14 @@
             112.0,
             138.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -15541,8 +16687,14 @@
             210.0,
             134.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -15622,8 +16774,14 @@
             251.0,
             91.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -15703,8 +16861,14 @@
             198.0,
             123.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -15784,8 +16948,14 @@
             256.0,
             139.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -15865,8 +17035,14 @@
             290.0,
             73.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -15946,8 +17122,14 @@
             278.0,
             50.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16027,8 +17209,14 @@
             171.0,
             83.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16108,8 +17296,14 @@
             268.0,
             75.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16189,8 +17383,14 @@
             298.0,
             59.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16270,8 +17470,14 @@
             216.0,
             99.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16351,8 +17557,14 @@
             164.0,
             71.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16432,8 +17644,14 @@
             216.0,
             76.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16513,8 +17731,14 @@
             264.0,
             90.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16594,8 +17818,14 @@
             221.0,
             114.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16675,8 +17905,14 @@
             173.0,
             74.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16756,8 +17992,14 @@
             123.0,
             81.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16837,8 +18079,14 @@
             102.0,
             57.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16918,8 +18166,14 @@
             236.0,
             80.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -16999,8 +18253,14 @@
             256.0,
             140.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -17080,8 +18340,14 @@
             154.0,
             95.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -17161,8 +18427,14 @@
             212.0,
             81.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -17242,8 +18514,14 @@
             222.0,
             54.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -17323,8 +18601,14 @@
             179.0,
             88.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -17404,8 +18688,14 @@
             159.0,
             148.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -17485,8 +18775,14 @@
             133.0,
             108.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -17566,8 +18862,14 @@
             137.0,
             75.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -17647,8 +18949,14 @@
             107.0,
             148.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -17728,8 +19036,14 @@
             178.0,
             149.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -17809,8 +19123,14 @@
             240.0,
             65.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -17890,8 +19210,14 @@
             236.0,
             147.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -17971,8 +19297,14 @@
             151.0,
             66.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -18052,8 +19384,14 @@
             158.0,
             79.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -18133,8 +19471,14 @@
             247.0,
             112.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -18214,8 +19558,14 @@
             261.0,
             104.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -18295,8 +19645,14 @@
             246.0,
             138.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -18376,8 +19732,14 @@
             175.0,
             65.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -18457,8 +19819,14 @@
             228.0,
             84.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -18538,8 +19906,14 @@
             257.0,
             112.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -18619,8 +19993,14 @@
             169.0,
             80.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -18700,8 +20080,14 @@
             225.0,
             60.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -18781,8 +20167,14 @@
             178.0,
             143.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -18862,8 +20254,14 @@
             291.0,
             99.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -18943,8 +20341,14 @@
             104.0,
             87.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19024,8 +20428,14 @@
             108.0,
             118.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19105,8 +20515,14 @@
             273.0,
             102.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19186,8 +20602,14 @@
             296.0,
             122.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19267,8 +20689,14 @@
             119.0,
             93.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19348,8 +20776,14 @@
             119.0,
             115.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19429,8 +20863,14 @@
             150.0,
             65.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19510,8 +20950,14 @@
             193.0,
             124.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19591,8 +21037,14 @@
             273.0,
             139.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19672,8 +21124,14 @@
             258.0,
             81.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19753,8 +21211,14 @@
             122.0,
             124.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19834,8 +21298,14 @@
             282.0,
             141.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19915,8 +21385,14 @@
             264.0,
             52.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -19996,8 +21472,14 @@
             272.0,
             71.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -20077,8 +21559,14 @@
             289.0,
             55.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -20158,8 +21646,14 @@
             243.0,
             104.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -20239,8 +21733,14 @@
             139.0,
             78.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -20320,8 +21820,14 @@
             108.0,
             65.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -20401,8 +21907,14 @@
             134.0,
             54.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -20482,8 +21994,14 @@
             245.0,
             56.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -20563,8 +22081,14 @@
             192.0,
             137.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -20644,8 +22168,14 @@
             147.0,
             71.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -20725,8 +22255,14 @@
             276.0,
             133.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -20806,8 +22342,14 @@
             118.0,
             126.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -20887,8 +22429,14 @@
             156.0,
             140.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -20968,8 +22516,14 @@
             177.0,
             119.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -21049,8 +22603,14 @@
             168.0,
             118.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -21130,8 +22690,14 @@
             128.0,
             77.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -21211,8 +22777,14 @@
             112.0,
             53.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -21292,8 +22864,14 @@
             208.0,
             135.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -21373,8 +22951,14 @@
             213.0,
             51.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -21454,8 +23038,14 @@
             150.0,
             99.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -21535,8 +23125,14 @@
             181.0,
             115.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -21616,8 +23212,14 @@
             134.0,
             122.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -21697,8 +23299,14 @@
             142.0,
             127.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -21778,8 +23386,14 @@
             264.0,
             131.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -21859,8 +23473,14 @@
             123.0,
             129.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -21940,8 +23560,14 @@
             142.0,
             60.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22021,8 +23647,14 @@
             187.0,
             120.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22102,8 +23734,14 @@
             113.0,
             110.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22183,8 +23821,14 @@
             110.0,
             122.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22264,8 +23908,14 @@
             218.0,
             53.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22345,8 +23995,14 @@
             181.0,
             107.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22426,8 +24082,14 @@
             158.0,
             111.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22507,8 +24169,14 @@
             178.0,
             139.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22588,8 +24256,14 @@
             286.0,
             136.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22669,8 +24343,14 @@
             148.0,
             78.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22750,8 +24430,14 @@
             266.0,
             85.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22831,8 +24517,14 @@
             192.0,
             132.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22912,8 +24604,14 @@
             144.0,
             144.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -22993,8 +24691,14 @@
             132.0,
             85.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -23074,8 +24778,14 @@
             143.0,
             99.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -23155,8 +24865,14 @@
             200.0,
             62.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -23236,8 +24952,14 @@
             174.0,
             83.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -23317,8 +25039,14 @@
             290.0,
             147.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -23398,8 +25126,14 @@
             231.0,
             94.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -23479,8 +25213,14 @@
             225.0,
             133.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -23560,8 +25300,14 @@
             152.0,
             61.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -23641,8 +25387,14 @@
             197.0,
             135.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -23722,8 +25474,14 @@
             291.0,
             142.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -23803,8 +25561,14 @@
             279.0,
             121.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -23884,8 +25648,14 @@
             120.0,
             147.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -23965,8 +25735,14 @@
             282.0,
             128.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -24046,8 +25822,14 @@
             259.0,
             99.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -24127,8 +25909,14 @@
             108.0,
             117.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -24208,8 +25996,14 @@
             270.0,
             57.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -24289,8 +26083,14 @@
             111.0,
             69.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -24370,8 +26170,14 @@
             263.0,
             133.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -24451,8 +26257,14 @@
             241.0,
             104.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -24532,8 +26344,14 @@
             160.0,
             65.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -24613,8 +26431,14 @@
             180.0,
             148.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -24694,8 +26518,14 @@
             140.0,
             67.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -24775,8 +26605,14 @@
             182.0,
             99.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -24856,8 +26692,14 @@
             121.0,
             145.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -24937,8 +26779,14 @@
             278.0,
             129.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25018,8 +26866,14 @@
             107.0,
             79.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25099,8 +26953,14 @@
             176.0,
             103.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25180,8 +27040,14 @@
             193.0,
             58.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25261,8 +27127,14 @@
             214.0,
             118.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25342,8 +27214,14 @@
             222.0,
             98.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25423,8 +27301,14 @@
             146.0,
             127.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25504,8 +27388,14 @@
             174.0,
             141.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25585,8 +27475,14 @@
             193.0,
             141.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25666,8 +27562,14 @@
             140.0,
             102.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25747,8 +27649,14 @@
             126.0,
             112.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25828,8 +27736,14 @@
             280.0,
             147.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25909,8 +27823,14 @@
             161.0,
             128.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -25990,8 +27910,14 @@
             111.0,
             97.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -26040,8 +27966,14 @@
             3000.0,
             3000.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/shrew1.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/shrew1.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.063232421875,
@@ -26121,8 +28053,14 @@
             16000.0,
             64.0
           ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
           "textureName": "textures/white.jpg",
-          "texturePath": "../CloverRenderer/assets/textures/white.jpg",
           "useLinkedTexture": false,
           "uvRect": [
             0.657958984375,
@@ -26641,7 +28579,7 @@
     "Game State System": null,
     "GameSystem": null,
     "Physics World": {
-      "debugDraw": true,
+      "debugDraw": false,
       "gravity": [
         0.0,
         -20.0
@@ -26649,6 +28587,12 @@
       "substeps": 4
     },
     "Renderer": {
+      "ambientColor": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "ambientIntensity": 0.10499999672174454,
       "spriteLayers": [
         {
           "id": 3,
