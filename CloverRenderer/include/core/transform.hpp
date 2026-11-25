@@ -17,8 +17,12 @@ namespace clvr
 		XMFLOAT2 scale;
 		float rotation;
 		entt::entity parent = entt::null;
-
+		std::vector<entt::entity> children = {};
+		
 		Transform() : position(0.0f, 0.0f), scale(1.0f, 1.0f), rotation(0.0f) {}
+
+		void SetParent(entt::entity p, entt::entity c);
+
 		XMMATRIX GetLocal() const {
 			XMMATRIX translationMatrix = XMMatrixTranslation(position.x, position.y, 0.0f);
 			XMMATRIX rotationMatrix = XMMatrixRotationZ(rotation);
@@ -51,6 +55,9 @@ namespace clvr
 		XMFLOAT2 GetLocalPosition() const { return position; }
 		XMFLOAT2 GetLocalScale() const { return scale; }
 		float GetLocalRotation() const { return rotation; }
+
+		void ForceTransformUpdate();
+		void Teleport(XMFLOAT2 pos);
 
 		void Inspect();
 	};

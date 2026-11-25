@@ -659,6 +659,24 @@ namespace clvr
 		ImGui::TextUnformatted("Backdrop");
 		BackdropPicker();
 		ImGui::Checkbox("Show backdrop", &m_showBackdrop);
+		
+		// check box for doors
+		if (ImGui::CollapsingHeader("Doors", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				int d = 1 << i;
+				const std::string label = DoorDirectionToString(static_cast<DoorType>(d));
+				bool hasDoor = m_currentRoom.HasDoor(static_cast<DoorType>(d));
+				if (ImGui::Checkbox(label.c_str(), &hasDoor)) 
+				{
+					m_currentRoom.SetDoor(static_cast<DoorType>(d), hasDoor);
+					m_dirty = true;
+				}
+			}
+		}
+
+		ImGui::Separator();
 	}
 
 	void RoomEditor::SetBackdrop(BackdropID id)

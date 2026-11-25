@@ -506,6 +506,7 @@
     <ClInclude Include="include\level\backdrop.hpp" />
     <ClInclude Include="include\level\backdrop_sprites.hpp" />
     <ClInclude Include="include\level\common.hpp" />
+    <ClInclude Include="include\level\door_sensor_command.hpp" />
     <ClInclude Include="include\level\grid.hpp" />
     <ClInclude Include="include\level\room.hpp" />
     <ClInclude Include="include\level\room_editor.hpp" />
@@ -541,6 +542,7 @@
     <ClInclude Include="include\level\dungeon.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\level\door_sensor_command.cpp" />
     <ClCompile Include="source\level\dungeon.cpp" />
     <ClCompile Include="source\level\room_loader.cpp" />
     <ClCompile Include="source\level\backdrop_sprites.cpp" />

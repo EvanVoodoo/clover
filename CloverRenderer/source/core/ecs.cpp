@@ -1,5 +1,6 @@
 #include "core/ecs.hpp"
 #include <core/engine.hpp>
+#include <core/transform.hpp>
 
 using namespace clvr;
 using namespace std;
@@ -26,6 +27,11 @@ void EntityComponentSystem::DeleteEntity(Entity e)
 
     // mark this entity for deletion
     m_active->emplace_or_replace<Delete>(e);
+
+	auto t = m_active->try_get<Transform>(e);
+	for (auto child : t->children) {
+		DeleteEntity(child);
+	}
 }
 
 void EntityComponentSystem::UpdateSystems(float dt)

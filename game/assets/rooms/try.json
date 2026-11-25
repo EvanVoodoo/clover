@@ -1,7 +1,7 @@
 {
   "backdropId": 1,
   "difficulty": 1,
-  "doors": 0,
+  "doors": 15,
   "gameplayLayer": [
     [
       0,

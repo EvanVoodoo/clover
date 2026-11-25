@@ -1,0 +1,249 @@
+{
+  "entities": [
+    {
+      "CircleCollider": {
+        "category": "Player",
+        "isSensor": false,
+        "material": {
+          "density": 1.0,
+          "enableContactEvents": true,
+          "enableHitEvents": false,
+          "enableSensorEvents": true,
+          "friction": 0.0,
+          "restitution": 0.0,
+          "rollingResistance": 0.0,
+          "tangentSpeed": 0.0
+        },
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "radius": 71.0
+      },
+      "Health Component": {
+        "alive": true,
+        "currentHealth": 100.0,
+        "invincible": false,
+        "maxHealth": 100.0
+      },
+      "Player Component": {
+        "acceleration": 3500.0,
+        "crouchScale": 0.5,
+        "deceleration": 1500.0,
+        "maxSpeed": 550.0,
+        "sprintScale": 2.0
+      },
+      "RigidBody": {
+        "angularDamping": 0.0,
+        "bodyType": 2,
+        "enableSleep": false,
+        "fixedRotation": true,
+        "gravityScale": 1.0,
+        "isBullet": false,
+        "linearDamping": 0.0
+      },
+      "Sprite": {
+        "sprite": {
+          "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "flipX": false,
+          "flipY": false,
+          "isOccluder": false,
+          "layerId": 1,
+          "pivot": [
+            -107374176.0,
+            -107374176.0
+          ],
+          "position": [
+            0.0,
+            -300.0
+          ],
+          "rotation": -107374176.0,
+          "size": [
+            200.0,
+            200.0
+          ],
+          "subRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "textureDir": 0,
+          "textureName": "textures/saturn.png",
+          "useLinkedTexture": true,
+          "uvRect": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "Transform": {
+        "name": "Player",
+        "position": [
+          0.0,
+          -178.0
+        ],
+        "rotation": 0.0,
+        "scale": [
+          1.0,
+          1.0
+        ]
+      },
+      "controlled": {
+        "type": "player"
+      }
+    },
+    {
+      "Camera Component": {
+        "followSpeed": 20.0,
+        "followTarget": false
+      },
+      "Transform": {
+        "name": "Game Camera",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "rotation": 0.0,
+        "scale": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "Light": {
+        "color": [
+          0.7408764958381653,
+          0.0001055598258972168,
+          0.7586760520935059
+        ],
+        "direction": [
+          -662.5,
+          -1081.25,
+          0.0
+        ],
+        "intensity": 2370.0,
+        "type": 1.0
+      },
+      "Transform": {
+        "name": "Point Light 2",
+        "position": [
+          -662.5,
+          -1081.25
+        ],
+        "rotation": 0.0,
+        "scale": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "Light": {
+        "color": [
+          0.017721325159072876,
+          0.8552608489990234,
+          0.6272610425949097
+        ],
+        "direction": [
+          706.25,
+          -310.15625,
+          0.0
+        ],
+        "intensity": 742.5,
+        "type": 1.0
+      },
+      "Transform": {
+        "name": "Point Light 1",
+        "position": [
+          706.25,
+          -310.15625
+        ],
+        "rotation": 0.0,
+        "scale": [
+          1.0,
+          1.0
+        ]
+      }
+    }
+  ],
+  "parents": [
+    -1,
+    -1,
+    -1,
+    -1
+  ],
+  "systems": {
+    "": null,
+    "Damage System": null,
+    "Game State System": null,
+    "GameSystem": null,
+    "Physics World": {
+      "debugDraw": true,
+      "gravity": [
+        0.0,
+        0.0
+      ],
+      "substeps": 4
+    },
+    "Renderer": {
+      "ambientColor": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "ambientIntensity": 1.0,
+      "spriteLayers": [
+        {
+          "id": 9,
+          "layerName": "Sprite Layer 9",
+          "parallaxFactor": 1.0
+        },
+        {
+          "id": 8,
+          "layerName": "Sprite Layer 8",
+          "parallaxFactor": 1.0
+        },
+        {
+          "id": 7,
+          "layerName": "Sprite Layer 7",
+          "parallaxFactor": 1.0
+        },
+        {
+          "id": 6,
+          "layerName": "Sprite Layer 6",
+          "parallaxFactor": 1.0
+        },
+        {
+          "id": 3,
+          "layerName": "Further Background Layer",
+          "parallaxFactor": 0.20000000298023224
+        },
+        {
+          "id": 2,
+          "layerName": "Background Layer",
+          "parallaxFactor": 0.5
+        },
+        {
+          "id": 1,
+          "layerName": "Sprite Layer",
+          "parallaxFactor": 1.0
+        },
+        {
+          "id": 0,
+          "layerName": "Default Layer",
+          "parallaxFactor": 1.0
+        }
+      ]
+    }
+  },
+  "version": 1.0
+}

@@ -4,21 +4,13 @@
 #include <cstdint>
 #include "grid.hpp"
 #include "backdrop.hpp"
+#include <string>
 
 namespace clvr
 {
 	using Layer = std::vector<std::vector<TileID>>;
 
-	enum class DoorType : std::uint8_t
-	{
-		None = 0,
-		North = 1 << 0,
-		East = 1 << 1,
-		South = 1 << 2,
-		West = 1 << 3,
-	};
-
-	using DoorFlags = std::uint8_t; // bitmask of DoorType
+	struct RoomTag {}; // for ecs
 
 	struct RoomData
 	{
@@ -28,7 +20,7 @@ namespace clvr
 		int height = CLVR_ROOM_HEIGHT;
 
 		RoomType type = RoomType::Normal;
-		DoorFlags doors = 0;
+		DoorFlags doors = static_cast<std::uint8_t>(DoorType::ALL);
 
 		int difficulty = 1;
 		int weight = 1;

@@ -5,6 +5,7 @@
 #include <core/engine.hpp>
 #include <core/scene.hpp>
 #include <core/components.hpp>
+#include <algorithm>
 
 using namespace clvr;
 
@@ -526,6 +527,12 @@ SpriteLayer* Renderer::CreateSpriteLayer(const unsigned int id, float parallaxFa
 	newLayer->parallaxFactor = parallaxFactor;
 
 	m_spriteLayers.push_back(newLayer);
+
+	// sort the layers by id so that they are always in the same order
+	std::stable_sort(m_spriteLayers.begin(), m_spriteLayers.end(),
+					 [](const SpriteLayer* a, const SpriteLayer* b) { return a->id > b->id; });
+
+
 	return newLayer;
 }
 

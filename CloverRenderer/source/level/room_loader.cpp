@@ -21,9 +21,17 @@
 #include <types.h>
 #include <utility>
 #include <vector>
+#include <random>
+#include <physics/sensor_component.hpp>
+#include <physics/world.hpp>
+#include <physics/world_helpers.hpp>
+#include <level/door_sensor_command.hpp>
 
 namespace clvr {
-	RoomLoader::RoomLoader() {}
+	RoomLoader::RoomLoader() 
+	{
+		priority = 20; // has to run before the Dungeon system, which is priority 25
+	}
 	RoomLoader::~RoomLoader() {}
 
 	void RoomLoader::Update(float)
@@ -35,7 +43,7 @@ namespace clvr {
 
 	void RoomLoader::Inspect(float)
 	{
-		auto rm = Engine.GetResourceManager();
+		/*auto rm = Engine.GetResourceManager();
 
 		if (m_roomListDirty)
 		{
@@ -84,7 +92,7 @@ namespace clvr {
 				std::cerr << "Test spawn failed for " << m_roomFileNames[m_selectedRoom] << '\n';
 			}
 		}
-		ImGui::EndDisabled();
+		ImGui::EndDisabled();*/
 	}
 
 	void RoomLoader::OnPlayStart()
@@ -97,28 +105,96 @@ namespace clvr {
 		const auto backdropPath = rm->GetPath(ResourceManager::Directory::Assets, "backdrops/backdrops.json");
 		auto backdropDb = rm->Load<BackdropDatabase>(backdropPath.c_str());
 		backdropDb->Sprites().Refresh();
+
+		ReloadAllRooms();
 	}
 
-	std::vector<RoomData> RoomLoader::GetAllRooms()
+	std::vector<RoomData> RoomLoader::ReloadAllRooms()
 	{
-		std::vector<RoomData> rooms;
+		m_rooms.clear();
 
 		auto rm = Engine.GetResourceManager();
 		auto roomFiles = rm->GetFilesInDirectory(ResourceManager::Directory::Assets, "rooms", ".json");
 		
+		// Same order every run, so a seed always maps to the same room
+		std::sort(roomFiles.begin(), roomFiles.end(),
+				  [](const FileInfo& a, const FileInfo& b) { return a.name < b.name; });
+
+		auto tileDb = rm->Load<TileDatabase>(
+			rm->GetPath(ResourceManager::Directory::Assets, "tiles/tiles.json").c_str());
+
 		for (const auto& file : roomFiles) {
 			RoomData room;
-			std::string error = "";
-			LoadRoomFromFile(rm->GetPath(ResourceManager::Directory::Assets, file.name), *rm->Load<TileDatabase>(rm->GetPath(ResourceManager::Directory::Assets, "tiles/tiles.json").c_str()), room, error);
-			if (!error.empty()) {
-				// Handle the error, e.g., log it or display a message
+			std::string error;
+			if (!LoadRoomFromFile(file.path, *tileDb, room, error))
+			{
+				std::cerr << "Skipping " << file.name << ": " << error << '\n';
+				continue;
 			}
-			else {
-				rooms.push_back(std::move(room));
-			}
+
+			room.id = static_cast<int>(m_rooms.size());   // index into the returned vector
+			m_rooms.push_back(std::move(room));
 		}
 
-		return rooms;
+		return m_rooms;
+	}
+
+	bool RoomLoader::AssignRandomRoom(DungeonCell& room)
+	{
+		std::vector<int> validRoomIds;
+
+		// First, filter the rooms based on the criteria
+		for (const auto& r : m_rooms) {
+			if ((r.doors & room.connections) != room.connections) continue; // skip if the room doesn't have all required doors
+			// ... add any other criteria checks here if needed, like difficulty level, etc.
+
+			validRoomIds.push_back(r.id);
+		}
+
+		// Then, if there are valid rooms, select one at random using a seeded random number generator
+		if (validRoomIds.empty()) {
+			return false; // no valid rooms found
+		}
+		std::uniform_int_distribution<int> dist(0, static_cast<int>(validRoomIds.size()) - 1);
+		room.roomDataIndex = validRoomIds[dist(LayoutRNG::m_rng)]; // assign a random index from the valid rooms
+
+		return true;
+	}
+
+	void RoomLoader::SpawnDoorTrigger(Entity root, XMFLOAT2 halfExtents, DoorType door)
+	{
+		auto ecs = Engine.GetECS();
+		Entity doorEntity = ecs->CreateEntity();
+
+		Transform& doorTransform = ecs->CreateComponent<Transform>(doorEntity);
+		doorTransform.SetParent(root, doorEntity);
+		
+		SensorComponent& doorSensor = CreateBoxSensor(ecs->GetSystem<World>(), doorEntity, halfExtents.x, halfExtents.y, CollisionFilters::CC::Door);
+		DoorSensorCommand& dSC = doorSensor.AddCommand<DoorSensorCommand>();
+
+		DoorComponent& doorComp = ecs->CreateComponent<DoorComponent>(doorEntity);
+
+		switch (door)
+		{
+			case DoorType::North:
+				doorTransform.position = { 0.0f, (-RoomUtils::PitchY() - CLVR_TILE_SIZE * 0.5f) * 0.5f };
+				doorComp.type = DoorType::North;
+				break;
+			case DoorType::East:
+				doorTransform.position = { (RoomUtils::PitchX() + CLVR_TILE_SIZE * 0.5f) * 0.5f, 0.0f };
+				doorComp.type = DoorType::East;
+				break;
+			case DoorType::South:
+				doorTransform.position = { 0.0f, (RoomUtils::PitchY() + CLVR_TILE_SIZE * 0.5f) * 0.5f };
+				doorComp.type = DoorType::South;
+				break;
+			case DoorType::West:
+				doorTransform.position = { (-RoomUtils::PitchX() - CLVR_TILE_SIZE * 0.5f) * 0.5f, 0.0f };
+				doorComp.type = DoorType::West;
+				break;
+			default:
+				break;
+		}
 	}
 
 	bool RoomLoader::SpawnTile(const TileDef& tileDef, std::shared_ptr<TileDatabase> tileDb, Entity roomTransform,
@@ -137,7 +213,7 @@ namespace clvr {
 		Entity tileEntity = ecs.CreateEntity();
 
 		auto& transform = ecs.CreateComponent<Transform>(tileEntity);
-		transform.parent = roomTransform;
+		transform.SetParent(roomTransform, tileEntity);
 		transform.position = localPos;
 
 		auto& spriteComp = ecs.CreateComponent<SpriteComponent>(tileEntity);
@@ -169,32 +245,34 @@ namespace clvr {
 		return true;
 	}
 
-	bool RoomLoader::SpawnRoom(const std::filesystem::path& path, std::shared_ptr<TileDatabase> tileDb, std::shared_ptr<BackdropDatabase> backdropDb,
-							   XMFLOAT2 worldPos, float tileSize, unsigned int baseLayerId, Entity& outRoot)
+	Entity RoomLoader::SpawnRoom(const std::filesystem::path& path, const DoorFlags doors, std::shared_ptr<TileDatabase> tileDb, std::shared_ptr<BackdropDatabase> backdropDb,
+							   XMFLOAT2 worldPos, float tileSize, unsigned int baseLayerId)
 	{
 		RoomData room;
 		std::string error;
 		if (!LoadRoomFromFile(path, *tileDb, room, error))
 		{
 			std::cerr << "Failed to load room: " << error << '\n';
-			return false;
+			return entt::null;
 		}
-		return SpawnRoom(room, tileDb, backdropDb, worldPos, tileSize, baseLayerId, outRoot);
+		return SpawnRoom(room, doors, tileDb, backdropDb, worldPos, tileSize, baseLayerId);
 	}
 
-	bool RoomLoader::SpawnRoom(const RoomData& room, std::shared_ptr<TileDatabase> tileDb, std::shared_ptr<BackdropDatabase> backdropDb,
-								   XMFLOAT2 worldPos, float tileSize, unsigned int baseLayerId, Entity& outRoot)
+	Entity RoomLoader::SpawnRoom(const RoomData& room, const DoorFlags doors, std::shared_ptr<TileDatabase> tileDb, std::shared_ptr<BackdropDatabase> backdropDb,
+								   XMFLOAT2 worldPos, float tileSize, unsigned int baseLayerId)
 	{
+		Entity result = entt::null;
 		auto& ecs = Engine.GetECSRef();
 		Entity root = ecs.CreateEntity();
 		auto& rootTransform = ecs.CreateComponent<Transform>(root);
 		rootTransform.position = worldPos;
+		ecs.CreateComponent<RoomTag>(root);
 
 		SpawnBackdrop(room, backdropDb, root, tileSize, baseLayerId);
 
 		// Center the room on the root so the dungeon can place it by cell position
-		const float halfW = (room.width - 1) * 0.5f;
-		const float halfH = (room.height - 1) * 0.5f;
+		const float halfW = (room.width - 2) * 0.5f;
+		const float halfH = (room.height - 2) * 0.5f;
 
 		for (size_t layerIdx = 0; layerIdx < room.visualLayers.size(); ++layerIdx)
 		{
@@ -213,16 +291,107 @@ namespace clvr {
 						continue;
 
 					// Row 0 is the top of the file, so flip y if your world is y-up
-					const XMFLOAT2 localPos{ (x - halfW) * tileSize, (halfH - y) * tileSize };
+					const XMFLOAT2 localPos{ (x - halfW - 0.5f) * tileSize, (halfH - y + 0.5f) * tileSize };
 
-					SpawnTile(*def, tileDb, root, localPos, tileSize,
-							  baseLayerId - 1 - static_cast<unsigned int>(layerIdx));
+					if (!SpawnTile(*def, tileDb, root, localPos, tileSize,
+								   baseLayerId - 1 - static_cast<unsigned int>(layerIdx)))
+					{
+						return result;
+					}
 				}
 			}
 		}
 
-		outRoot = root;
-		return true;
+		// create room colliders
+		const float left   = (-halfW - 1.5f) * tileSize;
+		const float right = (room.width - 1 - halfW + 0.5f) * tileSize;
+		const float top = (halfH + 1.5f) * tileSize;
+		const float bottom = (halfH - (room.height - 1) - 0.5f) * tileSize;
+
+		const BackdropDef* bd = backdropDb ? backdropDb->Get(room.backdropId) : nullptr;
+		const float thickness = (bd ? bd->wallThickness : 1) * tileSize;
+
+		SpawnWalls(root, left, right, top, bottom, thickness, doors, 2.0f * tileSize);
+
+		// check bit flags in room.doors to determine which doors exist and spawn triggers accordingly
+		if (doors & static_cast<std::uint8_t>(DoorType::North))
+		{
+			// spawn north door trigger
+			SpawnDoorTrigger(root, { tileSize * 0.5f, tileSize * 0.5f }, DoorType::North);
+		}
+		if (doors & static_cast<std::uint8_t>(DoorType::East))
+		{
+			// spawn east door trigger
+			SpawnDoorTrigger(root, { tileSize * 0.5f, tileSize * 0.5f }, DoorType::East);
+		}
+		if (doors & static_cast<std::uint8_t>(DoorType::South))
+		{
+			// spawn south door trigger
+			SpawnDoorTrigger(root, { tileSize * 0.5f, tileSize * 0.5f }, DoorType::South);
+		}
+		if (doors & static_cast<std::uint8_t>(DoorType::West))
+		{
+			// spawn west door trigger
+			SpawnDoorTrigger(root, { tileSize * 0.5f, tileSize * 0.5f }, DoorType::West);
+		}
+
+		result = root;
+		return result;
+	}
+
+	Entity RoomLoader::SpawnWall(Entity root, XMFLOAT2 center, XMFLOAT2 halfExtents)
+	{
+		auto& ecs = Engine.GetECSRef();
+		Entity wall = ecs.CreateEntity();
+
+		auto& t = ecs.CreateComponent<Transform>(wall);
+		t.SetParent(root, wall);
+		t.position = center;   // local to the room root
+
+		CreateBoxCollider(Engine.GetECS()->GetSystem<World>(), wall,
+						  halfExtents.x, halfExtents.y, CollisionFilters::CC::Wall);
+		return wall;
+	}
+
+	void RoomLoader::SpawnWalls(Entity root, float left, float right, float top, float bottom,
+								float thickness, DoorFlags doors, float doorWidth)
+	{
+		const float ht = thickness * 0.5f;
+		const auto has = [&](DoorType d) { return (doors & static_cast<std::uint8_t>(d)) != 0; };
+
+		// North and south span the full width including the corners
+		SpawnWallSide(root, true, top + ht, left - thickness, right + thickness, ht, has(-DoorType::North), doorWidth);
+		SpawnWallSide(root, true, bottom - ht, left - thickness, right + thickness, ht, has(-DoorType::South), doorWidth);
+		// East and west only span the height between them
+		SpawnWallSide(root, false, right + ht, bottom, top, ht, has(DoorType::East), doorWidth);
+		SpawnWallSide(root, false, left - ht, bottom, top, ht, has(DoorType::West), doorWidth);
+	}
+
+	void RoomLoader::SpawnWallSide(Entity root, bool horizontal, float fixed, float from, float to,
+								   float halfThickness, bool hasDoor, float doorWidth)
+	{
+		auto addSegment = [&](float a, float b)
+		{
+			if (b - a <= 0.001f)
+				return; // gap as wide as the wall, nothing to spawn
+
+			const float mid = (a + b) * 0.5f;
+			const float half = (b - a + 0.85f * CLVR_TILE_SIZE) * 0.5f;
+			if (horizontal)
+				SpawnWall(root, { mid, fixed }, { half, halfThickness });
+			else
+				SpawnWall(root, { fixed, mid }, { halfThickness, half });
+		};
+
+		if (!hasDoor)
+		{
+			addSegment(from, to);
+			return;
+		}
+
+		const float mid = (from + to) * 0.5f;
+		addSegment(from, mid - doorWidth * 0.5f);
+		addSegment(mid + doorWidth * 0.5f, to);
 	}
 
 	bool RoomLoader::SpawnBackdrop(const RoomData& room, std::shared_ptr<BackdropDatabase> backdropDb,
@@ -240,7 +409,7 @@ namespace clvr {
 		Entity e = ecs.CreateEntity();
 
 		auto& transform = ecs.CreateComponent<Transform>(e);
-		transform.parent = roomRoot;
+		transform.SetParent(roomRoot, e);
 		transform.position = { 0.0f, 0.0f };   // image is centered on the room (symmetric wall frame)
 
 		auto& spriteComp = ecs.CreateComponent<SpriteComponent>(e);

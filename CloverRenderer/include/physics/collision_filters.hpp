@@ -17,7 +17,8 @@ namespace clvr
 			Obstacle = 1ULL << 3,
 			PlayerProjectile = 1ULL << 4,
 			EnemyProjectile = 1ULL << 5,
-			Default = 1ULL << 6,
+			Door = 1ULL << 6,
+			Default = 1ULL << 16,
 		};
 
 		constexpr CollisionCategory operator|(CollisionCategory a, CollisionCategory b) {
@@ -26,24 +27,26 @@ namespace clvr
 
 		inline constexpr std::string_view ToString(CollisionCategory c) {
 			switch (c) {
-				case CollisionCategory::Player:           return "Player";
-				case CollisionCategory::Enemy:            return "Enemy";
-				case CollisionCategory::Wall:             return "Wall";
-				case CollisionCategory::Obstacle:         return "Obstacle";
-				case CollisionCategory::PlayerProjectile: return "PlayerProjectile";
-				case CollisionCategory::EnemyProjectile:  return "EnemyProjectile";
-				case CollisionCategory::Default:          return "Default";
-				default:                                  return "Default";
+				case CollisionCategory::Player:				return "Player";
+				case CollisionCategory::Enemy:				return "Enemy";
+				case CollisionCategory::Wall:				return "Wall";
+				case CollisionCategory::Obstacle:			return "Obstacle";
+				case CollisionCategory::PlayerProjectile:	return "PlayerProjectile";
+				case CollisionCategory::EnemyProjectile:	return "EnemyProjectile";
+				case CollisionCategory::Door:				return "Door";
+				case CollisionCategory::Default:			return "Default";
+				default:									return "Default";
 			}
 		}
 
 		inline constexpr CollisionCategory CategoryFromString(std::string_view s) {
-			if (s == "Player")           return CollisionCategory::Player;
-			if (s == "Enemy")            return CollisionCategory::Enemy;
-			if (s == "Wall")             return CollisionCategory::Wall;
-			if (s == "Obstacle")         return CollisionCategory::Obstacle;
-			if (s == "PlayerProjectile") return CollisionCategory::PlayerProjectile;
-			if (s == "EnemyProjectile")  return CollisionCategory::EnemyProjectile;
+			if (s == "Player")								return CollisionCategory::Player;
+			if (s == "Enemy")								return CollisionCategory::Enemy;
+			if (s == "Wall")								return CollisionCategory::Wall;
+			if (s == "Obstacle")							return CollisionCategory::Obstacle;
+			if (s == "PlayerProjectile")					return CollisionCategory::PlayerProjectile;
+			if (s == "EnemyProjectile")						return CollisionCategory::EnemyProjectile;
+			if (s == "Door")								return CollisionCategory::Door;
 			return CollisionCategory::Default;   // unknown or missing name falls back safely
 		}
 
@@ -72,14 +75,17 @@ namespace clvr
 		using CC = CollisionCategory;
 
 		// The one hand-written source of truth. Each row is one row of the table.
-		inline constexpr std::array<CollisionRule, 6> kCollisionTable = { {
-			{ CC::Player,           CC::Enemy | CC::Wall | CC::Obstacle | CC::EnemyProjectile },
-			{ CC::Enemy,            CC::Player | CC::Wall | CC::Obstacle | CC::PlayerProjectile },
-			{ CC::Wall,             CC::Player | CC::Enemy | CC::PlayerProjectile | CC::EnemyProjectile },
-			{ CC::Obstacle,         CC::Player | CC::Enemy | CC::PlayerProjectile | CC::EnemyProjectile },
-			{ CC::PlayerProjectile, CC::Enemy | CC::Wall | CC::Obstacle },
-			{ CC::EnemyProjectile,  CC::Player | CC::Wall | CC::Obstacle },
-		} };
+		inline constexpr std::array<CollisionRule, 7> kCollisionTable = { 
+			{
+				{ CC::Player,           CC::Enemy | CC::Wall | CC::Obstacle | CC::EnemyProjectile | CC::Door },
+				{ CC::Enemy,            CC::Player | CC::Wall | CC::Obstacle | CC::PlayerProjectile },
+				{ CC::Wall,             CC::Player | CC::Enemy | CC::PlayerProjectile | CC::EnemyProjectile },
+				{ CC::Obstacle,         CC::Player | CC::Enemy | CC::PlayerProjectile | CC::EnemyProjectile },
+				{ CC::PlayerProjectile, CC::Enemy | CC::Wall | CC::Obstacle },
+				{ CC::EnemyProjectile,  CC::Player | CC::Wall | CC::Obstacle },
+				{ CC::Door,				CC::Player },
+			} 
+		};
 
 		constexpr uint64_t MaskFor(CollisionCategory category) {
 			if (category == CollisionCategory::Default)

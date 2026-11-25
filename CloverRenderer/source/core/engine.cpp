@@ -97,8 +97,8 @@ namespace clvr {
                             rMngr->GetPath(Dir::SharedAssets, "shaders/crt.ps.hlsl"));
         //renderer.SetPostProcessShader(L"crt");
 
-        renderer.CreateSpriteLayer(3, 0.2f, "Further Background Layer");
-        renderer.CreateSpriteLayer(2, 0.5f, "Background Layer");
+        renderer.CreateSpriteLayer(999, 0.2f, "Further Background Layer");
+        renderer.CreateSpriteLayer(900, 0.5f, "Background Layer");
         renderer.CreateSpriteLayer(1, 1.0f, "Sprite Layer");
         renderer.CreateSpriteLayer(0, 1.0f, "Default Layer");
     }
@@ -146,6 +146,7 @@ bool EngineClass::Initialize(HINSTANCE hInstance, int nCmdShow)
     m_ecs->CreateSystem<RoomLoader>();
 
     m_ecs->CreateSystem<DungeonGenerator>();
+    m_ecs->CreateSystem<DungeonRuntime>();
 
     m_ecs->CreateSystem<InputHandler>();
 

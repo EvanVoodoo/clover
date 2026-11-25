@@ -1,11 +1,18 @@
 #include "level/dungeon.hpp"
 #include <queue>
+#include <core/engine.hpp>
+#include <level/room_loader.hpp>
+#include <DirectXMath.h>
+#include <core/transform.hpp>
+#include <cmath>
+#include <core/components.hpp>
+#include <physics/sensor_component.hpp>
 
 namespace clvr
 {
 	Dungeon::Dungeon()
 	{
-		m_roomGrid = Grid<DungeonCell>(CLVR_DUNGEON_WIDTH, CLVR_DUNGEON_HEIGHT);
+		roomGrid = Grid<DungeonCell>(CLVR_DUNGEON_WIDTH, CLVR_DUNGEON_HEIGHT);
 	}
 
 	CellCoord Dungeon::PickSpawnCell(std::mt19937& rng, int edgeMargin) const
@@ -50,7 +57,7 @@ namespace clvr
 		};
 
 		title = Title();
-		priority = 25;
+		priority = 20;
 		Open();
 	}
 	DungeonGenerator::~DungeonGenerator()
@@ -63,7 +70,19 @@ namespace clvr
 		DrawWindow();
 	}
 
-	void DungeonGenerator::OnPlayStart() {}
+	void DungeonGenerator::OnPlayStart() 
+	{
+		if (m_generateOnPlay)
+		{
+			if (m_generateRandom)
+			{
+				// use current time as seed for random generation
+				int seed = static_cast<int>(std::chrono::system_clock::now().time_since_epoch().count());
+				LayoutRNG::SetSeed(seed);
+			}
+			Generate();
+		}
+	}
 	void DungeonGenerator::OnPlayStop() {}
 
 	void DungeonGenerator::DrawContents() 
@@ -92,11 +111,11 @@ namespace clvr
 		SetHalfWidth("Max Filled Neighbors");
 		ImGui::SliderInt("Max Filled Neighbors", &m_maxFilledNeighbors, 1, 4);
 
-		ImGui::InputInt("Seed", &m_seed);
+		ImGui::InputInt("Seed", &LayoutRNG::m_seed);
 		ImGui::SameLine();
 		if (ImGui::Button("Randomize"))
 		{
-			m_seed = std::random_device{}();
+			LayoutRNG::m_seed = std::random_device{}();
 		}
 		if (ImGui::Button("Generate"))
 		{
@@ -105,7 +124,7 @@ namespace clvr
 		ImGui::SameLine();
 		if (ImGui::Button("Generate & Randomize"))
 		{
-			m_seed = std::random_device{}();
+			LayoutRNG::m_seed = std::random_device{}();
 			Generate();
 		}
 		ImGui::Checkbox("Show Cell Values", &m_showCellValues);
@@ -114,8 +133,16 @@ namespace clvr
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(120.f);
 			int mode = static_cast<int>(m_cellValueMode);
-			if (ImGui::Combo("##cellValueMode", &mode, "Room ID\0Distance from Spawn\0Doors\0"))
+			if (ImGui::Combo("##cellValueMode", &mode, "Room ID\0Assigned Room ID\0Distance from Spawn\0Doors\0"))
 				m_cellValueMode = static_cast<CellValueMode>(mode);
+		}
+
+		ImGui::Checkbox("Generate on Play", &m_generateOnPlay);
+
+		if (m_generateOnPlay)
+		{
+			ImGui::SameLine();
+			ImGui::Checkbox("Generate random?", &m_generateRandom);
 		}
 
 		if (!m_dungeon)
@@ -177,7 +204,9 @@ namespace clvr
 				if (m_showCellValues && room.id != -1)
 				{
 					int value = room.id;
-					if (m_cellValueMode == CellValueMode::DistanceFromSpawn)
+					if (m_cellValueMode == CellValueMode::AssignedRoomId)
+						value = room.roomDataIndex;
+					else if (m_cellValueMode == CellValueMode::DistanceFromSpawn)
 					{
 						value = room.distanceFromSpawn;
 					}
@@ -212,13 +241,13 @@ namespace clvr
 		bool success = false;
 		for (int attempt = 0; attempt < kMaxAttempts; ++attempt)
 		{
-			m_rng.seed(static_cast<std::mt19937::result_type>(m_seed + attempt));
+			LayoutRNG::SetSeed(LayoutRNG::m_seed + attempt);
 			m_dungeon = std::make_unique<Dungeon>();
 
-			m_dungeon->SetSpawnCell(m_dungeon->PickSpawnCell(m_rng, m_edgeMargin));
+			m_dungeon->SetSpawnCell(m_dungeon->PickSpawnCell(LayoutRNG::m_rng, m_edgeMargin));
 
 			std::uniform_int_distribution<int> roomDist(0, m_maxRandAdditionalRooms);
-			int numberOfRooms = roomDist(m_rng) + m_minNumOfRooms;
+			int numberOfRooms = roomDist(LayoutRNG::m_rng) + m_minNumOfRooms;
 
 			if (GenerateRooms(numberOfRooms) && FindDeadEnds() >= m_minDeadEnds)
 			{
@@ -236,8 +265,29 @@ namespace clvr
 		DijkstraMap();
 
 		// Place special rooms
-		SpecialRoomSpawn();
+		SpecialRoomPlacement();
+		
+		auto ecs = Engine.GetECS();
+		auto& roomLoader = ecs->GetSystem<RoomLoader>();
 
+		const auto rooms = roomLoader.GetRooms();
+		// Load the generated dungeon into the game world
+		for (const auto& cell : m_dungeon->floorCells)
+		{
+			if (cell.x < 0 || cell.x >= CLVR_DUNGEON_WIDTH || cell.y < 0 || cell.y >= CLVR_DUNGEON_HEIGHT)
+				continue; // out of bounds
+			auto& room = m_dungeon->GetRoomGrid().At(cell.x, cell.y);
+
+			if (room.id == -1)
+				continue; // skip empty cells
+
+			// Get the world position of the room based on its cell coordinates
+			XMFLOAT2 worldPos = RoomUtils::GetRoomCenter(cell);
+
+			roomLoader.AssignRandomRoom(room);
+		}
+
+		m_generated = true;
 		return true;
 	}
 
@@ -269,7 +319,7 @@ namespace clvr
 
 	void DungeonGenerator::RoomGenCrawl(int& roomsPlaced, int numberOfRooms, std::vector<std::pair<CellCoord, DoorType>>& cardinalDirs, std::queue<clvr::CellCoord>& roomQueue)
 	{
-		std::shuffle(cardinalDirs.begin(), cardinalDirs.end(), m_rng);
+		std::shuffle(cardinalDirs.begin(), cardinalDirs.end(), LayoutRNG::m_rng);
 
 		CellCoord current = roomQueue.front();
 		roomQueue.pop();
@@ -303,7 +353,7 @@ namespace clvr
 				continue;
 
 			// Random 50% chance, give up
-			auto randomChance = std::uniform_int_distribution<int>(0, 1)(m_rng);
+			auto randomChance = std::uniform_int_distribution<int>(0, 1)(LayoutRNG::m_rng);
 			if (randomChance == 0)
 				continue;
 
@@ -398,7 +448,7 @@ namespace clvr
 		} while (changed);
 	}
 
-	void DungeonGenerator::SpecialRoomSpawn()
+	void DungeonGenerator::SpecialRoomPlacement()
 	{
 		if (!m_dungeon)
 			return;
@@ -415,4 +465,124 @@ namespace clvr
 			cell.type = m_guaranteedSpecialRooms[i];
 		}
 	}
+
+	DungeonRuntime::DungeonRuntime()
+	{
+		m_runtimeStates = Grid<RuntimeState>(CLVR_DUNGEON_WIDTH, CLVR_DUNGEON_HEIGHT);
+		title = "Dungeon Runtime System";
+		// should be after the DungeonGenerator in terms of proority, so that the generator can set up the dungeon before we try to run it
+		priority = 19;
+	}
+
+	void DungeonRuntime::Update(float dt)
+	{}
+
+	void DungeonRuntime::OnPlayStart()
+	{
+		auto ecs = Engine.GetECS();
+		auto dungeon = ecs->GetSystem<DungeonGenerator>().GetDungeon();
+
+		if (!dungeon)
+		{
+			return;
+		}
+
+		auto& roomLoader = ecs->GetSystem<RoomLoader>();
+		
+		CellCoord spawnCell = dungeon->GetSpawnCell();
+		m_currentRoom = spawnCell;
+
+		const auto rooms = roomLoader.GetRooms();
+		const DungeonCell& spawnRoom = dungeon->GetRoomGrid().At(spawnCell.x, spawnCell.y);
+		const auto& selectedRoom = rooms[spawnRoom.roomDataIndex];
+		m_currentRoomEntity = roomLoader.SpawnRoom(
+			selectedRoom, spawnRoom.connections,
+			Engine.GetResourceManager()->Load<TileDatabase>(Engine.GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "tiles/tiles.json").c_str()),
+			Engine.GetResourceManager()->Load<BackdropDatabase>(Engine.GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "backdrops/backdrops.json").c_str()),
+			RoomUtils::GetRoomCenter(spawnCell),
+			static_cast<float>(CLVR_TILE_SIZE),
+			99);
+
+		if (m_currentRoomEntity == entt::null)
+		{
+			return;
+		}
+
+		Transform roomTransform = ecs->GetRegistry().get<Transform>(m_currentRoomEntity);
+		for (auto [e, p, t] : ecs->GetRegistry().view<PlayerComponent, Transform>().each())
+		{
+			t.Teleport(roomTransform.GetWorldPosition());
+		}
+
+		UpdateRoomEntity(m_currentRoomEntity);
+	}
+
+	void DungeonRuntime::MoveToRoom(CellCoord cell, DoorType doorDir, Entity player)
+	{
+		auto ecs = Engine.GetECS();
+		auto dungeon = ecs->GetSystem<DungeonGenerator>().GetDungeon();
+		auto& roomLoader = ecs->GetSystem<RoomLoader>();
+
+		CellCoord direction = DoorDirectionToCellOffset(doorDir);
+		CellCoord nextCell = cell + direction;
+
+		const auto rooms = roomLoader.GetRooms();
+		const DungeonCell& nextRoom = dungeon->GetRoomGrid().At(nextCell.x, nextCell.y);
+		const auto& selectedRoom = rooms[nextRoom.roomDataIndex];
+		Entity roomEntity = roomLoader.SpawnRoom(
+			selectedRoom, nextRoom.connections,
+			Engine.GetResourceManager()->Load<TileDatabase>(Engine.GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "tiles/tiles.json").c_str()),
+			Engine.GetResourceManager()->Load<BackdropDatabase>(Engine.GetResourceManager()->GetPath(ResourceManager::Directory::Assets, "backdrops/backdrops.json").c_str()),
+			RoomUtils::GetRoomCenter(nextCell),
+			static_cast<float>(CLVR_TILE_SIZE),
+			99);
+
+		auto doorView = ecs->GetRegistry().view<DoorComponent, Transform>();
+		// check if room entity is parent of door entity
+		for (auto [doorEntity, door, doorTransform] : doorView.each())
+		{
+			// if the door entity is a child of the room entity, add the player to the sensor component's overlapping entities, so that the player can't trigger the door's begin event
+			// without this, the player will trigger the door's begin event when moving to a new room, which is not desiredaaaaa
+			if (doorTransform.parent == roomEntity && door.type == -doorDir)
+			{
+				SensorComponent& sensor = ecs->GetRegistry().get<SensorComponent>(doorEntity);
+				//sensor.AddOverlapping(player);
+
+				// push player in door direction
+				for (auto [e, player, transform] : ecs->GetRegistry().view<PlayerComponent, Transform>().each())
+				{
+					XMFLOAT2 newPosition = doorTransform.GetWorldPosition();
+					newPosition.x += direction.x * 1.5f * CLVR_TILE_SIZE;
+					newPosition.y += direction.y * 1.5f * CLVR_TILE_SIZE;
+					transform.Teleport(newPosition);
+				}
+			}
+		}
+
+		ecs->DeleteEntity(m_currentRoomEntity);
+
+		UpdateRoomEntity(roomEntity);
+
+		if (m_currentRoomEntity == entt::null)
+		{
+			return;
+		}
+		m_currentRoom = nextCell;
+	}
+
+	void DungeonRuntime::UpdateRoomEntity(Entity newRoomEntity)
+	{
+		if (newRoomEntity == entt::null)
+			return;
+
+		m_currentRoomEntity = newRoomEntity;
+		for (auto [e, c, t] : Engine.GetECS()->GetRegistry().view<CameraComponent, Transform>().each())
+		{
+			c.followEntity = m_currentRoomEntity;
+		}
+	}
+
+	void DungeonRuntime::OnPlayStop()
+	{}
+
 }

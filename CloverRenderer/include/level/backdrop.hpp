@@ -15,9 +15,9 @@ namespace clvr
 	{
 		std::string name;
 		std::string image;          // relative to the Assets folder, e.g. "backdrops/basement.png"
-		int wallThickness = 1;      // frame width in tiles, on every side
-		int widthTiles = CLVR_ROOM_WIDTH + 2 * wallThickness;        // whole image, in tiles, wall frame included
-		int heightTiles = CLVR_ROOM_HEIGHT + 2 * wallThickness;
+		int wallThickness = CLVR_WALL_THICKNESS;      // frame width in tiles, on every side
+		int widthTiles = CLVR_ROOM_WIDTH + CLVR_WALL_DTHICKNESS;        // whole image, in tiles, wall frame included
+		int heightTiles = CLVR_ROOM_HEIGHT + CLVR_WALL_DTHICKNESS;
 
 		// The playable area inside the frame, in tiles.
 		int PlayableWidth() const { return widthTiles - 2 * wallThickness; }

@@ -95,11 +95,14 @@ namespace clvr
 	void SensorComponent::OnBegin(entt::registry& reg, Entity visitor, Entity sensor) {
 		if (!active) return;
 
-		overlapping.push_back(visitor);
+		if (std::find(overlapping.begin(), overlapping.end(), visitor) != overlapping.end())
+			return; // Already overlapping, ignore
+
 		SensorContext context{ visitor, sensor };
 		for (auto& command : commands) {
 			command->OnBegin(reg, context);
 		}
+		overlapping.push_back(visitor);
 	}
 	void SensorComponent::OnStay(entt::registry& reg, Entity sensor) {
 		if (!active) return;

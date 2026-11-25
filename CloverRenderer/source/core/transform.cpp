@@ -7,7 +7,14 @@
 #include "physics/units.hpp"
 
 namespace clvr {
-    XMMATRIX Transform::GetWorld() const
+	void Transform::SetParent(entt::entity p, entt::entity c) {
+		parent = p;
+		if (p != entt::null) {
+			auto& parentTransform = Engine.GetECS()->GetRegistry().get<Transform>(p);
+			parentTransform.children.push_back(c);
+		}
+	}
+	XMMATRIX Transform::GetWorld() const
     {
         return GetWorld(Engine.GetECS()->GetRegistry());
     }
@@ -24,6 +31,28 @@ namespace clvr {
         }
         return world;
     }
+
+	void Transform::ForceTransformUpdate()
+	{
+		auto& reg = Engine.GetECS()->GetRegistry();
+		Entity e = entt::to_entity(reg.storage<Transform>(), *this);
+
+		RigidBody* rb = reg.try_get<RigidBody>(e);
+		if (rb) {
+			if (b2Body_IsValid(rb->bodyId)) {
+				b2Body_SetTransform(rb->bodyId,
+									Units::ToMeters({ GetWorldPosition().x, GetWorldPosition().y }),
+									b2MakeRot(GetWorldRotation()));
+				b2Body_SetAwake(rb->bodyId, true);
+			}
+		}
+	}
+
+	void Transform::Teleport(XMFLOAT2 pos)
+	{
+		position = pos;
+		ForceTransformUpdate();
+	}
 
     void Transform::Inspect()
     {
@@ -48,18 +77,7 @@ namespace clvr {
                 dirty = true;
             }
 
-            auto& reg = Engine.GetECS()->GetRegistry();
-            Entity e = entt::to_entity(reg.storage<Transform>(), *this);
-
-            RigidBody* rb = reg.try_get<RigidBody>(e);
-            if (rb) {
-                if (b2Body_IsValid(rb->bodyId)) {
-                    b2Body_SetTransform(rb->bodyId,
-                                        Units::ToMeters({ GetWorldPosition().x, GetWorldPosition().y}),
-                                        b2MakeRot(GetWorldRotation()));
-                    b2Body_SetAwake(rb->bodyId, true);
-                }
-            }
+			ForceTransformUpdate();
 
             ImGui::TreePop();
         }
