@@ -4,6 +4,7 @@
 #include "resources/json_io.hpp"
 #include <core/engine.hpp>
 #include <rendering/renderer.hpp>
+#include <iostream>
 
 using json = nlohmann::json;
 
@@ -56,12 +57,12 @@ namespace clvr {
 	bool TileSprites::GetSubRect(const TileDef& def, const TilesetInfo& info, XMFLOAT4& out) const
 	{
 		if (!m_ready || def.spriteCol < 0 || def.spriteRow < 0 ||
-			info.cellSize <= 0 || info.padding * 2 >= info.cellSize)
+			info.tileSize <= 0 || info.spacing < 0 || info.margin < 0)
 			return false;
 
-		const float art = float(info.cellSize - 2 * info.padding);
-		const float px = float(def.spriteCol * info.cellSize + info.padding);
-		const float py = float(def.spriteRow * info.cellSize + info.padding);
+		const float art = float(info.tileSize);
+		const float px = float(info.margin + def.spriteCol * info.CellSize());
+		const float py = float(info.margin + def.spriteRow * info.CellSize());
 		if (px + art > m_pixelW || py + art > m_pixelH)
 			return false;
 
@@ -83,16 +84,106 @@ namespace clvr {
 		return ref;
 	}
 
+	namespace
+	{
+		constexpr int kTileDbVersion = 3;
+	}
+
     TileDatabase::TileDatabase(const char* filepath) : Resource(ResourceType::TileDatabase)
     {
         m_filename = std::filesystem::path(filepath).filename().string();
         m_path = std::filesystem::path(filepath).string();
 		LoadFromFile(filepath);
 
-		auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
-		m_sprites.Init(*renderer.GetTextureAtlas(),
-					   ResourceManager::Directory::Assets, Tileset().path);
+		if (!LoadFromFile(filepath))
+			std::cerr << "TileDatabase: could not load " << filepath << ", starting empty\n";
+
+		if (m_tilesets.empty())
+		{
+			// Missing or unreadable file: start with one default tileset so the editors have something to show
+			m_tilesets[0].info = TilesetInfo{};
+			InitSprites();
+		}
     }
+
+	void TileDatabase::InitSprites()
+	{
+		auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
+		for (auto& [id, entry] : m_tilesets)
+		{
+			if (!entry.sprites.Init(*renderer.GetTextureAtlas(), ResourceManager::Directory::Assets, entry.info.path))
+				std::cerr << "TileDatabase: tileset " << id << " image failed to load: " << entry.info.path << '\n';
+		}
+	}
+
+	const TilesetEntry* TileDatabase::GetTileset(TilesetID id) const
+	{
+		auto it = m_tilesets.find(id);
+		if (it == m_tilesets.end())
+			return nullptr;
+		return &it->second;
+	}
+
+	SpriteRef TileDatabase::GetSprite(const TileDef& def) const
+	{
+		// pick the right tileset internally
+		const TilesetEntry* entry = GetTileset(def.tileset);
+		return entry ? entry->sprites.Get(def, entry->info) : SpriteRef{};
+	}
+
+	bool TileDatabase::GetSubRect(const TileDef& def, XMFLOAT4& out) const
+	{
+		const TilesetEntry* entry = GetTileset(def.tileset);
+		return entry ? entry->sprites.GetSubRect(def, entry->info, out) : false;
+	}
+
+	const std::string& TileDatabase::TilesetPath(const TileDef& def) const
+	{
+		static const std::string kEmpty;
+		const TilesetEntry* entry = GetTileset(def.tileset);
+		return entry ? entry->info.path : kEmpty;
+	}
+
+	void TileDatabase::RefreshSprites()
+	{
+		// call refresh on every tileset, in case the atlas was rebuilt
+		for (auto& [id, entry] : m_tilesets)
+			entry.sprites.Refresh();
+	}
+
+	TilesetID TileDatabase::NextFreeTilesetID() const
+{
+	return m_tilesets.empty() ? TilesetID(0) : static_cast<TilesetID>(m_tilesets.rbegin()->first + 1);
+}
+
+bool TileDatabase::TilesetInUse(TilesetID id) const
+{
+	return std::any_of(m_tileDefs.begin(), m_tileDefs.end(),
+	                   [id](const auto& kv) { return kv.second.tileset == id; });
+}
+
+bool TileDatabase::RegisterTileset(TilesetID id, TilesetInfo info)
+{
+	if (info.path.empty() || info.tileSize <= 0 || info.spacing < 0 || info.margin < 0)
+		return false;
+
+	auto& entry = m_tilesets[id];
+	entry.info = std::move(info);
+	entry.sprites = TileSprites{};
+
+	auto& renderer = Engine.GetECS()->GetSystem<Renderer>();
+	entry.sprites.Init(*renderer.GetTextureAtlas(), ResourceManager::Directory::Assets, entry.info.path);
+	// The atlas must be rebuilt before Refresh() can find the new region.
+	// Call whatever you use for that here (the Build() call from the backdrop setup).
+	return true;
+}
+
+bool TileDatabase::UnregisterTileset(TilesetID id)
+{
+	if (m_tilesets.size() <= 1 || TilesetInUse(id))
+		return false;
+	return m_tilesets.erase(id) > 0;
+}
 
     bool TileDatabase::LoadFromFile(const std::filesystem::path& path)
     {
@@ -113,58 +204,84 @@ namespace clvr {
     }
 
     json TileDatabase::ToJson() const {
-		json tileDB;
-		tileDB["version"] = 2;
-		tileDB["tileDefinitions"] = json::array();
-			
-		for (const auto& [id, def] : m_tileDefs) {
-			tileDB["tileDefinitions"].push_back({
-				{ "id",         id },
-				{ "definition", def }
-			});
-		}
+		json db;
+		db["version"] = kTileDbVersion;
 
-        tileDB["tileset"] = m_tileset;
+		db["tilesets"] = json::array();
+		for (const auto& [id, entry] : m_tilesets)
+			db["tilesets"].push_back({ { "id", id }, { "info", entry.info } });
 
-		return tileDB;
+		db["tileDefinitions"] = json::array();
+		for (const auto& [id, def] : m_tileDefs)
+			db["tileDefinitions"].push_back({ { "id", id }, { "definition", def } });
+
+		return db;
 	}
 
 	bool TileDatabase::FromJson(const json& j)
 	{
-        if (!j.is_object())
-            return false;
+		if (!j.is_object())
+			return false;
 
-        TilesetInfo tileset = j.value("tileset", TilesetInfo{});
+		// Don't load a file written by a newer build: saving it again would drop fields
+		if (j.value("version", 1) > kTileDbVersion)
+			return false;
 
-        const auto listIt = j.find("tileDefinitions");
-        if (listIt == j.end() || !listIt->is_array())
-            return false;
+		// Parse into temporaries so a bad file can't leave us half-loaded
+		std::map<TilesetID, TilesetEntry> tilesets;
+		std::map<TileID, TileDef> tileDefs;
 
-        // Parse into a temporary so a bad file can't leave you half-loaded
-        std::map<TileID, TileDef> parsed;
+		try
+		{
+			if (const auto it = j.find("tilesets"); it != j.end() && it->is_array())
+			{
+				for (const auto& item : *it)
+				{
+					const TilesetID id = item.at("id").get<TilesetID>();
+					if (tilesets.contains(id))
+						return false; // duplicate tileset id
+					tilesets[id].info = item.at("info").get<TilesetInfo>();
+				}
+			}
+			else
+			{
+				// Old format (version 2 and earlier): one tileset, which becomes tileset 0
+				tilesets[0].info = j.value("tileset", TilesetInfo{});
+			}
 
-        try
-        {
-            for (const auto& item : *listIt)
-            {
-                const TileID id = item.at("id").get<TileID>();
-                if (id == 0)
-                    return false; // 0 is reserved for "empty"
+			for (const auto& [id, entry] : tilesets)
+			{
+				const TilesetInfo& info = entry.info;
+				if (info.path.empty() || info.tileSize <= 0 || info.spacing < 0 || info.margin < 0)
+					return false; // unusable tileset settings
+			}
 
-                if (parsed.contains(id))
-                    return false; // duplicate ID
+			const auto listIt = j.find("tileDefinitions");
+			if (listIt == j.end() || !listIt->is_array())
+				return false;
 
-                parsed.emplace(id, item.at("definition").get<TileDef>());
-            }
-        }
-        catch (const json::exception&)
-        {
-            return false; // missing key or wrong type
-        }
+			for (const auto& item : *listIt)
+			{
+				const TileID id = item.at("id").get<TileID>();
+				if (id == 0 || tileDefs.contains(id))
+					return false; // 0 is reserved for "empty", and ids must be unique
 
-        m_tileDefs = std::move(parsed);
-		m_tileset = tileset;
-        return true;
+				TileDef def = item.at("definition").get<TileDef>();
+				if (!tilesets.contains(def.tileset))
+					return false; // tile points at a tileset that isn't defined
+
+				tileDefs.emplace(id, std::move(def));
+			}
+		}
+		catch (const json::exception&)
+		{
+			return false; // missing key or wrong type
+		}
+
+		m_tilesets = std::move(tilesets);
+		m_tileDefs = std::move(tileDefs);
+		InitSprites();
+		return true;
 	}
 
 	// Same formula the room editor uses for visual layers, so a tile has one color in both.
@@ -172,11 +289,12 @@ namespace clvr {
 	{
 		return IM_COL32((id * 37) % 200 + 40, (id * 59) % 200 + 40, (id * 83) % 200 + 40, alpha);
 	}
-	void DrawTileImage(ImDrawList* dl, ImVec2 a, ImVec2 b, const TileDef* def, const TileSprites& sprites, const TilesetInfo& info, TileID id, int alpha)
+
+	void DrawTileImage(ImDrawList* dl, ImVec2 a, ImVec2 b, const TileDef* def, const TileDatabase& db, TileID id, int alpha)
 	{
 		if (def && def->spriteCol >= 0)
 		{
-			const SpriteRef s = sprites.Get(*def, info);
+			const SpriteRef s = db.GetSprite(*def);
 			if (s.valid)
 				dl->AddImage(s.texture, a, b, s.uv0, s.uv1, IM_COL32(255, 255, 255, alpha));
 			else

@@ -100,7 +100,7 @@ namespace clvr {
 		auto rm = Engine.GetResourceManager();
 		const auto tilesPath = rm->GetPath(ResourceManager::Directory::Assets, "tiles/tiles.json");
 		auto tileDb = rm->Load<TileDatabase>(tilesPath.c_str());
-		tileDb->Sprites().Refresh();
+		tileDb->RefreshSprites();
 		
 		const auto backdropPath = rm->GetPath(ResourceManager::Directory::Assets, "backdrops/backdrops.json");
 		auto backdropDb = rm->Load<BackdropDatabase>(backdropPath.c_str());
@@ -201,12 +201,12 @@ namespace clvr {
 							   XMFLOAT2 localPos, float tileSize, unsigned int spriteLayerId)
 	{
 		// Resolve the sprite first, so a bad tile doesn't leave an orphan entity behind
-		const SpriteRef ref = tileDb->Sprites().Get(tileDef, tileDb->Tileset());
+		const SpriteRef ref = tileDb->GetSprite(tileDef);
 		if (!ref.valid)
 			return false;
 
 		XMFLOAT4 sub;
-		if (!tileDb->Sprites().GetSubRect(tileDef, tileDb->Tileset(), sub))
+		if (!tileDb->GetSubRect(tileDef, sub))
 			return false;
 
 		auto& ecs = Engine.GetECSRef();
@@ -221,7 +221,7 @@ namespace clvr {
 		s.position = { 0.0f, 0.0f };
 		s.size = { tileSize, tileSize };
 		s.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		s.SetTextureParams(ResourceManager::Directory::Assets, tileDb->Tileset().path);
+		s.SetTextureParams(ResourceManager::Directory::Assets, tileDb->TilesetPath(tileDef));
 		s.subRect = sub;
 		s.uvRect = { ref.uv0.x, ref.uv0.y, ref.uv1.x - ref.uv0.x, ref.uv1.y - ref.uv0.y };
 		s.pivot = { 0.5f, 0.5f };

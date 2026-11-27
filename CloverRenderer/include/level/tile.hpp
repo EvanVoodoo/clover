@@ -11,6 +11,7 @@
 #include <rendering/texture_atlas.hpp>
 #include <rendering/texture.hpp>
 #include "imgui/imgui.h"
+#include <cstdint>
 
 namespace clvr
 {
@@ -32,16 +33,22 @@ namespace clvr
 		int m_y = 0;
 	};
 
+	using TilesetID = std::uint16_t;
+
 	struct TilesetInfo
 	{
-		std::string path = "tiles/tileset.png"; // relative to Assets, not the absolute path from GetPath
-		int padding = 1;                        // border on each side of the art
-		int cellSize = TILE_SIZE + padding * 2; // full cell, including padding
+		std::string name = "Tileset";
+		std::string path = "tiles/tileset.png"; // relative to Assets
+		int tileSize = TILE_SIZE;
+		int spacing = 0;            // pixels between neighboring tiles
+		int margin = 0;             // pixels from the image edge to the first tile
+		int CellSize() const { return tileSize + spacing; }
 	};
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TilesetInfo, path, cellSize, padding)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TilesetInfo, name, path, tileSize, spacing, margin)
 
 	struct TileDef {
 		std::string name; 
+		TilesetID tileset = 0;
 		int spriteCol = -1;   // -1 = no sprite assigned
 		int spriteRow = -1;
 		bool blocksMovement = false;
@@ -49,7 +56,7 @@ namespace clvr
 		bool destructible = false;
 		int contactDamage = 0;
 	};
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TileDef, name, spriteCol, spriteRow, blocksMovement, blocksProjectiles, destructible, contactDamage)
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TileDef, name, tileset, spriteCol, spriteRow, blocksMovement, blocksProjectiles, destructible, contactDamage)
 
 	struct SpriteRef
 	{
@@ -88,14 +95,30 @@ namespace clvr
 		bool m_ready = false;
 	};
 
+	struct TilesetEntry
+	{
+		TilesetInfo info;
+		TileSprites sprites;
+	};
+
 	class TileDatabase : public Resource
 	{
 	public:	
 		TileDatabase(const char* filepath);
 		~TileDatabase() = default;
 
-		TilesetInfo& Tileset() { return m_tileset; }
-		TileSprites& Sprites() { return m_sprites; }
+		void InitSprites();
+		const TilesetEntry* GetTileset(TilesetID id) const;
+		SpriteRef GetSprite(const TileDef& def) const;                 // picks the right tileset internally
+		bool GetSubRect(const TileDef& def, XMFLOAT4& out) const;
+		const std::string& TilesetPath(const TileDef& def) const;
+		void RefreshSprites();                                          // refreshes every tileset
+
+		const std::map<TilesetID, TilesetEntry>& Tilesets() const { return m_tilesets; }
+		TilesetID NextFreeTilesetID() const;
+		bool TilesetInUse(TilesetID id) const;
+		bool RegisterTileset(TilesetID id, TilesetInfo info);   // add or replace
+		bool UnregisterTileset(TilesetID id);
 
 		void Register(TileID id, TileDef def) 
 		{ 
@@ -120,9 +143,6 @@ namespace clvr
 			return last == (std::numeric_limits<TileID>::max)() ? 0 : static_cast<TileID>(last + 1);
 		}
 
-		int GetTileSetWidth() const { return m_tilesetTexture ? m_tilesetTexture->GetWidth() : 0; }
-		int GetTileSetHeight() const { return m_tilesetTexture ? m_tilesetTexture->GetHeight() : 0; }
-
 		static std::string GetPath(const char* filepath) {
 			std::string path = "tile_database:" + std::filesystem::path(filepath).string();
 			return path;
@@ -139,14 +159,11 @@ namespace clvr
 
 	private:
 		std::map<TileID, TileDef> m_tileDefs;
-		std::shared_ptr<Texture> m_tilesetTexture;
-		TilesetInfo m_tileset;
-		TileSprites m_sprites;
+		std::map<TilesetID, TilesetEntry> m_tilesets;
 	};
 
 	// Same formula the room editor uses for visual layers, so a tile has one color in both.
 	ImU32 TileColor(unsigned id, int alpha);
 
-	void DrawTileImage(ImDrawList* dl, ImVec2 a, ImVec2 b, const TileDef* def,
-					   const TileSprites& sprites, const TilesetInfo& info, TileID id, int alpha);
+	void DrawTileImage(ImDrawList* dl, ImVec2 a, ImVec2 b, const TileDef* def, const TileDatabase& db, TileID id, int alpha);
 }

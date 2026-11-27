@@ -37,6 +37,7 @@ namespace clvr
 	private:
 		void DrawTileGrid();
 		void DrawTileProperties();
+		void DrawTilesetPanel();
 		bool SpritePicker(TileDef& def);
 		void SelectTile(TileID id);   // asks first if the draft has unsaved edits
 		void LoadDraft(TileID id);
@@ -48,6 +49,10 @@ namespace clvr
 		TileID m_selectedId = 0;      // 0 = nothing selected
 		TileDef m_draft;              // working copy of the selected tile
 		bool m_draftDirty = false;
+
+		TilesetID m_selectedTileset = 0;
+		TilesetInfo m_tilesetDraft;
+		bool m_tilesetDraftLoaded = false;
 
 		TileID m_pendingSelectId = 0; // selection waiting on the discard prompt
 		TileID m_scrollToId = 0;      // grid scrolls here once (set after Add)

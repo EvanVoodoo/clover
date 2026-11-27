@@ -31,7 +31,7 @@ namespace clvr
 	}
 	void TilesEditor::Update(float dt)
 	{
-		m_tileDatabase->Sprites().Refresh();
+		m_tileDatabase->RefreshSprites();
 	}
 	void TilesEditor::Render()
 	{
@@ -84,6 +84,8 @@ namespace clvr
 
 		// Right: properties of the selected tile
 		ImGui::BeginChild("TileProperties", ImVec2(0, 0), ImGuiChildFlags_Borders);
+		if (ImGui::CollapsingHeader("Tilesets"))
+			DrawTilesetPanel();
 		DrawTileProperties();
 		ImGui::EndChild();
 
@@ -156,7 +158,7 @@ namespace clvr
 		int index = 0;
 		TileID clicked = 0;
 
-		const TilesetInfo& tileset = m_tileDatabase->Tileset();
+		const TilesetInfo& tileset = m_tileDatabase->GetTileset(m_selectedTileset)->info;
 
 		for (const auto& [id, def] : tiles) // std::map: ascending by ID
 		{
@@ -168,7 +170,7 @@ namespace clvr
 			const ImVec2 a = ImGui::GetItemRectMin();
 			const ImVec2 b = ImGui::GetItemRectMax();
 
-			DrawTileImage(dl, a, b, &def, m_tileDatabase->Sprites(), tileset, id, 255);
+			DrawTileImage(dl, a, b, &def, *m_tileDatabase, id, 255);
 
 			char label[8];
 			std::snprintf(label, sizeof(label), "%u", static_cast<unsigned>(id));
@@ -251,13 +253,106 @@ namespace clvr
 		StatusText();
 	}
 
+	void TilesEditor::DrawTilesetPanel()
+	{
+		const auto& sets = m_tileDatabase->Tilesets();
+		if (sets.empty())
+			return;
+
+		if (!sets.contains(m_selectedTileset))
+		{
+			m_selectedTileset = sets.begin()->first;
+			m_tilesetDraftLoaded = false;
+		}
+		if (!m_tilesetDraftLoaded)
+		{
+			m_tilesetDraft = sets.at(m_selectedTileset).info;
+			m_tilesetDraftLoaded = true;
+		}
+
+		const std::string preview = std::to_string(m_selectedTileset) + ": " + sets.at(m_selectedTileset).info.name;
+		ImGui::SetNextItemWidth(-90.0f);
+		if (ImGui::BeginCombo("##tileset", preview.c_str()))
+		{
+			for (const auto& [id, entry] : sets)
+			{
+				const std::string l = std::to_string(id) + ": " + entry.info.name;
+				if (ImGui::Selectable(l.c_str(), id == m_selectedTileset))
+				{
+					m_selectedTileset = id;
+					m_tilesetDraftLoaded = false;
+				}
+			}
+			ImGui::EndCombo();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("+ New"))
+		{
+			TilesetInfo info;
+			info.name = "Tileset " + std::to_string(m_tileDatabase->NextFreeTilesetID());
+			const TilesetID id = m_tileDatabase->NextFreeTilesetID();
+			if (m_tileDatabase->RegisterTileset(id, info) && m_tileDatabase->SaveToFile())
+			{
+				m_selectedTileset = id;
+				m_tilesetDraftLoaded = false;
+				m_status = "Added tileset " + std::to_string(id) + ", set its image path below";
+			}
+		}
+
+		InputString("Name##ts", m_tilesetDraft.name);
+		InputString("Image##ts", m_tilesetDraft.path);   // relative to Assets
+		ImGui::InputInt("Tile size##ts", &m_tilesetDraft.tileSize);
+		ImGui::InputInt("Spacing##ts", &m_tilesetDraft.spacing);
+		ImGui::InputInt("Margin##ts", &m_tilesetDraft.margin);
+
+		if (ImGui::Button("Apply"))
+		{
+			if (m_tileDatabase->RegisterTileset(m_selectedTileset, m_tilesetDraft) && m_tileDatabase->SaveToFile())
+				m_status = "Saved tileset " + std::to_string(m_selectedTileset);
+			else
+				m_status = "Invalid tileset settings (check path, padding and cell size)";
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Remove"))
+		{
+			m_status = m_tileDatabase->UnregisterTileset(m_selectedTileset) && m_tileDatabase->SaveToFile()
+				? "Removed tileset"
+				: "Can't remove: tiles still use it, or it's the last tileset";
+			m_tilesetDraftLoaded = false;
+		}
+		ImGui::Separator();
+	}
+
 	bool TilesEditor::SpritePicker(TileDef& def)
 	{
 		bool changed = false;
-		const TilesetInfo& info = m_tileDatabase->Tileset();
-		const TileSprites& sprites = m_tileDatabase->Sprites();
+		const auto& sets = m_tileDatabase->Tilesets();
+
+		auto label = [](TilesetID id, const TilesetInfo& i) { return std::to_string(id) + ": " + i.name; };
+		const auto curIt = sets.find(def.tileset);
+		const std::string preview = curIt != sets.end()
+			? label(curIt->first, curIt->second.info)
+			: "Missing (" + std::to_string(def.tileset) + ")";
+
+		if (ImGui::BeginCombo("Tileset", preview.c_str()))
+		{
+			for (const auto& [id, entry] : sets)
+			{
+				if (ImGui::Selectable(label(id, entry.info).c_str(), id == def.tileset) && id != def.tileset)
+				{
+					def.tileset = id;
+					def.spriteCol = def.spriteRow = -1;   // col/row mean nothing in a different image
+					changed = true;
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		const TilesetEntry* entry = m_tileDatabase->GetTileset(def.tileset);
+
 		ImGui::TextUnformatted("Sprite");
-		const SpriteRef cur = sprites.Get(def, info);
+		const SpriteRef cur = m_tileDatabase->GetSprite(def);
+		
 		if (cur.valid)
 			ImGui::Image(cur.texture, ImVec2(48, 48), cur.uv0, cur.uv1);
 		else
@@ -275,19 +370,28 @@ namespace clvr
 
 		if (ImGui::BeginPopup("PickSprite"))
 		{
-			const SpriteRef whole = sprites.WholeTileset();
-			if (!whole.valid)
+			const SpriteRef whole = entry ? entry->sprites.WholeTileset() : SpriteRef{};
+			if (!entry || !whole.valid)
 			{
 				ImGui::TextUnformatted("Tileset not loaded");
 			}
 			else
 			{
+				const TilesetInfo& info = entry->info;
+				const TileSprites& sprites = entry->sprites;
 				static float scale = 2.0f;
 				ImGui::SetNextItemWidth(120.0f);
 				ImGui::SliderFloat("Zoom", &scale, 1.0f, 4.0f, "%.0fx");
 
 				const ImVec2 size(sprites.TilesetW() * scale, sprites.TilesetH() * scale);
-				const float cell = info.cellSize * scale;
+				const float stride = info.CellSize() * scale;   // distance from one tile origin to the next
+				const float margin = info.margin * scale;       // image edge to the first tile
+				const float art = info.tileSize * scale;        // the tile's own size
+
+				// How many whole tiles fit (the last tile has no trailing gap)
+				const int cols = (int) ((sprites.TilesetW() - info.margin + info.spacing) / info.CellSize());
+				const int rows = (int) ((sprites.TilesetH() - info.margin + info.spacing) / info.CellSize());
+
 				const ImVec2 o = ImGui::GetCursorScreenPos();
 
 				ImGui::InvisibleButton("##sheet", size);
@@ -297,27 +401,27 @@ namespace clvr
 				ImDrawList* dl = ImGui::GetWindowDrawList();
 				dl->AddImage(whole.texture, o, ImVec2(o.x + size.x, o.y + size.y), whole.uv0, whole.uv1);
 
-				for (float x = 0; x <= size.x; x += cell)
-					dl->AddLine(ImVec2(o.x + x, o.y), ImVec2(o.x + x, o.y + size.y), IM_COL32(255, 255, 255, 40));
-				for (float y = 0; y <= size.y; y += cell)
-					dl->AddLine(ImVec2(o.x, o.y + y), ImVec2(o.x + size.x, o.y + y), IM_COL32(255, 255, 255, 40));
-
-				auto outline = [&](int c, int r, ImU32 color) {
-					dl->AddRect(ImVec2(o.x + c * cell, o.y + r * cell),
-								ImVec2(o.x + (c + 1) * cell, o.y + (r + 1) * cell), color, 0.0f, 0, 2.0f);
+				// One box per tile, drawn around the art itself
+				auto outline = [&](int c, int r, ImU32 color, float thickness) {
+					const ImVec2 a(o.x + margin + c * stride, o.y + margin + r * stride);
+					dl->AddRect(a, ImVec2(a.x + art, a.y + art), color, 0.0f, 0, thickness);
 				};
 
-				if (def.spriteCol >= 0)
-					outline(def.spriteCol, def.spriteRow, IM_COL32(255, 220, 60, 255));
+				for (int r = 0; r < rows; ++r)
+					for (int c = 0; c < cols; ++c)
+						outline(c, r, IM_COL32(255, 255, 255, 40), 1.0f);
+
+				if (def.spriteCol >= 0 && def.spriteCol < cols && def.spriteRow >= 0 && def.spriteRow < rows)
+					outline(def.spriteCol, def.spriteRow, IM_COL32(255, 220, 60, 255), 2.0f);
 
 				if (hovered)
 				{
 					const ImVec2 m = ImGui::GetMousePos();
-					const int c = (int) std::floor((m.x - o.x) / cell);
-					const int r = (int) std::floor((m.y - o.y) / cell);
-					if (c >= 0 && r >= 0 && c < (int) (size.x / cell) && r < (int) (size.y / cell))
+					const int c = (int) std::floor((m.x - o.x - margin) / stride);
+					const int r = (int) std::floor((m.y - o.y - margin) / stride);
+					if (c >= 0 && r >= 0 && c < cols && r < rows)
 					{
-						outline(c, r, IM_COL32(255, 255, 255, 200));
+						outline(c, r, IM_COL32(255, 255, 255, 200), 2.0f);
 						ImGui::SetTooltip("(%d, %d)", c, r);
 						if (clicked)
 						{
@@ -376,6 +480,7 @@ namespace clvr
 
 		TileDef def;
 		def.name = "Tile " + std::to_string(id);
+		def.tileset = m_selectedTileset;
 		m_tileDatabase->Register(id, def);
 
 		const bool saved = m_tileDatabase->SaveToFile();

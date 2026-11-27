@@ -435,9 +435,6 @@ namespace clvr
 		auto cellMin = [&](int x, int y) { return ImVec2(origin.x + x * cell, origin.y + y * cell); };
 		auto cellMax = [&](int x, int y) { return ImVec2(origin.x + (x + 1) * cell, origin.y + (y + 1) * cell); };
 
-		const TilesetInfo& tileset = m_tileDatabase->Tileset();
-		const TileSprites& sprites = m_tileDatabase->Sprites();
-
 		// Background for the whole canvas, then the backdrop on top of it
 		dl->AddRectFilled(canvasOrigin,
 						  ImVec2(canvasOrigin.x + canvasSize.x, canvasOrigin.y + canvasSize.y),
@@ -478,7 +475,7 @@ namespace clvr
 					const TileID id = layer.At(x, y);
 					if (id != 0)
 						DrawTileImage(dl, cellMin(x, y), cellMax(x, y),
-									  m_tileDatabase->Get(id), sprites, tileset, id, alpha);
+									  m_tileDatabase->Get(id), *m_tileDatabase, id, alpha);
 				}
 		}
 
@@ -863,9 +860,6 @@ namespace clvr
 		}
 		++index;
 
-		const TilesetInfo& tileset = m_tileDatabase->Tileset();
-		const TileSprites& sprites = m_tileDatabase->Sprites();
-
 		for (const auto& [id, def] : tiles) // ascending by ID
 		{
 			if ((index % columns) != 0)
@@ -876,7 +870,7 @@ namespace clvr
 				selectBrush(id);
 
 			const ImVec2 a = ImGui::GetItemRectMin(), b = ImGui::GetItemRectMax();
-			DrawTileImage(dl, a, b, &def, sprites, tileset, id, 255);
+			DrawTileImage(dl, a, b, &def, *m_tileDatabase, id, 255);
 
 			if (id == m_brushTile)
 				dl->AddRect(a, b, IM_COL32(255, 220, 60, 255), 0.0f, 0, 2.0f);
